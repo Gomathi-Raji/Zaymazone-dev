@@ -196,7 +196,7 @@ const ArtisanAnalytics = () => {
                   <Calendar
                     initialFocus
                     mode="range"
-                    defaultMonth={dateRange.from}
+                    defaultMonth={dateRange?.from || new Date()}
                     selected={dateRange}
                     onSelect={(range) => setDateRange(range?.from ? range as { from: Date; to?: Date } : undefined)}
                     numberOfMonths={2}
