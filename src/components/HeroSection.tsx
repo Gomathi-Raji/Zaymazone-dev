@@ -7,7 +7,7 @@ export const HeroSection = () => {
   const titleWords = ["Crafting Culture.", "Empowering Artisans."];
 
   return (
-    <section className="relative min-h-[70vh] md:min-h-screen flex items-center justify-center overflow-hidden mobile-section">
+    <section className="relative min-h-[70vh] md:min-h-screen flex items-center justify-center overflow-hidden mobile-section bg-gradient-to-b from-primary/5 to-transparent dark:from-background dark:to-background/80">
       {/* Background Image with Parallax */}
       <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -16,7 +16,8 @@ export const HeroSection = () => {
         animate={{ scale: 1 }}
         transition={{ duration: 1.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <div className="absolute inset-0 bg-black/30"></div>
+        {/* Enhanced overlay for better dark/light mode support */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40 dark:from-black/60 dark:via-black/50 dark:to-black/60"></div>
       </motion.div>
 
       {/* Content */}
