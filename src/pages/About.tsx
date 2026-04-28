@@ -5,8 +5,38 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Globe, Users, Leaf, Award, Target } from "lucide-react";
 import { getImageUrl } from "@/lib/api";
+import { useState, useEffect } from "react";
+
+interface ImpactStats {
+  artisansSupported: number;
+  statesReached: number;
+  productsListed: number;
+  averageRating: number;
+  totalRevenue: number;
+}
 
 const About = () => {
+  const [stats, setStats] = useState<ImpactStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/artisans/stats/impact');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch impact stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -144,20 +174,28 @@ const About = () => {
           <h2 className="text-2xl font-semibold text-foreground mb-8 text-center">Our Impact</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">150+</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                {loading ? '...' : `${stats?.artisansSupported || 0}+`}
+              </div>
               <div className="text-sm text-muted-foreground">Artisans Supported</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">25</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                {loading ? '...' : stats?.statesReached || 0}
+              </div>
               <div className="text-sm text-muted-foreground">States Reached</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">10,000+</div>
-              <div className="text-sm text-muted-foreground">Happy Customers</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                {loading ? '...' : `${stats?.productsListed || 0}+`}
+              </div>
+              <div className="text-sm text-muted-foreground">Products Listed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">₹50L+</div>
-              <div className="text-sm text-muted-foreground">Artisan Earnings</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                {loading ? '...' : `${stats?.averageRating || 0}/5`}
+              </div>
+              <div className="text-sm text-muted-foreground">Average Rating</div>
             </div>
           </div>
         </div>

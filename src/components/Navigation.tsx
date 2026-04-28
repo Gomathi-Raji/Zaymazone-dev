@@ -60,21 +60,21 @@ export const Navigation = () => {
       label: "Shop", 
       icon: <ShoppingBag className="h-4 w-4" />
     },
-    { 
-      to: "/categories", 
-      label: "Categories", 
-      icon: <Gift className="h-4 w-4" /> 
-    },
+    // { 
+    //   to: "/categories", 
+    //   label: "Categories", 
+    //   icon: <Gift className="h-4 w-4" /> 
+    // },
     { 
       to: "/artisans", 
       label: "Artisans", 
       icon: <Crown className="h-4 w-4" />
     },
-    { 
-      to: "/blog", 
-      label: "Blog", 
-      icon: <Star className="h-4 w-4" /> 
-    },
+    // { 
+    //   to: "/blog", 
+    //   label: "Blog", 
+    //   icon: <Star className="h-4 w-4" /> 
+    // },
     { 
       to: "/about", 
       label: "About", 

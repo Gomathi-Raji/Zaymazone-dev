@@ -2,36 +2,21 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Package, MapPin, Star } from "lucide-react";
 
-const stats = [
-  {
-    icon: Users,
-    label: "Master Artisans",
-    value: 150,
-    suffix: "+",
-    description: "Skilled craftspeople from across India"
-  },
-  {
-    icon: Package,
-    label: "Handcrafted Products",
-    value: 2500,
-    suffix: "+",
-    description: "Unique pieces made with love"
-  },
-  {
-    icon: MapPin,
-    label: "Regions Covered",
-    value: 28,
-    suffix: "",
-    description: "States and territories represented"
-  },
-  {
-    icon: Star,
-    label: "Customer Rating",
-    value: 4.9,
-    suffix: "/5",
-    description: "Average satisfaction score"
-  }
-];
+interface ImpactStats {
+  artisansSupported: number;
+  statesReached: number;
+  productsListed: number;
+  averageRating: number;
+  totalRevenue: number;
+}
+
+interface StatItem {
+  icon: any;
+  label: string;
+  value: number;
+  suffix: string;
+  description: string;
+}
 
 interface CounterProps {
   end: number;
@@ -96,6 +81,59 @@ const Counter = ({ end, duration, suffix }: CounterProps) => {
 };
 
 export const InteractiveStats = () => {
+  const [statsData, setStatsData] = useState<ImpactStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/artisans/stats/impact');
+        if (response.ok) {
+          const data = await response.json();
+          setStatsData(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch impact stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Build stats array from real data
+  const stats: StatItem[] = [
+    {
+      icon: Users,
+      label: "Master Artisans",
+      value: statsData?.artisansSupported || 0,
+      suffix: "+",
+      description: "Skilled craftspeople from across India"
+    },
+    {
+      icon: Package,
+      label: "Handcrafted Products",
+      value: statsData?.productsListed || 0,
+      suffix: "+",
+      description: "Unique pieces made with love"
+    },
+    {
+      icon: MapPin,
+      label: "Regions Covered",
+      value: statsData?.statesReached || 0,
+      suffix: "",
+      description: "States and territories represented"
+    },
+    {
+      icon: Star,
+      label: "Customer Rating",
+      value: statsData?.averageRating || 0,
+      suffix: "/5",
+      description: "Average satisfaction score"
+    }
+  ];
+
   return (
     <section className="relative py-16 bg-gradient-subtle dark:bg-gradient-to-br dark:from-background dark:via-background/98 dark:to-accent/8 overflow-hidden">
       {/* Interactive stats dark mode enhancement */}

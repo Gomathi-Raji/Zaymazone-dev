@@ -35,6 +35,57 @@ router.get('/', async (_req, res) => {
 	return res.json(items)
 })
 
+// Public stats endpoint for about page and marketing
+router.get('/stats/impact', async (_req, res) => {
+	try {
+		const [
+			totalArtisans,
+			uniqueStates,
+			totalProducts,
+			avgRating,
+			totalRevenue
+		] = await Promise.all([
+			Artisan.countDocuments({ 
+				approvalStatus: 'approved', 
+				isActive: true 
+			}),
+			Artisan.distinct('location.state', { 
+				approvalStatus: 'approved', 
+				isActive: true 
+			}).then(states => states.length),
+			Artisan.aggregate([
+				{ $match: { approvalStatus: 'approved', isActive: true } },
+				{ $group: { _id: null, total: { $sum: '$totalProducts' } } }
+			]).then(result => result[0]?.total || 0),
+			Artisan.aggregate([
+				{ $match: { approvalStatus: 'approved', isActive: true } },
+				{ $group: { _id: null, avg: { $avg: '$rating' } } }
+			]).then(result => (result[0]?.avg || 0).toFixed(1)),
+			Artisan.aggregate([
+				{ $match: { approvalStatus: 'approved', isActive: true } },
+				{ $group: { _id: null, total: { $sum: '$totalSales' } } }
+			]).then(result => result[0]?.total || 0)
+		])
+
+		res.json({
+			artisansSupported: Math.max(1, totalArtisans),
+			statesReached: Math.max(1, uniqueStates),
+			productsListed: Math.max(1, totalProducts),
+			averageRating: Math.max(0, parseFloat(avgRating) || 0),
+			totalRevenue: totalRevenue
+		})
+	} catch (error) {
+		console.error('Error fetching impact stats:', error)
+		res.json({
+			artisansSupported: 0,
+			statesReached: 0,
+			productsListed: 0,
+			averageRating: 0,
+			totalRevenue: 0
+		})
+	}
+})
+
 // Artisan profile routes (must come before /:id route)
 // Get current user's artisan profile
 router.get('/profile', authenticateToken, async (req, res) => {
