@@ -1,4 +1,9 @@
 import 'dotenv/config'
+import { validateEnvironment } from './config/environment.js'
+
+// Validate environment variables on startup
+validateEnvironment()
+
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
