@@ -15,7 +15,7 @@ const NotFound = () => {
           {/* Illustration */}
           <div className="mb-8">
             <img 
-              src={getImageUrl('/assets/404-illustration.jpg')} 
+              src="/assets/404-illustration.jpg" 
               alt="Scattered craft tools illustration"
               className="w-full max-w-md mx-auto mb-6 rounded-2xl shadow-soft"
             />

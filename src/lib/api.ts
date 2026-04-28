@@ -1166,6 +1166,23 @@ export function getImageUrl(path: string): string {
     return path;
   }
 
+	// Keep public/static assets on the frontend origin.
+	if (
+		path.startsWith('/assets/') ||
+		path.startsWith('/team_members/') ||
+		path.startsWith('/lovable-uploads/') ||
+		path === '/placeholder.svg' ||
+		path === '/placeholder-product.jpg' ||
+		path === '/favicon.ico' ||
+		path === '/logo.png' ||
+		path === '/logo2.png' ||
+		path === '/logo-invitation.png' ||
+		path === '/robots.txt' ||
+		path === '/sitemap.xml'
+	) {
+		return path;
+	}
+
   // If it's already an API image path, use it directly
   if (path.startsWith('/api/images/')) {
     return `${API_BASE_URL}${path}`;
