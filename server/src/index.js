@@ -67,7 +67,9 @@ const defaultAllowedOrigins = [
 	'https://zaymazone.netlify.app',
 	'https://zaymazone-taupe.vercel.app',
 	'https://zaymazone-backend.onrender.com',
-	'https://zaymazone-test.vercel.app'
+	'https://zaymazone-test.vercel.app',
+	'https://zaymazone-test2.vercel.app/',
+	'https://zaymazone-dev-backend.vercel.app'
 ]
 
 const envOrigins = process.env.CORS_ORIGIN
@@ -75,6 +77,9 @@ const envOrigins = process.env.CORS_ORIGIN
 	: []
 
 const allowedOriginsSet = new Set([...defaultAllowedOrigins, ...envOrigins])
+
+// Log allowed origins at startup to help debugging CORS in deployed environments
+console.log('🔐 Allowed CORS origins:', Array.from(allowedOriginsSet))
 
 app.use(cors({
 	origin: function (origin, callback) {
