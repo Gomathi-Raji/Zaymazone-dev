@@ -52,11 +52,14 @@ app.use(helmet({
 }))
 
 // More permissive CORS for development and production
-const allowedOrigins = [
-	'http://localhost:8080', 
-	'http://localhost:8081', 
+// Build allowed origins from hardcoded defaults plus any origins provided via
+// the CORS_ORIGIN environment variable (comma-separated). This lets the
+// deployed environment (e.g., Vercel) control which frontends are allowed.
+const defaultAllowedOrigins = [
+	'http://localhost:8080',
+	'http://localhost:8081',
 	'http://127.0.0.1:8080',
-	'http://127.0.0.1:8081', 
+	'http://127.0.0.1:8081',
 	'http://localhost:5173',
 	'https://zaymazone.com',
 	'https://www.zaymazone.com',
@@ -67,12 +70,18 @@ const allowedOrigins = [
 	'https://zaymazone-test.vercel.app'
 ]
 
+const envOrigins = process.env.CORS_ORIGIN
+	? process.env.CORS_ORIGIN.split(',').map(s => s.trim()).filter(Boolean)
+	: []
+
+const allowedOriginsSet = new Set([...defaultAllowedOrigins, ...envOrigins])
+
 app.use(cors({
 	origin: function (origin, callback) {
 		// Allow requests with no origin (like mobile apps or curl requests)
 		if (!origin) return callback(null, true)
-		
-		if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('github.dev')) {
+
+		if (allowedOriginsSet.has(origin) || origin.includes('github.dev')) {
 			callback(null, true)
 		} else {
 			console.log('CORS blocked for origin:', origin)
