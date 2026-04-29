@@ -1,11 +1,7 @@
-const BASE_URL = '/api/seller';
+import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
 
 const getToken = () => {
-  return localStorage.getItem('token') || 
-         localStorage.getItem('admin_token') || 
-         localStorage.getItem('auth_token') || 
-         localStorage.getItem('firebase_id_token') || 
-         '';
+  return getBackendAuthToken();
 };
 
 const headers = () => ({
@@ -16,7 +12,7 @@ const headers = () => ({
 export const sellerService = {
   // Stats
   getStats: async () => {
-    const response = await fetch(`${BASE_URL}/stats`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/stats'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch stats');
@@ -29,7 +25,7 @@ export const sellerService = {
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());
     
-    const response = await fetch(`${BASE_URL}/products?${query}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/products?${query}`), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch products');
@@ -37,7 +33,7 @@ export const sellerService = {
   },
 
   getProduct: async (id: string) => {
-    const response = await fetch(`${BASE_URL}/products/${id}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/products/${id}`), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch product');
@@ -45,7 +41,7 @@ export const sellerService = {
   },
 
   createProduct: async (data: any) => {
-    const response = await fetch(`${BASE_URL}/products`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/products'), {
       method: 'POST',
       headers: headers(),
       body: JSON.stringify(data)
@@ -55,7 +51,7 @@ export const sellerService = {
   },
 
   updateProduct: async (id: string, data: any) => {
-    const response = await fetch(`${BASE_URL}/products/${id}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/products/${id}`), {
       method: 'PUT',
       headers: headers(),
       body: JSON.stringify(data)
@@ -65,7 +61,7 @@ export const sellerService = {
   },
 
   deleteProduct: async (id: string) => {
-    const response = await fetch(`${BASE_URL}/products/${id}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/products/${id}`), {
       method: 'DELETE',
       headers: headers()
     });
@@ -79,7 +75,7 @@ export const sellerService = {
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());
     
-    const response = await fetch(`${BASE_URL}/orders?${query}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/orders?${query}`), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch orders');
@@ -87,7 +83,7 @@ export const sellerService = {
   },
 
   getOrder: async (id: string) => {
-    const response = await fetch(`${BASE_URL}/orders/${id}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/orders/${id}`), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch order');
@@ -95,7 +91,7 @@ export const sellerService = {
   },
 
   updateOrderStatus: async (id: string, status: string) => {
-    const response = await fetch(`${BASE_URL}/orders/${id}/status`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/orders/${id}/status`), {
       method: 'PATCH',
       headers: headers(),
       body: JSON.stringify({ status })
@@ -106,7 +102,7 @@ export const sellerService = {
 
   // Profile
   getProfile: async () => {
-    const response = await fetch(`${BASE_URL}/profile`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/profile'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch profile');
@@ -114,7 +110,7 @@ export const sellerService = {
   },
 
   updateProfile: async (data: any) => {
-    const response = await fetch(`${BASE_URL}/profile`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/profile'), {
       method: 'PUT',
       headers: headers(),
       body: JSON.stringify(data)
@@ -125,7 +121,7 @@ export const sellerService = {
 
   // Analytics
   getSalesAnalytics: async (period: string = '30days') => {
-    const response = await fetch(`${BASE_URL}/analytics/sales?period=${period}`, {
+    const response = await fetch(buildBackendApiUrl(`/api/seller/analytics/sales?period=${period}`), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch sales analytics');
@@ -133,7 +129,7 @@ export const sellerService = {
   },
 
   getProductAnalytics: async () => {
-    const response = await fetch(`${BASE_URL}/analytics/products`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/analytics/products'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch product analytics');
@@ -141,7 +137,7 @@ export const sellerService = {
   },
 
   getRevenueAnalytics: async () => {
-    const response = await fetch(`${BASE_URL}/analytics/revenue`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/analytics/revenue'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch revenue analytics');
@@ -149,7 +145,7 @@ export const sellerService = {
   },
 
   getOrderStatusAnalytics: async () => {
-    const response = await fetch(`${BASE_URL}/analytics/orders-status`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/analytics/orders-status'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch order status analytics');
@@ -157,7 +153,7 @@ export const sellerService = {
   },
 
   getCustomerAnalytics: async () => {
-    const response = await fetch(`${BASE_URL}/analytics/customers`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/analytics/customers'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch customer analytics');
@@ -165,7 +161,7 @@ export const sellerService = {
   },
 
   getCategoryAnalytics: async () => {
-    const response = await fetch(`${BASE_URL}/analytics/categories`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/analytics/categories'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch category analytics');
@@ -173,7 +169,7 @@ export const sellerService = {
   },
 
   getAlerts: async () => {
-    const response = await fetch(`${BASE_URL}/alerts`, {
+    const response = await fetch(buildBackendApiUrl('/api/seller/alerts'), {
       headers: headers()
     });
     if (!response.ok) throw new Error('Failed to fetch alerts');

@@ -10,6 +10,7 @@ import { SellerOrderManagement } from "@/components/seller/SellerOrderManagement
 import { SellerAnalytics } from "@/components/seller/SellerAnalytics";
 import { SellerProfile } from "@/components/seller/SellerProfile";
 import { useToast } from "@/hooks/use-toast";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 import {
   Package,
   ShoppingCart,
@@ -54,13 +55,13 @@ export default function SellerDashboard() {
   const loadStats = async () => {
     try {
       if (!refreshing) setRefreshing(true);
-      const token = localStorage.getItem('admin_token') || localStorage.getItem('auth_token') || localStorage.getItem('firebase_id_token');
+      const token = getBackendAuthToken();
       
       if (!token) {
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('/api/seller/stats', {
+      const response = await fetch(buildBackendApiUrl('/api/seller/stats'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }

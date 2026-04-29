@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, AlertCircle, Save } from "lucide-react";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 
 interface SellerProfile {
   _id: string;
@@ -35,15 +36,13 @@ export function SellerProfile() {
     loadProfile();
   }, []);
 
-  const getToken = () => {
-    return localStorage.getItem('admin_token') || localStorage.getItem('auth_token') || localStorage.getItem('firebase_id_token');
-  };
+  const getToken = () => getBackendAuthToken();
 
   const loadProfile = async () => {
     try {
       setLoading(true);
       const token = getToken();
-      const response = await fetch('/api/seller/profile', {
+      const response = await fetch(buildBackendApiUrl('/api/seller/profile'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -81,7 +80,7 @@ export function SellerProfile() {
     try {
       setSaving(true);
       const token = getToken();
-      const response = await fetch('/api/seller/profile', {
+      const response = await fetch(buildBackendApiUrl('/api/seller/profile'), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

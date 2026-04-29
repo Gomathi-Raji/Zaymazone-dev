@@ -114,12 +114,6 @@ const ArtisanProfileView = () => {
     }
   });
 
-  useEffect(() => {
-    if (user) {
-      loadProfile();
-    }
-  }, [user, loadProfile]);
-
   const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
@@ -152,6 +146,15 @@ const ArtisanProfileView = () => {
       setLoading(false);
     }
   }, [toast]);
+
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+      return;
+    }
+
+    setLoading(false);
+  }, [user, loadProfile]);
 
   const handleSaveProfile = async () => {
     try {

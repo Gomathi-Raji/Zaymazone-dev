@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Eye, Star, Package, Users, Loader2, AlertTriangle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 import { SingleImageUpload } from "./ImageUpload";
 import { adminService } from "@/services/adminService";
 
@@ -267,10 +268,10 @@ export const CategoriesManagement = () => {
     try {
       setSaving(true);
       const deletePromises = selectedCategories.map(id =>
-        fetch(`http://localhost:4000/api/admin/categories/${id}`, {
+        fetch(buildBackendApiUrl(`/api/admin/categories/${id}`), {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${getBackendAuthToken()}`
           }
         })
       );
@@ -309,11 +310,11 @@ export const CategoriesManagement = () => {
         const category = categories.find(cat => cat.id === id);
         if (!category) return Promise.resolve();
 
-        return fetch(`http://localhost:4000/api/admin/categories/${id}`, {
+        return fetch(buildBackendApiUrl(`/api/admin/categories/${id}`), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${getBackendAuthToken()}`
           },
           body: JSON.stringify({
             ...category,

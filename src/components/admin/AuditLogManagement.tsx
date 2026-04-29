@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Activity, Search, Filter, Download, RefreshCw } from "lucide-react";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 
 interface AuditLogEntry {
   id: string;
@@ -34,9 +35,9 @@ export const AuditLogManagement = () => {
   const loadAuditLogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/admin/audit-logs', {
+      const response = await fetch(buildBackendApiUrl('/api/admin/audit-logs'), {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          'Authorization': `Bearer ${getBackendAuthToken()}`
         }
       });
 

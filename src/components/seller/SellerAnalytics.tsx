@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, AlertCircle, TrendingUp, ShoppingCart } from "lucide-react";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 
 interface SalesDataPoint {
   date: string;
@@ -37,9 +38,7 @@ export function SellerAnalytics() {
     loadAnalytics();
   }, [period]);
 
-  const getToken = () => {
-    return localStorage.getItem('admin_token') || localStorage.getItem('auth_token') || localStorage.getItem('firebase_id_token');
-  };
+  const getToken = () => getBackendAuthToken();
 
   const loadAnalytics = async () => {
     try {
@@ -47,12 +46,12 @@ export function SellerAnalytics() {
       const token = getToken();
 
       // Load sales analytics
-      const salesResponse = await fetch(`/api/seller/analytics/sales?period=${period}`, {
+      const salesResponse = await fetch(buildBackendApiUrl(`/api/seller/analytics/sales?period=${period}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       // Load product analytics
-      const productsResponse = await fetch('/api/seller/analytics/products', {
+      const productsResponse = await fetch(buildBackendApiUrl('/api/seller/analytics/products'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 

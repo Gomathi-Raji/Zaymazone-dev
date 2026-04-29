@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ImageUpload } from '@/components/ImageUpload';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
 import { 
   User, 
   Building, 
@@ -189,8 +190,8 @@ export function SellerOnboardingForm() {
 
   const checkApplicationStatus = async () => {
     try {
-      const token = localStorage.getItem('firebase_id_token');
-      const response = await fetch('/api/seller/onboarding/status', {
+      const token = getBackendAuthToken();
+      const response = await fetch(buildBackendApiUrl('/api/seller/onboarding/status'), {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();

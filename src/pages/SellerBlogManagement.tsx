@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUpload } from '@/components/ImageUpload';
+import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
 import { 
   Plus, 
   Edit, 
@@ -82,7 +83,7 @@ export function SellerBlogManagement() {
   const fetchBlogs = async () => {
     setBlogsLoading(true);
     try {
-      const token = localStorage.getItem('firebase_id_token');
+      const token = getBackendAuthToken();
       const params = new URLSearchParams({
         page: page.toString(),
         limit: '10'
@@ -92,7 +93,7 @@ export function SellerBlogManagement() {
         params.append('status', statusFilter);
       }
 
-      const response = await fetch(`/api/seller/blogs?${params}`, {
+      const response = await fetch(buildBackendApiUrl(`/api/seller/blogs?${params}`), {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -126,13 +127,13 @@ export function SellerBlogManagement() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('firebase_id_token');
+      const token = getBackendAuthToken();
       const blogData = {
         ...formData,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
       };
 
-      const url = editingId ? `/api/seller/blogs/${editingId}` : '/api/seller/blogs';
+      const url = editingId ? buildBackendApiUrl(`/api/seller/blogs/${editingId}`) : buildBackendApiUrl('/api/seller/blogs');
       const method = editingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -185,8 +186,8 @@ export function SellerBlogManagement() {
     if (!confirm('Are you sure you want to delete this blog post?')) return;
     
     try {
-      const token = localStorage.getItem('firebase_id_token');
-      const response = await fetch(`/api/seller/blogs/${blogId}`, {
+      const token = getBackendAuthToken();
+      const response = await fetch(buildBackendApiUrl(`/api/seller/blogs/${blogId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Save, X, Eye, Loader2, AlertTriangle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 
 interface PageContent {
   id: string;
@@ -45,9 +46,9 @@ export const PageContentManagement = () => {
   const loadPageContents = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/admin/page-content', {
+      const response = await fetch(buildBackendApiUrl('/api/admin/page-content'), {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          'Authorization': `Bearer ${getBackendAuthToken()}`
         }
       });
 
@@ -141,11 +142,11 @@ export const PageContentManagement = () => {
       setSaving(true);
       setShowConfirmDialog(false);
 
-      const response = await fetch(`http://localhost:4000/api/admin/page-content/${editingContent.id}`, {
+      const response = await fetch(buildBackendApiUrl(`/api/admin/page-content/${editingContent.id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          'Authorization': `Bearer ${getBackendAuthToken()}`
         },
         body: JSON.stringify({
           title: editingContent.title.trim(),

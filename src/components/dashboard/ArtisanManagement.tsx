@@ -28,6 +28,7 @@ import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from '@/components/ImageUpload';
 import { DocumentPreview } from '@/components/admin/DocumentPreview';
+import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
 
 interface User {
   _id: string;
@@ -410,8 +411,8 @@ export function ArtisanManagement() {
     if (!editingArtisan) return;
 
     try {
-      const token = localStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/artisans/${editingArtisan._id}/verification`, {
+      const token = getBackendAuthToken();
+      const response = await fetch(buildBackendApiUrl(`/api/admin/artisans/${editingArtisan._id}/verification`), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

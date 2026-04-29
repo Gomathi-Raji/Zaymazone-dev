@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, AlertCircle, Eye } from "lucide-react";
+import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 
 interface OrderItem {
   product: {
@@ -61,15 +62,13 @@ export function SellerOrderManagement() {
     loadOrders();
   }, []);
 
-  const getToken = () => {
-    return localStorage.getItem('admin_token') || localStorage.getItem('auth_token') || localStorage.getItem('firebase_id_token');
-  };
+  const getToken = () => getBackendAuthToken();
 
   const loadOrders = async () => {
     try {
       setLoading(true);
       const token = getToken();
-      const response = await fetch('/api/seller/orders', {
+      const response = await fetch(buildBackendApiUrl('/api/seller/orders'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -92,7 +91,7 @@ export function SellerOrderManagement() {
     try {
       setUpdatingId(orderId);
       const token = getToken();
-      const response = await fetch(`/api/seller/orders/${orderId}/status`, {
+      const response = await fetch(buildBackendApiUrl(`/api/seller/orders/${orderId}/status`), {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
