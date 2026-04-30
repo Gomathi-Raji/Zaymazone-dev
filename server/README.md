@@ -210,3 +210,12 @@ npm run seed
 ```
 
 The backend is fully functional and ready for frontend integration!
+
+## Deployment Notes
+- Deploy the backend from the `server/` folder on Vercel so `server/index.js` is used as the function entrypoint.
+- Set these environment variables in Vercel:
+  - `MONGODB_URI`
+  - `JWT_SECRET`
+  - `CORS_ORIGIN` including `https://zaymazone-test2.vercel.app`
+  - `NODE_ENV=production`
+- If the frontend is deployed separately, set its API base URL to the backend deployment URL.

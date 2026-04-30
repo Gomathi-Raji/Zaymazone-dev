@@ -229,6 +229,28 @@ async function uploadTeamImagesOnStartup() {
   }
 }
 
+let serverResourcesInitialized = false
+
+async function initializeServerResources() {
+	if (serverResourcesInitialized) {
+		return
+	}
+
+	console.log('🔌 Connecting to MongoDB...')
+	try {
+		await mongoose.connect(mongoUri)
+		console.log('✅ Connected to MongoDB')
+
+		initGridFS()
+		console.log('✅ GridFS initialized')
+
+		serverResourcesInitialized = true
+	} catch (dbError) {
+		console.warn('⚠️  MongoDB connection failed:', dbError.message)
+		throw dbError
+	}
+}
+
 async function start() {
 	try {
 		const serverUrl = process.env.PUBLIC_API_URL || `http://localhost:${port}`
@@ -237,13 +259,8 @@ async function start() {
 		app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }))
 		app.get('/api-docs.json', (_req, res) => res.json(swaggerSpec))
 
-		console.log('🔌 Connecting to MongoDB...');
 		try {
-			await mongoose.connect(mongoUri)
-			console.log('✅ Connected to MongoDB');
-			
-			initGridFS() // Initialize GridFS after database connection
-			console.log('✅ GridFS initialized');
+			await initializeServerResources()
 
 			// Upload team images if they exist
 			await uploadTeamImagesOnStartup()
@@ -264,6 +281,12 @@ async function start() {
 		console.error('❌ Failed to start server:', error)
 		process.exit(1)
 	}
+}
+
+if (process.env.VERCEL) {
+	await initializeServerResources().catch((err) => {
+		console.error('Failed to initialize Vercel server resources', err)
+	})
 }
 
 if (!process.env.VERCEL) {
