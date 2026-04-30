@@ -22,7 +22,6 @@ import {
   Share2,
   MessageCircle,
   Package,
-  Verified,
   Clock,
   ArrowLeft,
   Loader2,
@@ -31,6 +30,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { api, type Artisan, type Product, getImageUrl } from "@/lib/api";
+import { VerifiedArtisanName } from "@/components/VerifiedArtisanName";
 
 const ArtisanDetailWithBackend = () => {
   const { id } = useParams<{ id: string }>();
@@ -174,12 +174,13 @@ const ArtisanDetailWithBackend = () => {
                 </Avatar>
                 
                 <div className="text-center sm:text-left">
-                  <div className="flex items-center gap-2 justify-center sm:justify-start mb-2">
-                    <h1 className="text-3xl font-bold text-foreground">{artisan.name}</h1>
-                    {artisan.verification.isVerified && (
-                      <Verified className="w-6 h-6 text-blue-500" />
-                    )}
-                  </div>
+                  <h1 className="flex items-center gap-2 justify-center sm:justify-start mb-2">
+                    <VerifiedArtisanName
+                      name={artisan.name}
+                      isVerified={artisan.verification.isVerified}
+                      nameClassName="text-3xl font-bold text-foreground"
+                    />
+                  </h1>
                   
                   <div className="flex items-center gap-1 text-muted-foreground mb-2 justify-center sm:justify-start">
                     <MapPin className="w-4 h-4" />

@@ -30,6 +30,7 @@ import { ProductVideoPlayer } from "@/components/ProductVideoPlayer";
 import { MaterialCareGuide } from "@/components/MaterialCareGuide";
 import { parseVideoUrl } from "@/lib/videoUtils";
 import { VideoEmbed } from "@/components/VideoEmbed";
+import { VerifiedArtisanName } from '@/components/VerifiedArtisanName';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -639,7 +640,13 @@ const ProductDetail = () => {
                     <AvatarFallback>{product.artisan.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm sm:text-base break-words">{product.artisan.name}</h4>
+                    <h4 className="font-medium text-sm sm:text-base break-words">
+                      <VerifiedArtisanName
+                        name={product.artisan.name}
+                        isVerified={product.artisan.verification?.isVerified}
+                        nameClassName="break-words"
+                      />
+                    </h4>
                     <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground mb-2">
                       <MapPin className="w-3 h-3 shrink-0" />
                       <span className="break-words">{product.artisan.location}</span>

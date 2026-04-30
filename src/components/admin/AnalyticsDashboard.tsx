@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -105,86 +105,156 @@ interface AnalyticsData {
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1'];
 
+const formatDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
+const formatDateLabel = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
 export function AnalyticsDashboard() {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState("30");
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadAnalyticsData();
-  }, [timeRange]);
-
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async (showToast = false) => {
     try {
       setLoading(true);
+      setError(null);
       
-      // Fetch data from multiple endpoints
       const [blogPosts, commentStats, categories] = await Promise.all([
-        adminService.getBlogPosts({ limit: 100 }),
+        adminService.getBlogPosts({ limit: 1000 }),
         adminService.getCommentStats(),
         adminService.getCategories({ limit: 100 })
       ]);
 
-      // Process the data
-      const processedData = processAnalyticsData(blogPosts, commentStats, categories);
+      if (!commentStats?.stats) {
+        throw new Error('Missing comment statistics from backend');
+      }
+
+      const processedData = processAnalyticsData(blogPosts, commentStats, categories, parseInt(timeRange, 10) || 30);
       setAnalyticsData(processedData);
-      
+
+      return true;
     } catch (error) {
       console.error('Failed to load analytics:', error);
-      toast({
-        title: "Error Loading Analytics",
-        description: "Failed to load analytics data. Please try again.",
-        variant: "destructive",
-      });
+      setAnalyticsData(null);
+      setError('Failed to load analytics data from the backend.');
+
+      if (showToast) {
+        toast({
+          title: "Error Loading Analytics",
+          description: "Failed to load analytics data. Please try again.",
+          variant: "destructive",
+        });
+      }
+
+      return false;
     } finally {
       setLoading(false);
     }
-  };
+  }, [timeRange, toast]);
+
+  useEffect(() => {
+    void loadAnalyticsData();
+  }, [loadAnalyticsData]);
 
   const processAnalyticsData = (
     blogData: any, 
     commentData: any, 
-    categoryData: any
+    categoryData: any,
+    days: number
   ): AnalyticsData => {
-    const posts = blogData.posts || [];
+    const posts = Array.isArray(blogData.posts) ? blogData.posts : [];
+    const categories = Array.isArray(categoryData.categories) ? categoryData.categories : [];
+    const parsedDays = Number.isFinite(days) && days > 0 ? days : 30;
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    startDate.setDate(startDate.getDate() - (parsedDays - 1));
+
+    const filteredPosts = posts.filter((post: any) => {
+      const sourceDate = new Date(post.publishedAt || post.createdAt || 0);
+      return !Number.isNaN(sourceDate.getTime()) && sourceDate >= startDate;
+    });
+
+    const bucketMap = new Map<string, {
+      date: string;
+      posts: number;
+      views: number;
+      comments: number;
+      likes: number;
+    }>();
+
+    for (let index = 0; index < parsedDays; index += 1) {
+      const bucketDate = new Date(startDate);
+      bucketDate.setDate(startDate.getDate() + index);
+      const key = formatDateKey(bucketDate);
+
+      bucketMap.set(key, {
+        date: formatDateLabel(bucketDate),
+        posts: 0,
+        views: 0,
+        comments: 0,
+        likes: 0,
+      });
+    }
+
+    filteredPosts.forEach((post: any) => {
+      const sourceDate = new Date(post.publishedAt || post.createdAt || 0);
+
+      if (Number.isNaN(sourceDate.getTime())) {
+        return;
+      }
+
+      const key = formatDateKey(sourceDate);
+      const bucket = bucketMap.get(key);
+
+      if (!bucket) {
+        return;
+      }
+
+      bucket.posts += 1;
+      bucket.views += post.views || 0;
+      bucket.comments += post.comments || 0;
+      bucket.likes += post.likes || 0;
+    });
+
+    const timeSeriesData = Array.from(bucketMap.values());
     
     // Calculate blog statistics
     const totalViews = posts.reduce((sum: number, post: any) => sum + (post.views || 0), 0);
     const totalLikes = posts.reduce((sum: number, post: any) => sum + (post.likes || 0), 0);
     const totalComments = posts.reduce((sum: number, post: any) => sum + (post.comments || 0), 0);
     const totalShares = posts.reduce((sum: number, post: any) => sum + (post.shares || 0), 0);
-    
-    // Generate time series data (mock data for demo)
-    const timeSeriesData = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (29 - i));
+
+    // Process category statistics
+    const categoryStats = categories.map((cat: any) => {
+      const categoryPosts = posts.filter((post: any) => post.category === cat.name);
+
       return {
-        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        posts: Math.floor(Math.random() * 5) + 1,
-        views: Math.floor(Math.random() * 500) + 100,
-        comments: Math.floor(Math.random() * 20) + 5,
-        likes: Math.floor(Math.random() * 50) + 10,
+        name: cat.name,
+        postCount: categoryPosts.length,
+        views: categoryPosts.reduce((sum: number, post: any) => sum + (post.views || 0), 0),
+        engagement: categoryPosts.reduce((sum: number, post: any) => sum + (post.likes || 0) + (post.comments || 0), 0),
       };
     });
 
-    // Process category statistics
-    const categoryStats = (categoryData.categories || []).map((cat: any) => ({
-      name: cat.name,
-      postCount: posts.filter((p: any) => p.category === cat.name).length,
-      views: posts
-        .filter((p: any) => p.category === cat.name)
-        .reduce((sum: number, p: any) => sum + (p.views || 0), 0),
-      engagement: posts
-        .filter((p: any) => p.category === cat.name)
-        .reduce((sum: number, p: any) => sum + (p.likes || 0) + (p.comments || 0), 0),
-    }));
-
     // Top performing posts
     const topPerformingPosts = posts
-      .sort((a: any, b: any) => (b.views || 0) - (a.views || 0))
+      .slice()
+      .sort((a: any, b: any) => {
+        const bScore = (b.views || 0) + (b.likes || 0) + (b.comments || 0);
+        const aScore = (a.views || 0) + (a.likes || 0) + (a.comments || 0);
+
+        return bScore - aScore;
+      })
       .slice(0, 10)
       .map((post: any) => ({
         title: post.title,
@@ -206,11 +276,7 @@ export function AnalyticsDashboard() {
         totalShares,
         avgEngagement: posts.length > 0 ? Math.round((totalLikes + totalComments) / posts.length) : 0,
       },
-      commentStats: commentData.stats || {
-        total: { pending: 0, approved: 0, rejected: 0, spam: 0 },
-        recent: [],
-        topPosts: [],
-      },
+      commentStats: commentData.stats,
       categoryStats,
       timeSeriesData,
       topPerformingPosts,
@@ -219,13 +285,34 @@ export function AnalyticsDashboard() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadAnalyticsData();
+    const success = await loadAnalyticsData(true);
     setRefreshing(false);
-    toast({
-      title: "Analytics Refreshed",
-      description: "Analytics data has been updated successfully.",
-    });
+
+    if (success) {
+      toast({
+        title: "Analytics Refreshed",
+        description: "Analytics data has been updated successfully.",
+      });
+    }
   };
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col gap-4 p-6">
+          <div>
+            <p className="text-lg font-semibold">Analytics unavailable</p>
+            <p className="text-sm text-muted-foreground">{error}</p>
+          </div>
+          <div>
+            <Button variant="outline" onClick={() => void handleRefresh()} disabled={refreshing}>
+              {refreshing ? 'Retrying...' : 'Retry'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const exportData = () => {
     if (!analyticsData) return;

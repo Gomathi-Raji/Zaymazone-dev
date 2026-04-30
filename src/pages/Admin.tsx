@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductManagement } from "@/components/dashboard/ProductManagement";
 import { ArtisanManagement } from "@/components/dashboard/ArtisanManagement";
-import { OrderManagement } from "@/components/admin/OrderManagement";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { BlogManagement } from "@/components/admin/BlogManagement";
 import { AnalyticsOverview } from "@/components/admin/AnalyticsOverview";
@@ -21,6 +20,7 @@ import { AdminLogin } from "@/components/AdminLogin";
 import { PageContentManagement } from "@/components/admin/PageContentManagement";
 import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
 import { AuditLogManagement } from "@/components/admin/AuditLogManagement";
+import { OrderManagement } from "@/components/admin/OrderManagementEnhanced";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -41,7 +41,8 @@ import {
   HeadphonesIcon,
   AlertCircle,
   Activity,
-  Settings
+  Settings,
+  Loader2
 } from "lucide-react";
 
 export default function Admin() {
@@ -115,7 +116,7 @@ export default function Admin() {
   }
 
   const loadStats = async () => {
-    // Don't set loading to true to avoid blocking the UI
+    setLoading(true);
     try {
       const response = await adminService.getStats();
       setStats(response.stats);
@@ -123,7 +124,7 @@ export default function Admin() {
       console.warn('Failed to load admin statistics:', error);
       // Keep default stats on error
     } finally {
-      // Don't set loading to false since we don't show loading initially
+      setLoading(false);
     }
   };
 
@@ -237,15 +238,27 @@ export default function Admin() {
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
               <p className="text-muted-foreground">Manage your marketplace data and operations</p>
+              {loading && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Syncing admin data...
+                </div>
+              )}
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleLogout}
-              className="flex items-center gap-2"
-            >
-              <Settings className="w-4 h-4" />
-              Logout
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="outline" onClick={() => void loadStats()} disabled={loading} className="flex items-center gap-2">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Activity className="w-4 h-4" />}
+                Refresh Stats
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleLogout}
+                className="flex items-center gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                Logout
+              </Button>
+            </div>
           </div>
 
           {activeTab === "overview" && (

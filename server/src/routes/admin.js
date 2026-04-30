@@ -33,13 +33,13 @@ const upload = multer({
 // Helper function to generate tokens
 const generateTokens = (userId, email) => {
   const accessToken = jwt.sign(
-    { sub: userId, email }, 
-    process.env.JWT_SECRET || 'dev-secret', 
+    { sub: userId, email },
+    process.env.JWT_SECRET || 'dev-secret',
     { expiresIn: '8h' } // Longer session for admin
   )
-  
+
   const refreshToken = crypto.randomBytes(64).toString('hex')
-  
+
   return { accessToken, refreshToken }
 }
 
@@ -54,21 +54,21 @@ router.post('/auth/login', async (req, res) => {
   try {
     const parsed = adminLoginSchema.safeParse(req.body)
     if (!parsed.success) return res.status(400).json({ error: 'Invalid credentials' })
-    
+
     const { email, password } = parsed.data
-    
+
     // Find user with admin role
     const user = await User.findOne({ email, role: 'admin', isActive: true })
-    
+
     // If admin user doesn't exist, create default admin users
     if (!user) {
       const defaultAdmins = [
         { email: 'admin@zaymazone.com', password: 'admin123', name: 'Administrator' },
         { email: 'dinesh_admin@zaymazone.com', password: 'dinesh123', name: 'Dinesh Admin' }
       ]
-      
+
       const matchingAdmin = defaultAdmins.find(admin => admin.email === email && admin.password === password)
-      
+
       if (matchingAdmin) {
         // Create the admin user
         const passwordHash = await bcrypt.hash(matchingAdmin.password, 10)
@@ -80,13 +80,13 @@ router.post('/auth/login', async (req, res) => {
           isEmailVerified: true,
           authProvider: 'local'
         })
-        
+
         const { accessToken, refreshToken } = generateTokens(newAdmin._id, email)
-        
+
         // Store refresh token
         const refreshTokenExpiry = new Date()
         refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 30)
-        
+
         newAdmin.refreshTokens.push({
           token: refreshToken,
           expiresAt: refreshTokenExpiry,
@@ -94,7 +94,7 @@ router.post('/auth/login', async (req, res) => {
         })
         newAdmin.lastLogin = new Date()
         await newAdmin.save()
-        
+
         return res.json({
           success: true,
           accessToken,
@@ -107,20 +107,20 @@ router.post('/auth/login', async (req, res) => {
           }
         })
       }
-      
+
       return res.status(401).json({ error: 'Invalid admin credentials' })
     }
-    
+
     // Verify password
     const ok = await bcrypt.compare(password, user.passwordHash)
     if (!ok) return res.status(401).json({ error: 'Invalid credentials' })
-    
+
     const { accessToken, refreshToken } = generateTokens(user._id, email)
-    
+
     // Store refresh token
     const refreshTokenExpiry = new Date()
     refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 30)
-    
+
     user.refreshTokens.push({
       token: refreshToken,
       expiresAt: refreshTokenExpiry,
@@ -128,7 +128,7 @@ router.post('/auth/login', async (req, res) => {
     })
     user.lastLogin = new Date()
     await user.save()
-    
+
     return res.json({
       success: true,
       accessToken,
@@ -186,6 +186,7 @@ const logAdminAction = async (user, action, resource, resourceId, details, req) 
     console.error('Error logging admin action:', error)
   }
 }
+
 
 // Admin Statistics Endpoint
 router.get('/stats', requireAuth, requireAdmin, async (req, res) => {
@@ -257,88 +258,6 @@ router.get('/stats', requireAuth, requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Admin stats error:', error)
     res.status(500).json({ error: 'Failed to fetch admin statistics' })
-  }
-})
-
-// Approval Management Endpoints
-router.post('/products', requireAuth, requireAdmin, async (req, res) => {
-  try {
-    const {
-      name,
-      description,
-      price,
-      originalPrice,
-      images,
-      category,
-      subcategory,
-      materials,
-      colors,
-      tags,
-      stockCount,
-      dimensions,
-      weight,
-      shippingTime,
-      isHandmade,
-      featured,
-      artisanId
-    } = req.body
-
-    // Validation
-    if (!name || !price || !category) {
-      return res.status(400).json({
-        error: 'Missing required fields: name, price, category'
-      })
-    }
-
-    // If artisanId is provided, verify it exists
-    if (artisanId) {
-      const artisan = await Artisan.findById(artisanId)
-      if (!artisan) {
-        return res.status(400).json({ error: 'Invalid artisanId' })
-      }
-    }
-
-    const product = new Product({
-      name,
-      description,
-      price: parseFloat(price),
-      originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
-      images: Array.isArray(images) ? images : [],
-      artisanId: artisanId || null, // Allow null for admin-created products
-      category,
-      subcategory,
-      materials,
-      colors,
-      tags,
-      stockCount: parseInt(stockCount) || 0,
-      inStock: parseInt(stockCount) > 0,
-      dimensions,
-      weight,
-      shippingTime,
-      isHandmade: isHandmade !== false,
-      featured: featured === true,
-      isActive: true, // Admin-created products are active by default
-      approvalStatus: 'approved' // Admin-created products are pre-approved
-    })
-
-    await product.save()
-
-    // Update artisan product count if artisanId is provided
-    if (artisanId) {
-      const artisan = await Artisan.findById(artisanId)
-      if (artisan) {
-        artisan.totalProducts = (artisan.totalProducts || 0) + 1
-        await artisan.save()
-      }
-    }
-
-    res.status(201).json({
-      message: 'Product created successfully',
-      product
-    })
-  } catch (error) {
-    console.error('Admin create product error:', error)
-    res.status(500).json({ error: 'Failed to create product' })
   }
 })
 
@@ -993,15 +912,52 @@ router.get('/products', requireAuth, requireAdmin, async (req, res) => {
 
 router.post('/products', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const productData = {
-      ...req.body,
-      isActive: req.body.isActive !== undefined ? req.body.isActive : true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+    const {
+      artisanId,
+      stock,
+      stockCount,
+      featured,
+      isFeatured,
+      ...rest
+    } = req.body
+
+    const normalizedName = typeof rest.name === 'string' ? rest.name.trim() : ''
+    const normalizedCategory = typeof rest.category === 'string' ? rest.category.trim() : ''
+    const normalizedPrice = Number.parseFloat(rest.price)
+    const normalizedStock = Number.parseInt(stock ?? stockCount ?? 0, 10)
+    const normalizedFeatured = isFeatured !== undefined ? Boolean(isFeatured) : Boolean(featured)
+
+    if (!normalizedName || !Number.isFinite(normalizedPrice) || !normalizedCategory) {
+      return res.status(400).json({
+        error: 'Missing required fields: name, price, category'
+      })
     }
 
-    const product = new Product(productData)
-    await product.save()
+    if (artisanId) {
+      const artisan = await Artisan.findById(artisanId)
+      if (!artisan) {
+        return res.status(400).json({ error: 'Invalid artisanId' })
+      }
+    }
+
+    const product = await Product.create({
+      ...rest,
+      name: normalizedName,
+      category: normalizedCategory,
+      price: normalizedPrice,
+      originalPrice: rest.originalPrice !== undefined ? Number.parseFloat(rest.originalPrice) : undefined,
+      images: Array.isArray(rest.images) ? rest.images : [],
+      artisanId: artisanId || undefined,
+      stock: Number.isFinite(normalizedStock) ? normalizedStock : 0,
+      inStock: Number.isFinite(normalizedStock) ? normalizedStock > 0 : false,
+      isFeatured: normalizedFeatured,
+      isActive: rest.isActive !== undefined ? Boolean(rest.isActive) : true,
+      approvalStatus: 'approved',
+    })
+
+    if (artisanId) {
+      await Artisan.findByIdAndUpdate(artisanId, { $inc: { totalProducts: 1 } })
+    }
 
     res.status(201).json({
       message: 'Product created successfully',

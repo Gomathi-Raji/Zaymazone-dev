@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,63 +15,103 @@ export function ReportsAndInvoices() {
   const [dateRange, setDateRange] = useState("30days");
   const [reportType, setReportType] = useState("sales");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [salesReport, setSalesReport] = useState(null);
   const [artisanReport, setArtisanReport] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadReportsData();
-  }, []);
-
-  const loadReportsData = async () => {
+  const loadReportsData = useCallback(async () => {
     setLoading(true);
+    setError(null);
+
     try {
-      const [salesData, artisanData, invoicesData] = await Promise.all([
+      const [salesDataResult, artisanDataResult, invoicesDataResult] = await Promise.allSettled([
         adminService.getSalesReport(dateRange),
         adminService.getArtisanReport(),
         adminService.getInvoices()
       ]);
 
-      setSalesReport(salesData);
-      setArtisanReport(artisanData);
-      setInvoices(invoicesData.invoices || []);
+      const loadErrors: string[] = [];
+
+      if (salesDataResult.status === 'fulfilled') {
+        setSalesReport(salesDataResult.value);
+      } else {
+        console.error('Error loading sales report:', salesDataResult.reason);
+        setSalesReport(null);
+        loadErrors.push('sales report');
+      }
+
+      if (artisanDataResult.status === 'fulfilled') {
+        setArtisanReport(artisanDataResult.value);
+      } else {
+        console.error('Error loading artisan report:', artisanDataResult.reason);
+        setArtisanReport(null);
+        loadErrors.push('artisan report');
+      }
+
+      if (invoicesDataResult.status === 'fulfilled') {
+        setInvoices(invoicesDataResult.value.invoices || []);
+      } else {
+        console.error('Error loading invoices:', invoicesDataResult.reason);
+        setInvoices([]);
+        loadErrors.push('invoices');
+      }
+
+      if (loadErrors.length > 0) {
+        const errorMessage = `Failed to load ${loadErrors.join(', ')} from the backend.`;
+        setError(errorMessage);
+        toast({
+          title: "Backend data unavailable",
+          description: errorMessage,
+          variant: "destructive"
+        });
+      }
     } catch (error) {
       console.error('Error loading reports data:', error);
+      setError('Failed to load reports data from the backend.');
+      setSalesReport(null);
+      setArtisanReport(null);
+      setInvoices([]);
       toast({
         title: "Error",
         description: "Failed to load reports data",
         variant: "destructive"
       });
-      
-      // Set fallback data
-      setSalesReport({
-        totalRevenue: 0,
-        totalOrders: 0,
-        averageOrderValue: 0,
-        topProducts: [],
-        monthlyData: []
-      });
-      setArtisanReport({
-        totalArtisans: 0,
-        activeArtisans: 0,
-        newArtisans: 0,
-        topArtisans: []
-      });
-      setInvoices([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange, toast]);
+
+  useEffect(() => {
+    void loadReportsData();
+  }, [loadReportsData]);
 
   const handleGenerateReport = () => {
-    // API call to generate report
-    console.log(`Generating ${reportType} report for ${dateRange}`);
+    void loadReportsData();
   };
 
   const handleDownloadInvoice = (invoiceId) => {
-    // API call to download invoice
-    console.log(`Downloading invoice ${invoiceId}`);
+    const invoice = invoices.find((item) => item.id === invoiceId);
+    if (!invoice) return;
+
+    const csvContent = [
+      ['Invoice ID', 'Order ID', 'Customer', 'Amount', 'Status', 'Due Date'],
+      [invoice.id, invoice.orderId, invoice.customer, invoice.amount, invoice.status, invoice.dueDate]
+    ].map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${invoice.id}.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: 'Download started',
+      description: `Invoice ${invoiceId} exported as CSV`
+    });
   };
 
   if (loading) {
@@ -99,6 +139,20 @@ export function ReportsAndInvoices() {
         <FileBarChart className="w-6 h-6" />
         <h2 className="text-2xl font-bold">Reports & Invoices</h2>
       </div>
+
+      {error && (
+        <Card className="border-destructive/40 bg-destructive/5">
+          <CardContent className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="font-semibold text-destructive">Backend data unavailable</p>
+              <p className="text-sm text-muted-foreground">{error}</p>
+            </div>
+            <Button variant="outline" onClick={() => void loadReportsData()}>
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>

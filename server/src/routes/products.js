@@ -102,7 +102,7 @@ router.get('/',
 					.sort(sort)
 					.skip(skip)
 					.limit(limit)
-					.populate('artisanId', 'name location.city location.state bio avatar rating totalProducts')
+					.populate('artisanId', 'name location.city location.state bio avatar rating totalProducts verification.isVerified')
 					.lean(),
 				Product.countDocuments(filter)
 			])
@@ -278,7 +278,12 @@ router.get('/:id', optionalAuth, async (req, res) => {
 				bio: product.artisanId.bio,
 				avatar: product.artisanId.avatar,
 				rating: product.artisanId.rating,
-				totalProducts: product.artisanId.totalProducts
+				totalProducts: product.artisanId.totalProducts,
+				verification: {
+					isVerified: product.artisanId.verification && typeof product.artisanId.verification.isVerified !== 'undefined'
+						? Boolean(product.artisanId.verification.isVerified)
+						: false
+				}
 			} : null,
 			rating: product.rating,
 			reviewCount: product.reviewCount,

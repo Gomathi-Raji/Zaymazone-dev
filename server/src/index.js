@@ -11,6 +11,7 @@ import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import mongoose from 'mongoose'
 import path from 'path'
+import swaggerUi from 'swagger-ui-express'
 
 import authRouter from './routes/auth.js'
 import firebaseAuthRouter from './routes/firebase-auth.js'
@@ -35,6 +36,7 @@ import { sanitize } from './middleware/validation.js'
 import { initGridFS } from './services/imageService.js'
 import { uploadImageToGridFS } from './services/imageService.js'
 import fs from 'fs'
+import { buildOpenApiSpec } from './docs/openapi.js'
 
 const app = express()
 
@@ -226,6 +228,12 @@ async function uploadTeamImagesOnStartup() {
 
 async function start() {
 	try {
+		const serverUrl = process.env.PUBLIC_API_URL || `http://localhost:${port}`
+		const swaggerSpec = await buildOpenApiSpec({ serverUrl })
+
+		app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }))
+		app.get('/api-docs.json', (_req, res) => res.json(swaggerSpec))
+
 		console.log('🔌 Connecting to MongoDB...');
 		try {
 			await mongoose.connect(mongoUri)

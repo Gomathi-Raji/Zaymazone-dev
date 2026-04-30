@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, AlertCircle, Eye } from "lucide-react";
+import { Loader2, AlertCircle, Eye, ArrowRight, Package, Truck, CheckCircle } from "lucide-react";
 import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 
 interface OrderItem {
@@ -56,6 +56,7 @@ export function SellerOrderManagement() {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -140,6 +141,28 @@ export function SellerOrderManagement() {
     }
   };
 
+  const filteredOrders = useMemo(() => {
+    if (statusFilter === 'all') return orders;
+    return orders.filter(order => order.status?.toLowerCase() === statusFilter);
+  }, [orders, statusFilter]);
+
+  const statusSummary = useMemo(() => {
+    return orders.reduce((summary, order) => {
+      const key = (order.status || 'pending').toLowerCase();
+      summary[key] = (summary[key] || 0) + 1;
+      return summary;
+    }, { pending: 0, processing: 0, shipped: 0, delivered: 0, cancelled: 0 } as Record<string, number>);
+  }, [orders]);
+
+  const getNextStatus = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'pending': return 'processing';
+      case 'processing': return 'shipped';
+      case 'shipped': return 'delivered';
+      default: return null;
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -155,7 +178,43 @@ export function SellerOrderManagement() {
         <p className="text-muted-foreground">Track and manage your orders</p>
       </div>
 
-      {orders.length === 0 ? (
+      <div className="grid gap-4 md:grid-cols-5">
+        {[
+          { label: 'Pending', value: statusSummary.pending, icon: Package, color: 'text-yellow-600' },
+          { label: 'Processing', value: statusSummary.processing, icon: ArrowRight, color: 'text-blue-600' },
+          { label: 'Shipped', value: statusSummary.shipped, icon: Truck, color: 'text-purple-600' },
+          { label: 'Delivered', value: statusSummary.delivered, icon: CheckCircle, color: 'text-green-600' },
+          { label: 'Cancelled', value: statusSummary.cancelled, icon: AlertCircle, color: 'text-red-600' },
+        ].map((item) => {
+          const Icon = item.icon
+          return (
+            <Card key={item.label} className="border-dashed">
+              <CardContent className="flex items-center justify-between p-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <p className="text-2xl font-bold">{item.value}</p>
+                </div>
+                <Icon className={`h-5 w-5 ${item.color}`} />
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'].map((status) => (
+          <Button
+            key={status}
+            variant={statusFilter === status ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter(status)}
+          >
+            {status === 'all' ? 'All Orders' : status.charAt(0).toUpperCase() + status.slice(1)}
+          </Button>
+        ))}
+      </div>
+
+      {filteredOrders.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <AlertCircle className="w-12 h-12 text-muted-foreground mb-4" />
@@ -167,7 +226,7 @@ export function SellerOrderManagement() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>{orders.length} orders total</CardDescription>
+            <CardDescription>{filteredOrders.length} of {orders.length} orders shown</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -184,7 +243,9 @@ export function SellerOrderManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.map((order) => (
+                  {filteredOrders.map((order) => {
+                    const nextStatus = getNextStatus(order.status)
+                    return (
                     <TableRow key={order._id}>
                       <TableCell className="font-medium">#{order.orderNumber}</TableCell>
                       <TableCell>
@@ -204,16 +265,29 @@ export function SellerOrderManagement() {
                         {new Date(order.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setSelectedOrder(order)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          {nextStatus && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleStatusUpdate(order._id, nextStatus)}
+                              disabled={updatingId === order._id}
+                            >
+                              Move to {nextStatus}
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedOrder(order)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                    )
+                  })}
                 </TableBody>
               </Table>
             </div>

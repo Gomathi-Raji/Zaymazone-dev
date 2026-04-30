@@ -1,13 +1,15 @@
 import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
 
-const getToken = () => {
-  return getBackendAuthToken();
-};
+const getToken = () => getBackendAuthToken();
 
-const headers = () => ({
-  'Authorization': `Bearer ${getToken()}`,
-  'Content-Type': 'application/json'
-});
+const headers = () => {
+  const token = getToken();
+  const h: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    h['Authorization'] = `Bearer ${token}`;
+  }
+  return h;
+};
 
 export const sellerService = {
   // Stats
@@ -25,9 +27,20 @@ export const sellerService = {
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());
     
-    const response = await fetch(buildBackendApiUrl(`/api/seller/products?${query}`), {
+    // If no auth token is present, fall back to the public products endpoint
+    const token = getToken();
+    const path = token ? `/api/seller/products?${query}` : `/api/products?${query}`;
+    let response = await fetch(buildBackendApiUrl(path), {
       headers: headers()
     });
+
+    // If seller route returned 404 or 401 (e.g., token corresponds to non-seller, expired,
+    // or artisan not found), and we attempted the seller route, fallback to public products endpoint.
+    if (!response.ok && (response.status === 404 || response.status === 401) && path.startsWith('/api/seller')) {
+      const publicPath = `/api/products?${query}`;
+      response = await fetch(buildBackendApiUrl(publicPath), { headers: headers() });
+    }
+
     if (!response.ok) throw new Error('Failed to fetch products');
     return response.json();
   },

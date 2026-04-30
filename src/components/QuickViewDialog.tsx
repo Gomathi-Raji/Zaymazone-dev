@@ -7,6 +7,7 @@ import { Heart, Star, MapPin, Truck, Shield, ArrowLeft, ArrowRight } from "lucid
 import { Product, getImageUrl } from "@/lib/api";
 import { toast } from "sonner";
 import { AnimatedDialog } from "./AnimatedDialog";
+import { VerifiedArtisanName } from '@/components/VerifiedArtisanName';
 
 interface QuickViewDialogProps {
   product: Product;
@@ -127,7 +128,7 @@ export const QuickViewDialog = ({ product, isOpen, onClose }: QuickViewDialogPro
               {product.artisan && (
                 <div className="flex items-center gap-2 text-muted-foreground mb-4">
                   <MapPin className="w-4 h-4" />
-                  <span className="font-medium">{product.artisan.name}</span>
+                  <VerifiedArtisanName name={product.artisan.name} isVerified={product.artisan.verification?.isVerified} nameClassName="font-medium" />
                   <span>•</span>
                   <span>{product.artisan.location}</span>
                 </div>

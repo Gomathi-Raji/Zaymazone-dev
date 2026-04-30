@@ -9,6 +9,7 @@ import { getImageUrl } from "@/lib/api";
 import { QuickViewDialog } from "./QuickViewDialog";
 import { LazyImage } from "./LazyImage";
 import { MobileOptimizedImage } from "./MobileOptimizedImage";
+import { VerifiedArtisanName } from '@/components/VerifiedArtisanName';
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -433,7 +434,11 @@ export const ProductCard = ({ product, onQuickView, onAddToComparison }: Product
         {product.artisan && (
           <div className="flex items-center gap-1 mb-2 text-xs text-muted-foreground">
             <MapPin className="w-3 h-3 flex-shrink-0" />
-            <span className="truncate text-xs">{product.artisan.name}</span>
+            <VerifiedArtisanName
+              name={product.artisan.name}
+              isVerified={product.artisan.verification?.isVerified}
+              nameClassName="truncate text-xs"
+            />
           </div>
         )}
 

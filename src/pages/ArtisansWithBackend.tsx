@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, Search, MapPin, Star, Award, Users, Palette } from "lucide-react";
+import { Loader2, Search, MapPin, Star, Users, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api, type Artisan } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { VerifiedArtisanName } from "@/components/VerifiedArtisanName";
 
 const ArtisansWithBackend = () => {
   const [artisans, setArtisans] = useState<Artisan[]>([]);
@@ -165,20 +166,19 @@ const ArtisansWithBackend = () => {
                       </AvatarFallback>
                     </Avatar>
                   </div>
-                  {artisan.verification.isVerified && (
-                    <div className="absolute top-3 right-3">
-                      <Badge className="bg-green-100 text-green-800 border-green-300">
-                        <Award className="w-3 h-3 mr-1" />
-                        Verified
-                      </Badge>
-                    </div>
-                  )}
                 </div>
               </CardHeader>
               
               <CardContent className="p-6">
                 <div className="text-center mb-4">
-                  <h3 className="text-xl font-semibold mb-1">{artisan.name}</h3>
+                  <h3 className="mb-1">
+                    <VerifiedArtisanName
+                      name={artisan.name}
+                      isVerified={artisan.verification.isVerified}
+                      className="justify-center"
+                      nameClassName="text-xl font-semibold"
+                    />
+                  </h3>
                   <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mb-2">
                     <MapPin className="w-3 h-3" />
                     {artisan.location.city}, {artisan.location.state}

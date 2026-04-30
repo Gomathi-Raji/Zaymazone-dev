@@ -170,6 +170,10 @@ export interface Product {
 		avatar: string;
 		rating: number;
 		totalProducts: number;
+		verification?: {
+			isVerified: boolean;
+			verifiedAt?: Date;
+		};
 	} | null;
 	rating: number;
 	reviewCount: number;

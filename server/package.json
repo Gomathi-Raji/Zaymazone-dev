@@ -27,6 +27,7 @@
     "multer": "^2.0.2",
     "node-fetch": "^2.7.0",
     "react-chartjs-2": "^5.3.0",
+    "swagger-ui-express": "^5.0.1",
     "vite_react_shadcn_ts": "file:..",
     "zod": "^3.23.8"
   },

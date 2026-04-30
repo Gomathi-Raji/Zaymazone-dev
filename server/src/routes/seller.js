@@ -385,6 +385,29 @@ router.patch('/orders/:id/status', authenticateToken, async (req, res) => {
 })
 
 // ============= PROFILE MANAGEMENT =============
+const formatSellerProfile = (artisan) => ({
+	_id: artisan._id,
+	name: artisan.name,
+	businessName: artisan.businessInfo?.businessName || artisan.name,
+	description: artisan.bio || '',
+	bio: artisan.bio || '',
+	avatar: artisan.avatar || '',
+	bannerImage: artisan.coverImage || '',
+	coverImage: artisan.coverImage || '',
+	location: artisan.location,
+	specialties: artisan.specialties,
+	experience: artisan.experience,
+	socials: artisan.socials,
+	verification: artisan.verification,
+	businessInfo: artisan.businessInfo,
+	totalProducts: artisan.totalProducts || 0,
+	totalSales: artisan.totalSales || 0,
+	rating: artisan.rating || 0,
+	totalRatings: artisan.totalRatings || 0,
+	isActive: artisan.isActive,
+	joinedDate: artisan.createdAt
+})
+
 // Get seller profile
 router.get('/profile', authenticateToken, async (req, res) => {
 	try {
@@ -394,25 +417,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
 		}
 
 		res.json({
-			profile: {
-				_id: artisan._id,
-				name: artisan.name,
-				bio: artisan.bio,
-				avatar: artisan.avatar,
-				coverImage: artisan.coverImage,
-				location: artisan.location,
-				specialties: artisan.specialties,
-				experience: artisan.experience,
-				socials: artisan.socials,
-				verification: artisan.verification,
-				businessInfo: artisan.businessInfo,
-				totalProducts: artisan.totalProducts,
-				totalSales: artisan.totalSales,
-				rating: artisan.rating,
-				totalRatings: artisan.totalRatings,
-				isActive: artisan.isActive,
-				joinedDate: artisan.createdAt
-			}
+			profile: formatSellerProfile(artisan)
 		})
 	} catch (error) {
 		console.error('Get profile error:', error)
@@ -423,21 +428,61 @@ router.get('/profile', authenticateToken, async (req, res) => {
 // Update seller profile
 router.put('/profile', authenticateToken, async (req, res) => {
 	try {
-		const { name, bio, avatar, coverImage, location, specialties, experience, socials } = req.body
+		const {
+			name,
+			businessName,
+			bio,
+			description,
+			avatar,
+			coverImage,
+			bannerImage,
+			location,
+			specialties,
+			experience,
+			socials
+		} = req.body
+
+		const updates = { updatedAt: new Date() }
+
+		if (name !== undefined) {
+			updates.name = name
+		}
+
+		if (businessName !== undefined) {
+			updates['businessInfo.businessName'] = businessName
+		}
+
+		if (bio !== undefined || description !== undefined) {
+			updates.bio = description !== undefined ? description : bio
+		}
+
+		if (avatar !== undefined) {
+			updates.avatar = avatar
+		}
+
+		if (coverImage !== undefined || bannerImage !== undefined) {
+			updates.coverImage = bannerImage !== undefined ? bannerImage : coverImage
+		}
+
+		if (location !== undefined) {
+			updates.location = location
+		}
+
+		if (specialties !== undefined) {
+			updates.specialties = specialties
+		}
+
+		if (experience !== undefined) {
+			updates.experience = experience
+		}
+
+		if (socials !== undefined) {
+			updates.socials = socials
+		}
 
 		const artisan = await Artisan.findOneAndUpdate(
 			{ userId: req.user._id },
-			{
-				name,
-				bio,
-				avatar,
-				coverImage,
-				location,
-				specialties,
-				experience,
-				socials,
-				updatedAt: new Date()
-			},
+			updates,
 			{ new: true }
 		)
 
@@ -447,7 +492,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
 
 		res.json({
 			message: 'Profile updated successfully',
-			profile: artisan
+			profile: formatSellerProfile(artisan)
 		})
 	} catch (error) {
 		console.error('Update profile error:', error)
@@ -1028,64 +1073,6 @@ router.post('/categories/suggest', authenticateToken, async (req, res) => {
 	} catch (error) {
 		console.error('Suggest category error:', error)
 		res.status(500).json({ error: 'Failed to suggest category' })
-	}
-})
-
-// ============= PROFILE MANAGEMENT ENDPOINTS =============
-
-// Get seller profile
-router.get('/profile', authenticateToken, async (req, res) => {
-	try {
-		const userId = req.user._id
-		const artisan = await Artisan.findOne({ userId })
-			.populate('userId', 'name email')
-			.lean()
-		
-		if (!artisan) {
-			return res.status(404).json({ error: 'Artisan profile not found' })
-		}
-
-		res.json({ profile: artisan })
-	} catch (error) {
-		console.error('Get profile error:', error)
-		res.status(500).json({ error: 'Failed to fetch profile' })
-	}
-})
-
-// Update seller profile
-router.put('/profile', authenticateToken, async (req, res) => {
-	try {
-		const userId = req.user._id
-		const artisan = await Artisan.findOne({ userId })
-		
-		if (!artisan) {
-			return res.status(404).json({ error: 'Artisan profile not found' })
-		}
-
-		// Don't allow updating approval status or verification details
-		const allowedUpdates = [
-			'name', 'bio', 'location', 'avatar', 'coverImage', 
-			'specialties', 'experience', 'socials'
-		]
-
-		const updates = {}
-		allowedUpdates.forEach(field => {
-			if (req.body[field] !== undefined) {
-				updates[field] = req.body[field]
-			}
-		})
-
-		Object.assign(artisan, updates)
-		await artisan.save()
-		await artisan.populate('userId', 'name email')
-
-		res.json({
-			message: 'Profile updated successfully',
-			profile: artisan
-		})
-	} catch (error) {
-		console.error('Update profile error:', error)
-		res.status(500).json({ error: 'Failed to update profile' })
 	}
 })
 

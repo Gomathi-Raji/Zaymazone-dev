@@ -9,6 +9,7 @@ import { SellerProductManagement } from "@/components/seller/SellerProductManage
 import { SellerOrderManagement } from "@/components/seller/SellerOrderManagement";
 import { SellerAnalytics } from "@/components/seller/SellerAnalytics";
 import { SellerProfile } from "@/components/seller/SellerProfile";
+import { SellerPitchStudio } from "@/components/seller/SellerPitchStudio";
 import { useToast } from "@/hooks/use-toast";
 import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 import {
@@ -154,6 +155,14 @@ export default function SellerDashboard() {
     }
   ];
 
+  const goToTab = (tab: string) => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const completionRate = stats.totalOrders > 0 ? Math.round((stats.completedOrders / stats.totalOrders) * 100) : 0;
+  const revenuePerOrder = stats.totalOrders > 0 ? Math.round(stats.totalRevenue / stats.totalOrders) : 0;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -236,8 +245,9 @@ export default function SellerDashboard() {
 
           {/* Main Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-5">
+            <TabsList className="grid w-full grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="pitch">Pitch Studio</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -252,15 +262,39 @@ export default function SellerDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-3">
-                      <Button onClick={() => setActiveTab('products')} variant="default">
+                      <Button onClick={() => goToTab('pitch')} variant="default">
+                        Create Pitch
+                      </Button>
+                      <Button onClick={() => goToTab('products')} variant="outline">
                         Add New Product
                       </Button>
-                      <Button onClick={() => setActiveTab('orders')} variant="outline">
+                      <Button onClick={() => goToTab('orders')} variant="outline">
                         View Orders
                       </Button>
-                      <Button onClick={() => setActiveTab('profile')} variant="outline">
+                      <Button onClick={() => goToTab('profile')} variant="outline">
                         Edit Profile
                       </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Sales Snapshot</CardTitle>
+                    <CardDescription>Fast facts for pitch and fulfillment</CardDescription>
+                  </CardHeader>
+                  <CardContent className="grid gap-4 sm:grid-cols-3">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Completion rate</p>
+                      <p className="text-2xl font-bold">{completionRate}%</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Avg. order value</p>
+                      <p className="text-2xl font-bold">₹{revenuePerOrder.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Top line revenue</p>
+                      <p className="text-2xl font-bold">₹{stats.totalRevenue.toLocaleString()}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -278,6 +312,13 @@ export default function SellerDashboard() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="pitch" className="space-y-6">
+              <SellerPitchStudio
+                onGoToProducts={() => goToTab('products')}
+                onGoToOrders={() => goToTab('orders')}
+              />
             </TabsContent>
 
             <TabsContent value="products" className="space-y-6">

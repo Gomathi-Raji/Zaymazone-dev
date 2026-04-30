@@ -90,6 +90,8 @@ router.patch('/approve-artisan/:artisanId', requireAuth, requireAdmin, async (re
         approvalNotes: approvalNotes || '',
         approvedBy: adminId,
         approvedAt: new Date(),
+        'verification.isVerified': true,
+        'verification.verifiedAt': new Date(),
         $unset: { rejectionReason: 1 }
       },
       { new: true }
