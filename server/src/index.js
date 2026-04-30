@@ -70,7 +70,7 @@ const defaultAllowedOrigins = [
 	'https://zaymazone-taupe.vercel.app',
 	'https://zaymazone-backend.onrender.com',
 	'https://zaymazone-test.vercel.app',
-	'https://zaymazone-test2.vercel.app/',
+	'https://zaymazone-test2.vercel.app',
 	'https://zaymazone-dev-backend.vercel.app'
 ]
 
@@ -88,7 +88,10 @@ app.use(cors({
 		// Allow requests with no origin (like mobile apps or curl requests)
 		if (!origin) return callback(null, true)
 
-		if (allowedOriginsSet.has(origin) || origin.includes('github.dev')) {
+		const isVercelPreview = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)
+		const isNetlifyPreview = /^https:\/\/[a-z0-9-]+\.netlify\.app$/i.test(origin)
+
+		if (allowedOriginsSet.has(origin) || isVercelPreview || isNetlifyPreview || origin.includes('github.dev')) {
 			callback(null, true)
 		} else {
 			console.log('CORS blocked for origin:', origin)
