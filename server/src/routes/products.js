@@ -34,7 +34,8 @@ const upsertSchema = z.object({
 // Enhanced products listing with search, filter, and pagination
 router.get('/', 
 	validate(z.object({
-		...paginationSchema.shape,
+		page: z.coerce.number().int().min(1).default(1),
+		limit: z.coerce.number().int().min(1).max(100).optional(),
 		...searchSchema.shape,
 		featured: z.coerce.boolean().optional(),
 		sortBy: z.enum(['name', 'price', 'rating', 'createdAt', 'salesCount']).optional().default('createdAt')
@@ -43,7 +44,7 @@ router.get('/',
 		try {
 			const {
 				page = 1,
-				limit = 20,
+				limit,
 				q,
 				category,
 				minPrice,
@@ -95,13 +96,15 @@ router.get('/',
 				sort[sortBy] = order === 'desc' ? -1 : 1
 			}
 
-			// Execute query with pagination
-			const skip = (page - 1) * limit
+			const usePagination = typeof limit === 'number'
+
+			// Execute query with optional pagination
+			const skip = usePagination ? (page - 1) * limit : 0
 			const [products, total] = await Promise.all([
 				Product.find(filter)
 					.sort(sort)
 					.skip(skip)
-					.limit(limit)
+					.limit(usePagination ? limit : 0)
 					.populate('artisanId', 'name location.city location.state bio avatar rating totalProducts verification.isVerified')
 					.lean(),
 				Product.countDocuments(filter)
@@ -145,17 +148,17 @@ router.get('/',
 				careInstructions: product.careInstructions || null
 			}))
 
-			const totalPages = Math.ceil(total / limit)
+			const totalPages = usePagination ? Math.ceil(total / limit) : 1
 
 			return res.json({
 				products: transformedProducts,
 				pagination: {
-					page,
-					limit,
+					page: usePagination ? page : 1,
+					limit: usePagination ? limit : total,
 					total,
 					totalPages,
-					hasNext: page < totalPages,
-					hasPrev: page > 1
+					hasNext: usePagination ? page < totalPages : false,
+					hasPrev: usePagination ? page > 1 : false
 				}
 			})
 		} catch (error) {

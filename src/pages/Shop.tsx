@@ -32,9 +32,7 @@ const Shop = () => {
   } = useProductComparison();
 
   // Fetch products from API
-  const { data: productsData, isLoading, error } = useProducts({
-    limit: 100, // Get a reasonable amount for client-side filtering
-  });
+  const { data: productsData, isLoading, error } = useProducts();
 
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
