@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { sellerApi, SellerFormData } from "@/services/api";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { AuthDebugPanel } from "@/components/AuthDebugPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,6 +33,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function SellerOnboarding() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -389,12 +390,24 @@ export default function SellerOnboarding() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/sign-in" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
       {/* Hero Section */}
-      <section className="pt-20 pb-16 bg-gradient-warm">
+      <section className="pt-20 pb-16 bg-background border-b border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
@@ -426,9 +439,6 @@ export default function SellerOnboarding() {
       {/* Main Content */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Debug Panel - Remove in production */}
-          <AuthDebugPanel />
-          
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
