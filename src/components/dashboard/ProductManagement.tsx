@@ -31,6 +31,7 @@ import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from '@/components/ImageUpload';
 import { VideoManager } from '@/components/VideoManager';
+import { getImageUrl } from "@/lib/api";
 
 interface Product {
   _id: string;
@@ -596,7 +597,7 @@ export function ProductManagement() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <img
-                            src={product.images[0] || '/placeholder.svg'}
+                            src={getImageUrl(product.images[0] || '/placeholder.svg')}
                             alt={product.name}
                             className="h-10 w-10 rounded object-cover"
                           />
@@ -678,7 +679,7 @@ export function ProductManagement() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <img
-                            src={product.images[0] || '/placeholder.svg'}
+                            src={getImageUrl(product.images[0] || '/placeholder.svg')}
                             alt={product.name}
                             className="h-10 w-10 rounded object-cover"
                           />
@@ -746,7 +747,7 @@ export function ProductManagement() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <img
-                  src={viewingProduct.images[0] || '/placeholder.svg'}
+                  src={getImageUrl(viewingProduct.images[0] || '/placeholder.svg')}
                   alt={viewingProduct.name}
                   className="w-full h-48 object-cover rounded"
                 />

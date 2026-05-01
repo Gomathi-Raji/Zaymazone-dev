@@ -14,6 +14,7 @@ import { ImageUpload } from '@/components/ImageUpload';
 import { VideoManager } from '@/components/VideoManager';
 import { useSellerProducts } from '@/hooks/useSeller';
 import { sellerService } from '@/services/sellerService';
+import { getImageUrl } from '@/lib/api';
 import { 
   Plus, 
   Edit, 
@@ -363,7 +364,7 @@ export function SellerShopManagement() {
                       <div className="flex items-center gap-3">
                         {product.images[0] && (
                           <img 
-                            src={product.images[0]} 
+                            src={getImageUrl(product.images[0])} 
                             alt={product.name}
                             className="w-12 h-12 object-cover rounded"
                           />
@@ -452,7 +453,7 @@ export function SellerShopManagement() {
                   <div className="aspect-square relative">
                     {product.images[0] ? (
                       <img 
-                        src={product.images[0]} 
+                        src={getImageUrl(product.images[0])} 
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

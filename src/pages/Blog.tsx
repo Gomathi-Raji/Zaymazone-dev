@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { BlogSearch } from "@/components/BlogSearch";
 import { useBlogPosts, useBlogCategories, BlogPost as DBBlogPost } from "@/hooks/useBlog";
 import { pageContentApi } from "@/services/api";
+import { getImageUrl } from "@/lib/api";
 import { useState, useEffect } from "react";
 
 // BlogSearch component's expected format
@@ -151,7 +152,7 @@ const Blog = () => {
                 <Card key={post._id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
                   <div className="aspect-video bg-muted overflow-hidden">
                     <img 
-                      src={post.featuredImage} 
+                      src={getImageUrl(post.featuredImage)} 
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -179,7 +180,7 @@ const Blog = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-8 h-8">
-                          <AvatarImage src={post.author.avatar} />
+                          <AvatarImage src={getImageUrl(post.author.avatar)} />
                           <AvatarFallback>{post.author.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                         </Avatar>
                         <div>
@@ -214,7 +215,7 @@ const Blog = () => {
                 <Card key={post._id} className="hover:shadow-md transition-shadow group">
                   <div className="aspect-video bg-muted overflow-hidden">
                     <img 
-                      src={post.featuredImage} 
+                      src={getImageUrl(post.featuredImage)} 
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -233,7 +234,7 @@ const Blog = () => {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <Avatar className="w-6 h-6">
-                          <AvatarImage src={post.author.avatar} />
+                          <AvatarImage src={getImageUrl(post.author.avatar)} />
                           <AvatarFallback className="text-xs">{post.author.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                         </Avatar>
                         <span className="text-xs text-muted-foreground">{post.author.name}</span>

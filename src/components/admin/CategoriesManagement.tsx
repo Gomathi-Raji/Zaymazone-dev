@@ -14,6 +14,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 import { SingleImageUpload } from "./ImageUpload";
 import { adminService } from "@/services/adminService";
+import { getImageUrl } from "@/lib/api";
 
 interface Category {
   id: string;
@@ -710,7 +711,7 @@ export const CategoriesManagement = () => {
                   {editingCategory.image[0] && (
                     <div className="mt-2">
                       <img
-                        src={editingCategory.image[0]}
+                        src={getImageUrl(editingCategory.image[0])}
                         alt="Category preview"
                         className="w-20 h-20 object-cover rounded border"
                       />

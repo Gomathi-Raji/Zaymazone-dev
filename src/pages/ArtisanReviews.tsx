@@ -19,7 +19,7 @@ import {
   Search,
   Calendar
 } from 'lucide-react';
-import { api } from '@/lib/api';
+import { api, getImageUrl } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 
 const ArtisanReviews = () => {
@@ -281,7 +281,7 @@ const ArtisanReviews = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-start space-x-4">
                       <Avatar className="w-10 h-10">
-                        <AvatarImage src={review.userId.avatar} alt={review.userId.name} />
+                        <AvatarImage src={getImageUrl(review.userId.avatar)} alt={review.userId.name} />
                         <AvatarFallback>{getInitials(review.userId.name)}</AvatarFallback>
                       </Avatar>
                       <div>
@@ -312,7 +312,7 @@ const ArtisanReviews = () => {
                       {review.images.slice(0, 3).map((image, index) => (
                         <img
                           key={index}
-                          src={image}
+                          src={getImageUrl(image)}
                           alt={`Review image ${index + 1}`}
                           className="w-16 h-16 object-cover rounded-md border"
                         />

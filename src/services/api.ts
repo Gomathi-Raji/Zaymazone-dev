@@ -1,16 +1,37 @@
 import { apiRequest } from '@/lib/api';
 
+const normalizeApiBaseUrl = (value: string | undefined, fallback: string) => {
+  if (!value) return fallback
+
+  let url = value
+  if (url.includes(',')) {
+    const urls = url.split(',').map(item => item.trim()).filter(Boolean)
+    url = urls.find(item => item.startsWith('http')) || urls[0]
+  }
+
+  const cleaned = url.replace(/\s+/g, '')
+  if (cleaned.endsWith('/api')) return cleaned
+  if (cleaned.endsWith('/api/')) return cleaned.slice(0, -1)
+  return `${cleaned.replace(/\/$/, '')}/api`
+}
+
 // Base API configuration
-let API_BASE_URL: string;
+let API_BASE_URL: string
 
 try {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  console.log('VITE_API_BASE_URL from env:', envUrl);
-  API_BASE_URL = envUrl || 'http://localhost:4000/api';
-  console.log('API configured with base URL:', API_BASE_URL);
+  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
+  const fallback = import.meta.env.PROD
+    ? 'https://zaymazone-dev-backend.vercel.app/api'
+    : 'http://localhost:4000/api'
+
+  console.log('VITE_API_BASE_URL from env:', envUrl)
+  API_BASE_URL = normalizeApiBaseUrl(envUrl, fallback)
+  console.log('API configured with base URL:', API_BASE_URL)
 } catch (error) {
-  console.warn('Environment variable not found, using default API URL');
-  API_BASE_URL = 'http://localhost:4000/api';
+  console.warn('Environment variable not found, using default API URL')
+  API_BASE_URL = import.meta.env.PROD
+    ? 'https://zaymazone-dev-backend.vercel.app/api'
+    : 'http://localhost:4000/api'
 }
 
 // Helper function to handle API responses

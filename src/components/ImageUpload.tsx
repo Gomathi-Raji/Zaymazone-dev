@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
-import { imagesApi } from '@/lib/api';
+import { imagesApi, getImageUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
 interface ImageUploadProps {
@@ -355,7 +355,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               ) : (
                 <>
                   <img
-                    src={images[0]}
+                    src={getImageUrl(images[0])}
                     alt="Uploaded image"
                     className="w-10 h-10 object-cover rounded border"
                   />
@@ -401,7 +401,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 // Uploaded image preview
                 <div className="flex-1 flex items-center gap-2">
                   <img
-                    src={image}
+                    src={getImageUrl(image)}
                     alt={`Image ${index + 1}`}
                     className="w-10 h-10 object-cover rounded border"
                   />
