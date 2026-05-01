@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,8 @@ import {
   Eye,
   ShoppingBag,
   Calendar,
-  Loader2 
+  Loader2,
+  Check
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -55,6 +56,9 @@ export default function UserDashboard() {
   const [wishlist, setWishlist] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -67,6 +71,7 @@ export default function UserDashboard() {
       country: "India"
     }
   });
+  const [originalProfileData, setOriginalProfileData] = useState(profileData);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orderPaymentStatus, setOrderPaymentStatus] = useState<string>('');
@@ -103,7 +108,7 @@ export default function UserDashboard() {
   // keep local profileData in sync when user changes
   useEffect(() => {
     if (user) {
-      setProfileData({
+      const newProfileData = {
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
@@ -114,9 +119,68 @@ export default function UserDashboard() {
           zipCode: "",
           country: "India"
         }
-      });
+      };
+      setProfileData(newProfileData);
+      setOriginalProfileData(newProfileData);
     }
   }, [user]);
+
+  // Auto-save effect for profile changes
+  useEffect(() => {
+    if (!editingProfile || autoSaving) return;
+
+    // Clear previous timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Check if data has changed
+    const hasChanged = 
+      profileData.name !== originalProfileData.name ||
+      profileData.phone !== originalProfileData.phone ||
+      profileData.address.street !== originalProfileData.address.street ||
+      profileData.address.city !== originalProfileData.address.city ||
+      profileData.address.state !== originalProfileData.address.state;
+
+    if (!hasChanged) return;
+
+    setAutoSaveStatus('saving');
+
+    // Debounce auto-save (wait 2 seconds after last change)
+    autoSaveTimeoutRef.current = setTimeout(async () => {
+      try {
+        setAutoSaving(true);
+        if (updateUserProfile) {
+          await updateUserProfile({
+            name: profileData.name,
+            phone: profileData.phone,
+            address: profileData.address
+          });
+        }
+        setOriginalProfileData(profileData);
+        setAutoSaveStatus('saved');
+        
+        // Reset status after 2 seconds
+        setTimeout(() => setAutoSaveStatus('idle'), 2000);
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        setAutoSaveStatus('idle');
+        toast({
+          title: 'Failed to auto-save profile',
+          description: 'Please try saving manually',
+          variant: 'destructive'
+        });
+      } finally {
+        setAutoSaving(false);
+      }
+    }, 2000);
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [profileData, editingProfile, originalProfileData, updateUserProfile, autoSaving, toast]);
 
   const loadUserData = async () => {
     setLoading(true);
@@ -404,14 +468,28 @@ export default function UserDashboard() {
                       <User className="w-5 h-5" />
                       Profile Information
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setEditingProfile(!editingProfile)}
-                    >
-                      <Edit2 className="w-4 h-4 mr-2" />
-                      {editingProfile ? "Cancel" : "Edit"}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      {editingProfile && autoSaveStatus === 'saving' && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Saving...</span>
+                        </div>
+                      )}
+                      {editingProfile && autoSaveStatus === 'saved' && (
+                        <div className="flex items-center gap-2 text-sm text-green-600">
+                          <Check className="w-4 h-4" />
+                          <span>Saved</span>
+                        </div>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingProfile(!editingProfile)}
+                      >
+                        <Edit2 className="w-4 h-4 mr-2" />
+                        {editingProfile ? "Done" : "Edit"}
+                      </Button>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

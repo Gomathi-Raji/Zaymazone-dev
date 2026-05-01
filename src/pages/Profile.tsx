@@ -22,9 +22,10 @@ import {
   Edit,
   Save,
   Camera,
-  Loader2
+  Loader2,
+  Check
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getImageUrl, api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -32,6 +33,9 @@ const Profile = () => {
   const { user, updateUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [autoSaving, setAutoSaving] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -41,6 +45,7 @@ const Profile = () => {
     joinDate: "",
     avatar: ""
   });
+  const [originalData, setOriginalData] = useState(userData);
 
   const [orders, setOrders] = useState<any[]>([]);
 
@@ -52,6 +57,63 @@ const Profile = () => {
     memberSince: ""
   });
 
+  // Auto-save effect
+  useEffect(() => {
+    if (!isEditing || autoSaving) return;
+
+    // Clear previous timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Check if data has changed
+    const hasChanged = 
+      userData.name !== originalData.name ||
+      userData.phone !== originalData.phone ||
+      userData.location !== originalData.location;
+
+    if (!hasChanged) return;
+
+    setAutoSaveStatus('saving');
+
+    // Debounce auto-save (wait 2 seconds after last change)
+    autoSaveTimeoutRef.current = setTimeout(async () => {
+      try {
+        setAutoSaving(true);
+        if (updateUserProfile) {
+          await updateUserProfile({
+            name: userData.name,
+            phone: userData.phone,
+            address: {
+              city: userData.location.split(',')[0]?.trim() || "",
+              state: userData.location.split(',')[1]?.trim() || "",
+              street: "",
+              zipCode: "",
+              country: "India"
+            }
+          });
+        }
+        setOriginalData(userData);
+        setAutoSaveStatus('saved');
+        
+        // Reset status after 2 seconds
+        setTimeout(() => setAutoSaveStatus('idle'), 2000);
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        setAutoSaveStatus('idle');
+        toast.error('Failed to auto-save profile');
+      } finally {
+        setAutoSaving(false);
+      }
+    }, 2000);
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [userData, isEditing, originalData, updateUserProfile, autoSaving]);
+
   useEffect(() => {
     if (user) {
       loadUserData();
@@ -62,7 +124,7 @@ const Profile = () => {
     setLoading(true);
     try {
       // Load user data from context
-      setUserData({
+      const newUserData = {
         name: user?.name || "",
         email: user?.email || "",
         phone: user?.phone || "",
@@ -70,7 +132,9 @@ const Profile = () => {
         bio: "Art enthusiast and collector of traditional crafts.",
         joinDate: user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : "",
         avatar: user?.avatar || ""
-      });
+      };
+      setUserData(newUserData);
+      setOriginalData(newUserData);
 
       // Load orders and wishlist
       const [ordersData, wishlistData] = await Promise.all([
@@ -118,7 +182,9 @@ const Profile = () => {
           }
         });
       }
+      setOriginalData(userData);
       setIsEditing(false);
+      setAutoSaveStatus('idle');
       toast.success('Profile updated successfully');
     } catch (error) {
       console.error('Profile update failed:', error);
@@ -178,23 +244,37 @@ const Profile = () => {
                     <CardTitle>Personal Information</CardTitle>
                     <CardDescription>Update your personal details</CardDescription>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                  >
-                    {isEditing ? (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save
-                      </>
-                    ) : (
-                      <>
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit
-                      </>
+                  <div className="flex items-center gap-2">
+                    {isEditing && autoSaveStatus === 'saving' && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Saving...</span>
+                      </div>
                     )}
-                  </Button>
+                    {isEditing && autoSaveStatus === 'saved' && (
+                      <div className="flex items-center gap-2 text-sm text-green-600">
+                        <Check className="w-4 h-4" />
+                        <span>Saved</span>
+                      </div>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                    >
+                      {isEditing ? (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Done
+                        </>
+                      ) : (
+                        <>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center gap-6">
