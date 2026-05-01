@@ -10,7 +10,17 @@ export const getBackendApiBaseUrl = () => {
     }
 
     if (apiUrl) {
-      return stripApiSuffix(apiUrl)
+      const cleanUrl = stripApiSuffix(apiUrl)
+      // Check if this is localhost and we're in production
+      const isLocalhostUrl = cleanUrl.includes('localhost') || cleanUrl.includes('127.0.0.1')
+      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : ''
+      const isProduction = !currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')
+      
+      if (isLocalhostUrl && isProduction) {
+        console.warn('Localhost URL in production, falling back to Render backend')
+      } else {
+        return cleanUrl
+      }
     }
   }
 
@@ -25,7 +35,7 @@ export const getBackendApiBaseUrl = () => {
     }
   }
 
-  return 'https://zaymazone-dev-backend.vercel.app'
+  return 'https://zaymazone-dev-backend.onrender.com'
 }
 
 export const buildBackendApiUrl = (path: string) => {

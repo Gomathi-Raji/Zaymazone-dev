@@ -8,6 +8,17 @@ const normalizeApiBaseUrl = (value: string | undefined, fallback: string) => {
   }
 
   const cleaned = url.replace(/\s+/g, '')
+  
+  // Check if this is localhost and we're in production
+  const isLocalhostUrl = cleaned.includes('localhost') || cleaned.includes('127.0.0.1')
+  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : ''
+  const isProduction = !currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')
+  
+  if (isLocalhostUrl && isProduction) {
+    console.warn('Localhost URL in production, using fallback:', fallback)
+    return fallback
+  }
+  
   if (cleaned.endsWith('/api')) return cleaned
   if (cleaned.endsWith('/api/')) return cleaned.slice(0, -1)
   return `${cleaned.replace(/\/$/, '')}/api`
@@ -15,7 +26,9 @@ const normalizeApiBaseUrl = (value: string | undefined, fallback: string) => {
 
 const API_BASE_URL = normalizeApiBaseUrl(
   import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL,
-  import.meta.env.PROD ? 'https://zaymazone-dev-backend.vercel.app/api' : 'http://localhost:4000/api'
+  (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) 
+    ? 'https://zaymazone-dev-backend.onrender.com/api' 
+    : 'http://localhost:4000/api'
 )
 
 const ANALYTICS_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#ff00ff']

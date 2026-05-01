@@ -1,8 +1,36 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!_next)(?!api).*)",
       "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_API_BASE_URL": "@vite_api_base_url",
+    "VITE_API_URL": "@vite_api_url"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=3600"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
     }
   ]
 }

@@ -18,27 +18,32 @@ const getApiBaseUrl = () => {
 		// Clean up URL
 		apiUrl = stripApiSuffix(apiUrl)
     
-		// Validate URL format
+		// Validate URL format and only use if it's not localhost in production
 		if (apiUrl.startsWith('http') && !apiUrl.includes('%20')) {
-			return apiUrl
+			// Check if this is a localhost URL and we're in production
+			const isLocalhostUrl = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')
+			const isProduction = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
+			
+			// Don't use localhost URL in production
+			if (isLocalhostUrl && isProduction) {
+				console.warn('Localhost URL configured for production environment, falling back to production backend')
+			} else {
+				return apiUrl
+			}
 		}
 	}
 
-  // In development, use localhost
-  if (import.meta.env.DEV) {
-    return "http://localhost:4000";
-  }
-
-  // Fallback to localhost for development
+  // Determine if we're in development locally
   const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-  const isLocalhost = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
+  const isLocalDev = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
 
-  if (isLocalhost) {
+  // In local development, use localhost
+  if (isLocalDev || import.meta.env.DEV) {
     return "http://localhost:4000";
   }
 
-	// Production fallback
-	return "https://zaymazone-dev-backend.vercel.app";
+	// Production deployment - use Render backend
+	return "https://zaymazone-dev-backend.onrender.com";
 };
 
 const API_BASE_URL = getApiBaseUrl();
