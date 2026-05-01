@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Package, MapPin, Star } from "lucide-react";
+import { buildBackendApiUrl } from "@/lib/backendApi";
 
 interface ImpactStats {
   artisansSupported: number;
@@ -87,7 +88,7 @@ export const InteractiveStats = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/artisans/stats/impact');
+        const response = await fetch(buildBackendApiUrl('/api/artisans/stats/impact'));
         if (response.ok) {
           const data = await response.json();
           setStatsData(data);

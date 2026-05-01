@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Globe, Users, Leaf, Award, Target } from "lucide-react";
 import { getImageUrl } from "@/lib/api";
+import { buildBackendApiUrl } from "@/lib/backendApi";
 import { useState, useEffect } from "react";
 
 interface ImpactStats {
@@ -22,7 +23,7 @@ const About = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/artisans/stats/impact');
+        const response = await fetch(buildBackendApiUrl('/api/artisans/stats/impact'));
         if (response.ok) {
           const data = await response.json();
           setStats(data);
