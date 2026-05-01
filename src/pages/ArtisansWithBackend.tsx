@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Search, MapPin, Star, Users, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
-import { api, type Artisan } from "@/lib/api";
+import { api, type Artisan, getImageUrl } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { VerifiedArtisanName } from "@/components/VerifiedArtisanName";
 
@@ -160,7 +160,7 @@ const ArtisansWithBackend = () => {
                 <div className="relative">
                   <div className="h-48 bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
                     <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
-                      <AvatarImage src={artisan.avatar} alt={artisan.name} />
+                      <AvatarImage src={getImageUrl(artisan.avatar)} alt={artisan.name} />
                       <AvatarFallback className="text-lg font-semibold">
                         {artisan.name.charAt(0)}
                       </AvatarFallback>

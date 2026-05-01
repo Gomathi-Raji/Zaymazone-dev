@@ -19,6 +19,7 @@ import {
   Tablet,
   Monitor
 } from 'lucide-react';
+import { getImageUrl } from '@/lib/api';
 
 interface BlogPost {
   _id: string;
@@ -149,7 +150,7 @@ export function BlogPreview({ post, onClose, showDeviceToggle = true }: BlogPrev
             {post.featuredImage && (
               <div className="mb-8">
                 <img
-                  src={post.featuredImage}
+                  src={getImageUrl(post.featuredImage)}
                   alt={post.title}
                   className="w-full h-64 md:h-96 object-cover rounded-lg"
                 />
@@ -179,7 +180,7 @@ export function BlogPreview({ post, onClose, showDeviceToggle = true }: BlogPrev
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                    <AvatarImage src={getImageUrl(post.author.avatar || '/placeholder.svg')} alt={post.author.name} />
                     <AvatarFallback>
                       {post.author.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>

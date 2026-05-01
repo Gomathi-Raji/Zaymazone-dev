@@ -1,4 +1,22 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
+const normalizeApiBaseUrl = (value: string | undefined, fallback: string) => {
+  if (!value) return fallback
+
+  let url = value
+  if (url.includes(',')) {
+    const urls = url.split(',').map(item => item.trim()).filter(Boolean)
+    url = urls.find(item => item.startsWith('http')) || urls[0]
+  }
+
+  const cleaned = url.replace(/\s+/g, '')
+  if (cleaned.endsWith('/api')) return cleaned
+  if (cleaned.endsWith('/api/')) return cleaned.slice(0, -1)
+  return `${cleaned.replace(/\/$/, '')}/api`
+}
+
+const API_BASE_URL = normalizeApiBaseUrl(
+  import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL,
+  import.meta.env.PROD ? 'https://zaymazone-dev-backend.vercel.app/api' : 'http://localhost:4000/api'
+)
 
 const ANALYTICS_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#ff00ff']
 

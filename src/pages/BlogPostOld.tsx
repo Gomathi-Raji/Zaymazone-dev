@@ -22,6 +22,7 @@ import {
   Eye
 } from "lucide-react";
 import { useBlogPost, likeBlogPost, getRelatedPosts, type BlogPost as BlogPostType } from "@/hooks/useBlog";
+import { getImageUrl } from "@/lib/api";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -189,7 +190,7 @@ const BlogPost = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
-                  <AvatarImage src={post.author.avatar} />
+                  <AvatarImage src={getImageUrl(post.author.avatar)} />
                   <AvatarFallback>{post.author.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -221,7 +222,7 @@ const BlogPost = () => {
           {/* Featured Image */}
           <div className="aspect-video bg-muted rounded-lg overflow-hidden">
             <img 
-              src={post.image} 
+              src={getImageUrl(post.image)} 
               alt={post.title}
               className="w-full h-full object-cover"
             />
@@ -278,7 +279,7 @@ const BlogPost = () => {
             <CardHeader>
               <div className="flex items-start gap-4">
                 <Avatar className="w-16 h-16">
-                  <AvatarImage src={post.author.avatar} />
+                  <AvatarImage src={getImageUrl(post.author.avatar)} />
                   <AvatarFallback>{post.author.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
@@ -302,7 +303,7 @@ const BlogPost = () => {
               <Card key={relatedPost.id} className="hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-muted">
                   <img 
-                    src={relatedPost.image} 
+                    src={getImageUrl(relatedPost.image)} 
                     alt={relatedPost.title}
                     className="w-full h-full object-cover"
                   />

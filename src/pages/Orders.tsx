@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { api } from "@/lib/api";
+import { api, getImageUrl } from "@/lib/api";
 import type { Order } from "@/lib/api";
 
 export default function Orders() {
@@ -266,7 +266,7 @@ export default function Orders() {
                           {order.items.slice(0, 3).map((item, index) => (
                             <div key={index} className="flex gap-3">
                               <img 
-                                src={item.image || "/placeholder.svg"} 
+                                src={getImageUrl(item.image || "/placeholder.svg")} 
                                 alt={item.name}
                                 className="w-12 h-12 object-cover rounded-md"
                               />

@@ -567,17 +567,42 @@ router.get('/orders', requireAuth, requireAdmin, async (req, res) => {
     }
 
     const orders = await Order.find(filter)
-      .populate('user', 'name email')
-      .populate('items.product', 'name images price')
-      .populate('items.artisan', 'name')
+      .populate('userId', 'name email phone')
+      .populate('items.productId', 'name images price')
+      .populate('items.artisanId', 'name')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
+      .lean()
 
     const total = await Order.countDocuments(filter)
 
+    const normalizedOrders = (orders || []).map(order => {
+      const shippingAddress = order.shippingAddress
+        ? {
+            ...order.shippingAddress,
+            name: order.shippingAddress.name || order.shippingAddress.fullName,
+            street: order.shippingAddress.street || order.shippingAddress.addressLine1,
+            pincode: order.shippingAddress.pincode || order.shippingAddress.zipCode
+          }
+        : order.shippingAddress
+
+      return {
+        ...order,
+        user: order.userId || order.user,
+        totalAmount: order.totalAmount ?? order.total,
+        shippingAddress,
+        items: (order.items || []).map(item => ({
+          ...item,
+          product: item.product || item.productId,
+          artisan: item.artisan || item.artisanId,
+          subtotal: item.subtotal ?? (item.price && item.quantity ? item.price * item.quantity : undefined)
+        }))
+      }
+    })
+
     res.json({
-      orders,
+      orders: normalizedOrders,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),

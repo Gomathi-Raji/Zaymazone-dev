@@ -1,30 +1,28 @@
 import { logEvent } from "./security";
 
+const stripApiSuffix = (value: string) => value.replace(/\s+/g, '').replace(/\/api\/?$/, '')
+
 // Determine API base URL based on environment
 const getApiBaseUrl = () => {
-  // Sanitize and validate environment variable
-  let apiUrl = import.meta.env.VITE_API_URL;
+	// Sanitize and validate environment variable
+	let apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL
   
-  // Handle potential malformed URLs with comma-separated values
-  if (apiUrl && typeof apiUrl === 'string') {
-    // If there are multiple URLs (comma-separated), take the first valid one
-    if (apiUrl.includes(',')) {
-      const urls = apiUrl.split(',').map(url => url.trim());
-      apiUrl = urls.find(url => 
-        url.startsWith('http') && 
-        !url.includes('%20') && 
-        url.includes('zaymazone-backend.onrender.com')
-      ) || urls[0];
-    }
+	// Handle potential malformed URLs with comma-separated values
+	if (apiUrl && typeof apiUrl === 'string') {
+		// If there are multiple URLs (comma-separated), take the first valid one
+		if (apiUrl.includes(',')) {
+			const urls = apiUrl.split(',').map(url => url.trim()).filter(Boolean)
+			apiUrl = urls.find(url => url.startsWith('http') && !url.includes('%20')) || urls[0]
+		}
     
-    // Clean up URL
-    apiUrl = apiUrl.replace(/\s+/g, '').replace('/api', '');
+		// Clean up URL
+		apiUrl = stripApiSuffix(apiUrl)
     
-    // Validate URL format
-    if (apiUrl.startsWith('http') && !apiUrl.includes('%20')) {
-      return apiUrl;
-    }
-  }
+		// Validate URL format
+		if (apiUrl.startsWith('http') && !apiUrl.includes('%20')) {
+			return apiUrl
+		}
+	}
 
   // In development, use localhost
   if (import.meta.env.DEV) {
@@ -39,8 +37,8 @@ const getApiBaseUrl = () => {
     return "http://localhost:4000";
   }
 
-  // Production fallback
-  return "https://zaymazone-backend.onrender.com";
+	// Production fallback
+	return "https://zaymazone-dev-backend.vercel.app";
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -1166,9 +1164,27 @@ export function getImageUrl(path: string): string {
   if (!path) return '/placeholder.svg';
 
   // If it's already a full URL or data URL, return as is
-  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
-    return path;
-  }
+	if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:') || path.startsWith('blob:')) {
+		if (path.startsWith('data:') || path.startsWith('blob:')) return path
+
+		try {
+			const url = new URL(path)
+			const isLocalHost = url.hostname === 'localhost' || url.hostname === '127.0.0.1'
+
+			if (isLocalHost) {
+				return `${API_BASE_URL}${url.pathname}${url.search}`
+			}
+
+			if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.protocol === 'http:') {
+				url.protocol = 'https:'
+				return url.toString()
+			}
+		} catch {
+			// Fall back to returning the original path
+		}
+
+		return path
+	}
 
 	// Keep public/static assets on the frontend origin.
 	if (

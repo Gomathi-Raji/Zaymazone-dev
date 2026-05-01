@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckCircle, XCircle, Eye, Package, Users, UserCheck, Clock } from "lucide-react";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
+import { getImageUrl } from "@/lib/api";
 
 export function ApprovalManagement() {
   const [activeTab, setActiveTab] = useState("products");
@@ -110,7 +111,7 @@ export function ApprovalManagement() {
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <Avatar className="w-16 h-16">
-            <AvatarImage src={product.images?.[0] || "/placeholder.svg"} />
+            <AvatarImage src={getImageUrl(product.images?.[0] || "/placeholder.svg")} />
             <AvatarFallback><Package className="w-6 h-6" /></AvatarFallback>
           </Avatar>
           <div className="flex-1">

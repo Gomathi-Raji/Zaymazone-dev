@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUpload } from '@/components/ImageUpload';
 import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
+import { getImageUrl } from '@/lib/api';
 import { 
   Plus, 
   Edit, 
@@ -344,7 +345,7 @@ export function SellerBlogManagement() {
                       <div className="flex items-center gap-3">
                         {blog.featuredImage && (
                           <img 
-                            src={blog.featuredImage} 
+                            src={getImageUrl(blog.featuredImage)} 
                             alt={blog.title}
                             className="w-12 h-12 object-cover rounded"
                           />

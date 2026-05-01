@@ -24,7 +24,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { api } from '@/lib/api';
+import { api, getImageUrl } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import type { Order, Product } from '@/lib/api';
 
@@ -391,8 +391,8 @@ const ArtisanDashboard = () => {
                       <Card key={product.id} className="overflow-hidden">
                         <div className="aspect-square bg-muted">
                           {product.images?.[0] && (
-                            <img
-                              src={product.images[0]}
+                              <img
+                                src={getImageUrl(product.images[0])}
                               alt={product.name}
                               className="w-full h-full object-cover"
                             />

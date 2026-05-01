@@ -586,7 +586,7 @@ export default function UserDashboard() {
                       {wishlist.map((item) => (
                         <div key={item.id} className="border rounded-lg p-4">
                           <img 
-                            src={item.image} 
+                            src={getImageUrl(item.image)} 
                             alt={item.name}
                             className="w-full h-48 object-cover rounded mb-3"
                           />

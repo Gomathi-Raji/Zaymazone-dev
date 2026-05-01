@@ -23,7 +23,7 @@ import {
   AlertCircle,
   DollarSign
 } from 'lucide-react';
-import { api } from '@/lib/api';
+import { api, getImageUrl } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import type { Order } from '@/lib/api';
 
@@ -466,7 +466,7 @@ const ArtisanOrders = () => {
                           <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
                             {item.image ? (
                               <img
-                                src={item.image}
+                                src={getImageUrl(item.image)}
                                 alt={item.name}
                                 className="w-full h-full object-cover rounded-md"
                               />
