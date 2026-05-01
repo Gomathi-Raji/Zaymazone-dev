@@ -1,37 +1,28 @@
-const normalizeApiBaseUrl = (value: string | undefined, fallback: string) => {
-  if (!value) return fallback
+import { getBackendApiBaseUrl } from '@/lib/backendApi'
 
-  let url = value
-  if (url.includes(',')) {
-    const urls = url.split(',').map(item => item.trim()).filter(Boolean)
-    url = urls.find(item => item.startsWith('http')) || urls[0]
-  }
-
-  const cleaned = url.replace(/\s+/g, '')
-  
-  // Check if this is localhost and we're in production
-  const isLocalhostUrl = cleaned.includes('localhost') || cleaned.includes('127.0.0.1')
-  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : ''
-  const isProduction = !currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')
-  
-  if (isLocalhostUrl && isProduction) {
-    console.warn('Localhost URL in production, using fallback:', fallback)
-    return fallback
-  }
-  
-  if (cleaned.endsWith('/api')) return cleaned
-  if (cleaned.endsWith('/api/')) return cleaned.slice(0, -1)
-  return `${cleaned.replace(/\/$/, '')}/api`
-}
-
-const API_BASE_URL = normalizeApiBaseUrl(
-  import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL,
-  (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) 
-    ? 'https://zaymazone-dev-backend.onrender.com/api' 
-    : 'http://localhost:4000/api'
-)
+const API_BASE_URL = `${getBackendApiBaseUrl()}/api`
 
 const ANALYTICS_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#ff00ff']
+
+type ActivityItem = {
+  id: string
+  type: string
+  action: string
+  details: string
+  timestamp: string
+  user: string
+  icon: string
+  color: string
+}
+
+type NotificationItem = {
+  id: string
+  type: string
+  title: string
+  message: string
+  severity: string
+  timestamp: string
+}
 
 const formatAnalyticsDate = (value: string) => {
   const parsedDate = new Date(value)
@@ -277,7 +268,7 @@ class AdminService {
         fetch(`${API_BASE_URL}/artisans?limit=10`)
       ])
       
-      const activities = []
+      const activities: ActivityItem[] = []
       
       if (productsRes.ok) {
         const productsData = await productsRes.json()
@@ -314,7 +305,7 @@ class AdminService {
       }
       
       // Sort by timestamp
-      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      activities.sort((a: ActivityItem, b: ActivityItem) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       
       return { activities: activities.slice(0, limit) }
     } catch (error) {
@@ -339,7 +330,7 @@ class AdminService {
         this.getPendingArtisans()
       ])
       
-      const notifications = []
+      const notifications: NotificationItem[] = []
       
       if (pendingProducts.products?.length > 0) {
         notifications.push({

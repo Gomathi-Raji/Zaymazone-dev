@@ -10,22 +10,10 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { firebaseAuthApi, setFirebaseToken, getFirebaseToken, User as ApiUser } from '@/lib/api';
+import { getBackendApiBaseUrl } from '@/lib/backendApi';
 import { toast } from 'sonner';
 
-// Get API base URL
-const getApiBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    const apiUrl = import.meta.env?.VITE_API_BASE_URL;
-    if (apiUrl) {
-      const urls = apiUrl.split(',').map((url: string) => url.trim());
-      return urls[0]; // Use first URL
-    }
-  }
-  // Production fallback
-  return "https://zaymazone-backend.onrender.com";
-};
-
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL = getBackendApiBaseUrl();
 
 interface User {
   id: string;

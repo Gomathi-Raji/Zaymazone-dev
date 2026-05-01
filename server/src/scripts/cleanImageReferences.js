@@ -5,10 +5,10 @@ import Artisan from '../models/Artisan.js'
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/zaymazone'
 
-// Function to clean image URLs - remove localhost URLs and keep just filenames
+// Function to clean image URLs - remove local API URLs and keep just filenames
 function cleanImagePath(path) {
-  if (path.includes('localhost:4000/api/images/')) {
-    // Extract just the filename from localhost URL
+  if (/^https?:\/\/(localhost|127\.0\.0\.1):4000\/api\/images\//.test(path)) {
+    // Extract just the filename from local API URL
     return path.split('/').pop();
   }
   if (path.includes('/api/images/')) {

@@ -53,26 +53,19 @@ app.use(helmet({
 	crossOriginOpenerPolicy: false,
 }))
 
-// More permissive CORS for development and production
-// Build allowed origins from hardcoded defaults plus any origins provided via
-// the CORS_ORIGIN environment variable (comma-separated). This lets the
-// deployed environment (e.g., Vercel) control which frontends are allowed.
-const defaultAllowedOrigins = [
-	'http://localhost:8080',
-	'http://localhost:8081',
-	'http://127.0.0.1:8080',
-	'http://127.0.0.1:8081',
-	'http://localhost:5173',
-	'https://zaymazone.com',
-	'https://www.zaymazone.com',
-	'https://zaymazone-dev.netlify.app',
-	'https://zaymazone.netlify.app',
-	'https://zaymazone-taupe.vercel.app',
-	'https://zaymazone-backend.onrender.com',
-	'https://zaymazone-test.vercel.app',
-	'https://zaymazone-test2.vercel.app',
-	'https://zaymazone-dev-backend.vercel.app'
-]
+// More permissive CORS for development and production.
+// Production origins are controlled by CORS_ORIGIN so deployments can change
+// without code edits. Localhost is only enabled for local development.
+const defaultAllowedOrigins = process.env.NODE_ENV === 'production'
+	? []
+	: [
+		'http://localhost:8080',
+		'http://localhost:8081',
+		'http://127.0.0.1:8080',
+		'http://127.0.0.1:8081',
+		'http://localhost:5173',
+		'http://localhost:3000',
+	]
 
 const envOrigins = process.env.CORS_ORIGIN
 	? process.env.CORS_ORIGIN.split(',').map(s => s.trim()).filter(Boolean)

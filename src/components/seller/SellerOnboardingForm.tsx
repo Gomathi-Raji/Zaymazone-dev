@@ -382,7 +382,7 @@ export function SellerOnboardingForm() {
         formDataToSend.append('craftVideo', videoFile);
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/seller-onboarding`, {
+      const response = await fetch(buildBackendApiUrl('/seller-onboarding'), {
         method: 'POST',
         body: formDataToSend
       });

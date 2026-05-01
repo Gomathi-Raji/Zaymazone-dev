@@ -1,50 +1,8 @@
 import { apiRequest } from '@/lib/api';
+import { getBackendApiBaseUrl } from '@/lib/backendApi';
 
-const normalizeApiBaseUrl = (value: string | undefined, fallback: string) => {
-  if (!value) return fallback
-
-  let url = value
-  if (url.includes(',')) {
-    const urls = url.split(',').map(item => item.trim()).filter(Boolean)
-    url = urls.find(item => item.startsWith('http')) || urls[0]
-  }
-
-  const cleaned = url.replace(/\s+/g, '')
-  
-  // Check if this is localhost and we're in production
-  const isLocalhostUrl = cleaned.includes('localhost') || cleaned.includes('127.0.0.1')
-  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : ''
-  const isProduction = !currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')
-  
-  if (isLocalhostUrl && isProduction) {
-    console.warn('Localhost URL in production, using fallback:', fallback)
-    return fallback
-  }
-  
-  if (cleaned.endsWith('/api')) return cleaned
-  if (cleaned.endsWith('/api/')) return cleaned.slice(0, -1)
-  return `${cleaned.replace(/\/$/, '')}/api`
-}
-
-// Base API configuration
-let API_BASE_URL: string
-
-try {
-  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
-  const fallback = import.meta.env.PROD || (typeof window !== 'undefined' && !window.location.hostname.includes('localhost'))
-    ? 'https://zaymazone-dev-backend.onrender.com/api'
-    : 'http://localhost:4000/api'
-
-  console.log('VITE_API_BASE_URL from env:', envUrl)
-  API_BASE_URL = normalizeApiBaseUrl(envUrl, fallback)
-  console.log('API configured with base URL:', API_BASE_URL)
-} catch (error) {
-  console.warn('Environment variable not found, using default API URL')
-  const fallback = (typeof window !== 'undefined' && !window.location.hostname.includes('localhost'))
-    ? 'https://zaymazone-dev-backend.onrender.com/api'
-    : 'http://localhost:4000/api'
-  API_BASE_URL = fallback
-}
+// Base API configuration comes strictly from the environment.
+const API_BASE_URL = `${getBackendApiBaseUrl()}/api`
 
 // Helper function to handle API responses
 async function handleResponse(response: Response) {

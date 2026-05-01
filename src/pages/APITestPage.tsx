@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { buildBackendApiUrl } from '@/lib/backendApi';
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,23 +10,21 @@ import { CheckCircle, XCircle, Loader2, AlertCircle } from "lucide-react";
 
 const APITestPage = () => {
   // Test health endpoint
-  const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-  
   const { data: health, isLoading: healthLoading, error: healthError } = useQuery({
     queryKey: ['health'],
-    queryFn: () => fetch(`${apiBaseUrl}/health`).then(res => res.json()),
+    queryFn: () => fetch(buildBackendApiUrl('/health')).then(res => res.json()),
   });
 
   // Test products endpoint
   const { data: products, isLoading: productsLoading, error: productsError } = useQuery({
     queryKey: ['products'],
-    queryFn: () => fetch(`${apiBaseUrl}/api/products`).then(res => res.json()),
+    queryFn: () => fetch(buildBackendApiUrl('/api/products')).then(res => res.json()),
   });
 
   // Test artisans endpoint
   const { data: artisans, isLoading: artisansLoading, error: artisansError } = useQuery({
     queryKey: ['artisans'],
-    queryFn: () => fetch('http://localhost:4000/api/artisans').then(res => res.json()),
+    queryFn: () => fetch(buildBackendApiUrl('/api/artisans')).then(res => res.json()),
   });
 
   const StatusIndicator = ({ isLoading, error, data, label }: any) => (
@@ -171,7 +170,7 @@ const APITestPage = () => {
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => window.open('http://localhost:4000', '_blank')}
+            onClick={() => window.open(buildBackendApiUrl('/'), '_blank')}
           >
             View API Docs
           </Button>

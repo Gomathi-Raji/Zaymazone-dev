@@ -296,7 +296,13 @@ function buildOperation({ method, openApiPath, sourceFile, sourceSnippet }) {
   return operation
 }
 
-export async function buildOpenApiSpec({ serverUrl = 'http://localhost:4000' } = {}) {
+export async function buildOpenApiSpec({ serverUrl } = {}) {
+  const resolvedServerUrl = serverUrl || process.env.OPENAPI_SERVER_URL || process.env.PUBLIC_API_URL || process.env.API_BASE_URL
+
+  if (!resolvedServerUrl) {
+    throw new Error('Missing OpenAPI server URL. Set OPENAPI_SERVER_URL, PUBLIC_API_URL, or API_BASE_URL.')
+  }
+
   const routesDir = path.join(process.cwd(), 'src', 'routes')
   const paths = {}
   const tags = []

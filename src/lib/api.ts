@@ -1,52 +1,7 @@
 import { logEvent } from "./security";
+import { getBackendApiBaseUrl } from "./backendApi";
 
-const stripApiSuffix = (value: string) => value.replace(/\s+/g, '').replace(/\/api\/?$/, '')
-
-// Determine API base URL based on environment
-const getApiBaseUrl = () => {
-	// Sanitize and validate environment variable
-	let apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL
-  
-	// Handle potential malformed URLs with comma-separated values
-	if (apiUrl && typeof apiUrl === 'string') {
-		// If there are multiple URLs (comma-separated), take the first valid one
-		if (apiUrl.includes(',')) {
-			const urls = apiUrl.split(',').map(url => url.trim()).filter(Boolean)
-			apiUrl = urls.find(url => url.startsWith('http') && !url.includes('%20')) || urls[0]
-		}
-    
-		// Clean up URL
-		apiUrl = stripApiSuffix(apiUrl)
-    
-		// Validate URL format and only use if it's not localhost in production
-		if (apiUrl.startsWith('http') && !apiUrl.includes('%20')) {
-			// Check if this is a localhost URL and we're in production
-			const isLocalhostUrl = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')
-			const isProduction = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
-			
-			// Don't use localhost URL in production
-			if (isLocalhostUrl && isProduction) {
-				console.warn('Localhost URL configured for production environment, falling back to production backend')
-			} else {
-				return apiUrl
-			}
-		}
-	}
-
-  // Determine if we're in development locally
-  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-  const isLocalDev = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
-
-  // In local development, use localhost
-  if (isLocalDev || import.meta.env.DEV) {
-    return "http://localhost:4000";
-  }
-
-	// Production deployment - use Render backend
-	return "https://zaymazone-dev-backend.onrender.com";
-};
-
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL = getBackendApiBaseUrl();
 const TOKEN_KEY = "auth_token";
 const FIREBASE_TOKEN_KEY = "firebase_id_token";
 
