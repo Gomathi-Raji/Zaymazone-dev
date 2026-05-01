@@ -476,7 +476,7 @@ const ProductDetail = () => {
                     {media.type === 'video' ? (
                       <>
                         <img
-                          src={media.thumbnail}
+                          src={getImageUrl(media.thumbnail)}
                           alt={media.alt}
                           className="w-full h-full object-cover object-center"
                         />
@@ -488,7 +488,7 @@ const ProductDetail = () => {
                       </>
                     ) : (
                       <img
-                        src={media.url}
+                        src={getImageUrl(media.url)}
                         alt={media.alt}
                         className="w-full h-full object-cover object-center"
                       />
@@ -636,7 +636,7 @@ const ProductDetail = () => {
                 <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Meet the Artisan</h3>
                 <div className="flex items-start gap-3 sm:gap-4">
                   <Avatar className="w-10 h-10 sm:w-12 sm:h-12 shrink-0">
-                    <AvatarImage src={product.artisan.avatar} />
+                    <AvatarImage src={getImageUrl(product.artisan.avatar)} />
                     <AvatarFallback>{product.artisan.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
