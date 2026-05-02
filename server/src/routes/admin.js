@@ -2796,4 +2796,91 @@ router.get('/invoices', requireAuth, requireAdmin, async (req, res) => {
   }
 })
 
+// ============= PUBLIC STATS ENDPOINT =============
+// Public endpoint for home page statistics (no auth required)
+router.get('/public-stats', async (req, res) => {
+  try {
+    const [
+      approvedArtisans,
+      approvedProducts,
+      productRating,
+      artisanRating,
+      regionAggregation
+    ] = await Promise.all([
+      Artisan.countDocuments({
+        isActive: true,
+        approvalStatus: 'approved'
+      }),
+      Product.countDocuments({
+        isActive: true,
+        approvalStatus: 'approved'
+      }),
+      Product.aggregate([
+        {
+          $match: {
+            isActive: true,
+            approvalStatus: 'approved',
+            rating: { $gt: 0 }
+          }
+        },
+        { $group: { _id: null, avgRating: { $avg: '$rating' } } }
+      ]),
+      Artisan.aggregate([
+        {
+          $match: {
+            isActive: true,
+            approvalStatus: 'approved',
+            rating: { $gt: 0 }
+          }
+        },
+        { $group: { _id: null, avgRating: { $avg: '$rating' } } }
+      ]),
+      Artisan.aggregate([
+        {
+          $match: {
+            isActive: true,
+            approvalStatus: 'approved'
+          }
+        },
+        {
+          $project: {
+            region: {
+              $ifNull: [
+                '$location.state',
+                { $ifNull: ['$location.city', '$location.country'] }
+              ]
+            }
+          }
+        },
+        {
+          $match: {
+            region: { $type: 'string', $ne: '' }
+          }
+        },
+        {
+          $group: {
+            _id: { $toLower: '$region' }
+          }
+        },
+        { $count: 'total' }
+      ])
+    ])
+
+    const regionsCount = regionAggregation[0]?.total || 0
+    const rating = (productRating[0]?.avgRating || artisanRating[0]?.avgRating || 0)
+
+    res.json({
+      stats: {
+        artisans: approvedArtisans,
+        products: approvedProducts,
+        regions: regionsCount,
+        rating: Math.round(rating * 10) / 10
+      }
+    })
+  } catch (error) {
+    console.error('Public stats error:', error)
+    res.status(500).json({ error: 'Failed to fetch public stats' })
+  }
+})
+
 export default router

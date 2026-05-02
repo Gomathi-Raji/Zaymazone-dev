@@ -1,8 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Package, MapPin, Star } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 
-const stats = [
+interface Stat {
+  icon: React.ComponentType<any>;
+  label: string;
+  value: number;
+  suffix: string;
+  description: string;
+}
+
+const defaultStats: Stat[] = [
   {
     icon: Users,
     label: "Master Artisans",
@@ -96,6 +105,54 @@ const Counter = ({ end, duration, suffix }: CounterProps) => {
 };
 
 export const InteractiveStats = () => {
+  const [stats, setStats] = useState<Stat[]>(defaultStats);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await apiRequest<{ stats?: { artisans?: number; products?: number; regions?: number; rating?: number } }>("/api/admin/public-stats");
+        
+        if (data.stats) {
+          const realStats: Stat[] = [
+            {
+              icon: Users,
+              label: "Master Artisans",
+              value: data.stats.artisans ?? 0,
+              suffix: "+",
+              description: "Skilled craftspeople from across India"
+            },
+            {
+              icon: Package,
+              label: "Handcrafted Products",
+              value: data.stats.products ?? 0,
+              suffix: "+",
+              description: "Unique pieces made with love"
+            },
+            {
+              icon: MapPin,
+              label: "Regions Covered",
+              value: data.stats.regions ?? 0,
+              suffix: "",
+              description: "States and territories represented"
+            },
+            {
+              icon: Star,
+              label: "Customer Rating",
+              value: data.stats.rating ?? 0,
+              suffix: "/5",
+              description: "Average satisfaction score"
+            }
+          ];
+          setStats(realStats);
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <section className="relative py-16 bg-gradient-subtle dark:bg-gradient-to-br dark:from-background dark:via-background/98 dark:to-accent/8 overflow-hidden">
       {/* Interactive stats dark mode enhancement */}

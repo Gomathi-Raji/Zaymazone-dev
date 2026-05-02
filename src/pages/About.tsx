@@ -3,10 +3,39 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 import { Heart, Globe, Users, Leaf, Award, Target } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 import { getImageUrl } from "@/lib/api";
 
 const About = () => {
+  const [liveStats, setLiveStats] = useState({
+    artisans: 0,
+    products: 0,
+    regions: 0,
+    rating: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await apiRequest<{ stats?: { artisans?: number; products?: number; regions?: number; rating?: number } }>("/api/admin/public-stats");
+        if (data.stats) {
+          setLiveStats({
+            artisans: data.stats.artisans ?? 0,
+            products: data.stats.products ?? 0,
+            regions: data.stats.regions ?? 0,
+            rating: data.stats.rating ?? 0,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch about page stats:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -144,20 +173,20 @@ const About = () => {
           <h2 className="text-2xl font-semibold text-foreground mb-8 text-center">Our Impact</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">150+</div>
+              <div className="text-3xl font-bold text-primary mb-2">{liveStats.artisans.toLocaleString()}+</div>
               <div className="text-sm text-muted-foreground">Artisans Supported</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">25</div>
-              <div className="text-sm text-muted-foreground">States Reached</div>
+              <div className="text-3xl font-bold text-primary mb-2">{liveStats.products.toLocaleString()}+</div>
+              <div className="text-sm text-muted-foreground">Handcrafted Products</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">10,000+</div>
-              <div className="text-sm text-muted-foreground">Happy Customers</div>
+              <div className="text-3xl font-bold text-primary mb-2">{liveStats.regions}</div>
+              <div className="text-sm text-muted-foreground">Regions Covered</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">₹50L+</div>
-              <div className="text-sm text-muted-foreground">Artisan Earnings</div>
+              <div className="text-3xl font-bold text-primary mb-2">{liveStats.rating.toFixed(1)}/5</div>
+              <div className="text-sm text-muted-foreground">Customer Rating</div>
             </div>
           </div>
         </div>
