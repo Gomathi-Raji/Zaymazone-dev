@@ -26,7 +26,7 @@ import {
   Moon,
   Sun
 } from "lucide-react";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { CartDrawer } from "./CartDrawer";
 import { SearchDialog } from "./SearchDialog";
 import { WishlistDrawer } from "./WishlistDrawer";
@@ -44,9 +44,13 @@ export const Navigation = () => {
   const { theme, toggleTheme } = useTheme();
   const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
-  });
+  useEffect(() => {
+    if (!scrollY) return;
+    const unsubscribe = scrollY.onChange((latest) => {
+      setIsScrolled(latest > 50);
+    });
+    return () => unsubscribe();
+  }, [scrollY]);
 
   const navigationItems = [
     { 

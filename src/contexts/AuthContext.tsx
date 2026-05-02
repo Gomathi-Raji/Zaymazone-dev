@@ -13,7 +13,7 @@ import { firebaseAuthApi, setFirebaseToken, getFirebaseToken, User as ApiUser } 
 import { getBackendApiBaseUrl } from '@/lib/backendApi';
 import { toast } from 'sonner';
 
-const API_BASE_URL = getBackendApiBaseUrl();
+const API_BASE_URL = `${getBackendApiBaseUrl()}/api`;
 
 interface User {
   id: string;
