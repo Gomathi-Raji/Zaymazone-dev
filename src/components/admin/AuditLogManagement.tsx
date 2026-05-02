@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Activity, Search, Filter, Download, RefreshCw } from "lucide-react";
-import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
+
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://zaymazone-backend.onrender.com');
 
 interface AuditLogEntry {
   id: string;
@@ -28,16 +29,12 @@ export const AuditLogManagement = () => {
   const [filterResource, setFilterResource] = useState("all");
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadAuditLogs();
-  }, []);
-
-  const loadAuditLogs = async () => {
+  const loadAuditLogs = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(buildBackendApiUrl('/api/admin/audit-logs'), {
+      const response = await fetch(`${API_BASE}/api/admin/audit-logs`, {
         headers: {
-          'Authorization': `Bearer ${getBackendAuthToken()}`
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
         }
       });
 
@@ -93,7 +90,11 @@ export const AuditLogManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadAuditLogs();
+  }, [loadAuditLogs]);
 
   const filteredLogs = logs.filter(log => {
     const matchesSearch = log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||

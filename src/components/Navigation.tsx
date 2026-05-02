@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +18,13 @@ import {
   Heart, 
   Palette, 
   ShoppingBag, 
-  Star,
   Sparkles,
   ChevronDown,
-  Gift,
   Crown,
   Moon,
   Sun
 } from "lucide-react";
-import { motion, useScroll } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { CartDrawer } from "./CartDrawer";
 import { SearchDialog } from "./SearchDialog";
 import { WishlistDrawer } from "./WishlistDrawer";
@@ -44,13 +42,9 @@ export const Navigation = () => {
   const { theme, toggleTheme } = useTheme();
   const { scrollY } = useScroll();
 
-  useEffect(() => {
-    if (!scrollY) return;
-    const unsubscribe = scrollY.onChange((latest) => {
-      setIsScrolled(latest > 50);
-    });
-    return () => unsubscribe();
-  }, [scrollY]);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 50);
+  });
 
   const navigationItems = [
     { 
@@ -64,21 +58,11 @@ export const Navigation = () => {
       label: "Shop", 
       icon: <ShoppingBag className="h-4 w-4" />
     },
-    // { 
-    //   to: "/categories", 
-    //   label: "Categories", 
-    //   icon: <Gift className="h-4 w-4" /> 
-    // },
     { 
       to: "/artisans", 
       label: "Artisans", 
       icon: <Crown className="h-4 w-4" />
     },
-    // { 
-    //   to: "/blog", 
-    //   label: "Blog", 
-    //   icon: <Star className="h-4 w-4" /> 
-    // },
     { 
       to: "/about", 
       label: "About", 
@@ -127,7 +111,7 @@ export const Navigation = () => {
     <>
       {/* Top promotional bar */}
       <motion.div 
-        className="hidden sm:block bg-gradient-to-r from-primary via-primary-glow to-primary text-white dark:bg-gradient-to-r dark:from-primary/95 dark:via-primary-glow/95 dark:to-primary/95 dark:text-foreground text-center py-2 text-sm font-medium shadow-lg dark:shadow-dark-soft backdrop-blur-sm"
+        className="bg-gradient-to-r from-primary via-primary-glow to-primary text-white dark:bg-gradient-to-r dark:from-primary/95 dark:via-primary-glow/95 dark:to-primary/95 dark:text-foreground text-center py-2 text-sm font-medium shadow-lg dark:shadow-dark-soft backdrop-blur-sm"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -150,8 +134,8 @@ export const Navigation = () => {
         }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-20">
             {/* Logo */}
             <motion.div 
               className="flex items-center"
@@ -167,7 +151,7 @@ export const Navigation = () => {
                   <img
                     src="/logo.png"
                     alt="ZAYMAZONE Logo"
-                    className="h-14 sm:h-20 lg:h-28 w-auto object-contain group-hover:scale-110 transition-all duration-500 drop-shadow-xl filter group-hover:brightness-110 dark:group-hover:brightness-125 dark:drop-shadow-2xl"
+                    className="h-12 sm:h-20 md:h-28 w-auto object-contain group-hover:scale-110 transition-all duration-500 drop-shadow-xl filter group-hover:brightness-110 dark:group-hover:brightness-125 dark:drop-shadow-2xl"
                   />
                 </div>
               </Link>
@@ -179,14 +163,15 @@ export const Navigation = () => {
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex items-center space-x-1 sm:space-x-2">
-              {/* Theme Toggle */}
+            <div className="flex items-center space-x-2">
+              {/* Theme Toggle — hidden on mobile to reduce icon crowding */}
+              <div className="hidden sm:block">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={toggleTheme}
-                  className="h-9 w-9 sm:h-10 sm:w-auto px-0 sm:px-3 bg-gradient-to-r from-primary/5 to-primary-glow/5 hover:from-primary/10 hover:to-primary-glow/10 border border-primary/20 hover:border-primary/30 transition-all duration-300 dark:from-primary/10 dark:to-primary-glow/10 dark:hover:from-primary/20 dark:hover:to-primary-glow/20 dark:border-primary/30 dark:hover:shadow-dark-glow"
+                  className="bg-gradient-to-r from-primary/5 to-primary-glow/5 hover:from-primary/10 hover:to-primary-glow/10 border border-primary/20 hover:border-primary/30 transition-all duration-300 dark:from-primary/10 dark:to-primary-glow/10 dark:hover:from-primary/20 dark:hover:to-primary-glow/20 dark:border-primary/30 dark:hover:shadow-dark-glow"
                 >
                   {theme === 'light' ? (
                     <Moon className="h-5 w-5 text-primary dark:text-primary drop-shadow-sm dark:drop-shadow-lg" />
@@ -195,14 +180,15 @@ export const Navigation = () => {
                   )}
                 </Button>
               </motion.div>
+              </div>
 
               {/* Search */}
-              <motion.div className="hidden sm:block" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <SearchDialog />
               </motion.div>
 
               {/* Wishlist */}
-              <motion.div className="hidden sm:block" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <WishlistDrawer />
               </motion.div>
 
@@ -219,7 +205,7 @@ export const Navigation = () => {
               ) : (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <motion.div className="hidden sm:block" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button 
                         variant="ghost" 
                         size="sm" 
@@ -269,47 +255,16 @@ export const Navigation = () => {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                        className="lg:hidden h-9 w-9 px-0 bg-gradient-to-r from-primary/5 to-primary-glow/5 hover:from-primary/10 hover:to-primary-glow/10 border border-primary/20 hover:border-primary/30 dark:from-primary/10 dark:to-primary-glow/10 dark:hover:from-primary/20 dark:hover:to-primary-glow/20 dark:border-primary/30 dark:hover:shadow-dark-glow"
+                      className="lg:hidden bg-gradient-to-r from-primary/5 to-primary-glow/5 hover:from-primary/10 hover:to-primary-glow/10 border border-primary/20 hover:border-primary/30 dark:from-primary/10 dark:to-primary-glow/10 dark:hover:from-primary/20 dark:hover:to-primary-glow/20 dark:border-primary/30 dark:hover:shadow-dark-glow"
                     >
                       <Menu className="h-5 w-5 text-primary dark:text-primary drop-shadow-sm dark:drop-shadow-lg" />
                     </Button>
                   </motion.div>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[88vw] max-w-[360px] sm:w-[400px] bg-gradient-to-br from-white/85 via-white/65 to-primary/10 text-foreground backdrop-blur-3xl border border-white/70 shadow-[0_24px_80px_-28px_rgba(214,137,109,0.35)] dark:bg-gradient-to-br dark:from-zinc-950/55 dark:via-zinc-900/40 dark:to-black/25 dark:text-white dark:border-white/10 dark:backdrop-blur-3xl dark:shadow-[0_24px_90px_-30px_rgba(0,0,0,0.75)]">
-                  <div className="mb-6 rounded-2xl border border-white/70 bg-gradient-to-br from-white/80 via-white/55 to-primary/10 p-4 shadow-[0_12px_35px_-18px_rgba(255,255,255,0.85)] backdrop-blur-2xl dark:border-white/10 dark:bg-white/5 dark:from-white/10 dark:via-white/5 dark:to-white/0 dark:shadow-none">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground/90 dark:text-white/55">Quick actions</p>
-                      <p className="mt-1 text-sm font-semibold text-foreground dark:text-white/95">Browse, search, save</p>
-                    </div>
-                    <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Button variant="outline" size="sm" className="justify-start gap-2 border-white/70 bg-white/70 text-foreground shadow-sm backdrop-blur-md hover:bg-white/90 hover:text-primary hover:border-primary/20 dark:border-white/10 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white dark:shadow-none" onClick={() => setIsOpen(false)} asChild>
-                        <Link to="/shop">
-                          <ShoppingBag className="h-4 w-4" />
-                          Shop
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" className="justify-start gap-2 border-white/70 bg-white/70 text-foreground shadow-sm backdrop-blur-md hover:bg-white/90 hover:text-primary hover:border-primary/20 dark:border-white/10 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white dark:shadow-none" onClick={() => setIsOpen(false)} asChild>
-                        <Link to="/wishlist">
-                          <Heart className="h-4 w-4" />
-                          Wishlist
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" className="justify-start gap-2 border-white/70 bg-white/70 text-foreground shadow-sm backdrop-blur-md hover:bg-white/90 hover:text-primary hover:border-primary/20 dark:border-white/10 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white dark:shadow-none" onClick={() => setIsOpen(false)} asChild>
-                        <Link to="/contact">
-                          <User className="h-4 w-4" />
-                          Contact
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" className="justify-start gap-2 border-white/70 bg-white/70 text-foreground shadow-sm backdrop-blur-md hover:bg-white/90 hover:text-primary hover:border-primary/20 dark:border-white/10 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white dark:shadow-none" onClick={() => setIsOpen(false)} asChild>
-                        <Link to="/start-selling">
-                          <Crown className="h-4 w-4" />
-                          Sell
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
+                <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background/98 backdrop-blur-xl border-primary/20 dark:bg-background/98 dark:backdrop-blur-2xl dark:border-primary/30 dark:shadow-dark-floating">
+                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <motion.div
-                    className="flex flex-col space-y-3"
+                    className="flex flex-col space-y-6 mt-6"
                     initial="hidden"
                     animate="visible"
                     variants={{
@@ -349,7 +304,7 @@ export const Navigation = () => {
                       >
                         <Link
                           to={item.to}
-                          className="flex items-center gap-3 p-3 rounded-2xl text-foreground hover:text-primary hover:bg-primary/5 dark:text-white/90 dark:hover:text-white dark:hover:bg-white/8 dark:hover:shadow-none font-semibold transition-all duration-300 group border border-transparent hover:border-primary/10 dark:hover:border-white/10"
+                          className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
                           onClick={() => {
                             if (item.onClick) item.onClick();
                             setIsOpen(false);
@@ -358,7 +313,7 @@ export const Navigation = () => {
                           <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
                             {item.icon}
                           </span>
-                          <span className="text-[15px] tracking-[0.01em] text-foreground dark:text-white/90 drop-shadow-sm dark:drop-shadow-none">{item.label}</span>
+                          <span className="drop-shadow-sm dark:drop-shadow-lg">{item.label}</span>
                         </Link>
                       </motion.div>
                     ))}

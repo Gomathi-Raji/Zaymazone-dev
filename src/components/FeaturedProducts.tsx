@@ -12,7 +12,7 @@ export const FeaturedProducts = () => {
   const { addToComparison } = useProductComparison();
 
   // Get products from API - show first 6 as featured since backend doesn't support featured filtering
-  const { data: productsData, isLoading, error } = useProducts();
+  const { data: productsData, isLoading, error } = useProducts({ limit: 6 });
   let featuredProducts = productsData?.products || [];
 
   // Development logging

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Eye, Star, Package, Users, Loader2, AlertTriangle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
 import { SingleImageUpload } from "./ImageUpload";
 import { adminService } from "@/services/adminService";
-import { getImageUrl } from "@/lib/api";
+
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://zaymazone-backend.onrender.com');
 
 interface Category {
   id: string;
@@ -73,19 +73,7 @@ export const CategoriesManagement = () => {
     return matchesSearch && matchesFeatured;
   });
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  // Reload when search or filter changes
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      loadCategories();
-    }, 500);
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm, filterFeatured]);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       setLoading(true);
       const data = await adminService.getCategories({ 
@@ -110,7 +98,20 @@ export const CategoriesManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, filterFeatured, toast]);
+
+  // Initial load on mount only
+  useEffect(() => {
+    loadCategories();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload when search or filter changes
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      loadCategories();
+    }, 500);
+    return () => clearTimeout(debounceTimer);
+  }, [loadCategories]);
 
   const handleAdd = () => {
     const newCategory: Category = {
@@ -269,10 +270,10 @@ export const CategoriesManagement = () => {
     try {
       setSaving(true);
       const deletePromises = selectedCategories.map(id =>
-        fetch(buildBackendApiUrl(`/api/admin/categories/${id}`), {
+        fetch(`${API_BASE}/api/admin/categories/${id}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${getBackendAuthToken()}`
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
           }
         })
       );
@@ -311,11 +312,11 @@ export const CategoriesManagement = () => {
         const category = categories.find(cat => cat.id === id);
         if (!category) return Promise.resolve();
 
-        return fetch(buildBackendApiUrl(`/api/admin/categories/${id}`), {
+        return fetch(`${API_BASE}/api/admin/categories/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getBackendAuthToken()}`
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
           },
           body: JSON.stringify({
             ...category,
@@ -711,7 +712,7 @@ export const CategoriesManagement = () => {
                   {editingCategory.image[0] && (
                     <div className="mt-2">
                       <img
-                        src={getImageUrl(editingCategory.image[0])}
+                        src={editingCategory.image[0]}
                         alt="Category preview"
                         className="w-20 h-20 object-cover rounded border"
                       />

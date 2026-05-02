@@ -31,15 +31,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  const [isInitialized, setIsInitialized] = useState(false);
-
   useEffect(() => {
     const root = window.document.documentElement;
-
-    // Disable transitions on initial load
-    if (!isInitialized) {
-      root.classList.add('no-transition');
-    }
 
     // Remove previous theme classes
     root.classList.remove('light', 'dark');
@@ -49,15 +42,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     // Save to localStorage
     localStorage.setItem('theme', theme);
-
-    // Enable transitions after initial load
-    if (!isInitialized) {
-      requestAnimationFrame(() => {
-        root.classList.remove('no-transition');
-        setIsInitialized(true);
-      });
-    }
-  }, [theme, isInitialized]);
+  }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');

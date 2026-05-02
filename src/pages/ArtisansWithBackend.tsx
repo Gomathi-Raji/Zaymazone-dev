@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, Search, MapPin, Star, Users, Palette } from "lucide-react";
+import { Loader2, Search, MapPin, Star, Award, Users, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
-import { api, type Artisan, getImageUrl } from "@/lib/api";
+import { api, type Artisan } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { VerifiedArtisanName } from "@/components/VerifiedArtisanName";
+// Module 11
+import { VerifiedBadge } from "@/components/trust/VerifiedBadge";
 
 const ArtisansWithBackend = () => {
   const [artisans, setArtisans] = useState<Artisan[]>([]);
@@ -160,25 +161,33 @@ const ArtisansWithBackend = () => {
                 <div className="relative">
                   <div className="h-48 bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
                     <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
-                      <AvatarImage src={getImageUrl(artisan.avatar)} alt={artisan.name} />
+                      <AvatarImage src={artisan.avatar} alt={artisan.name} />
                       <AvatarFallback className="text-lg font-semibold">
                         {artisan.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </div>
+                  {artisan.verification.isVerified && (
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-green-100 text-green-800 border-green-300">
+                        <Award className="w-3 h-3 mr-1" />
+                        Verified
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               </CardHeader>
               
               <CardContent className="p-6">
                 <div className="text-center mb-4">
-                  <h3 className="mb-1">
-                    <VerifiedArtisanName
-                      name={artisan.name}
-                      isVerified={artisan.verification.isVerified}
-                      className="justify-center"
-                      nameClassName="text-xl font-semibold"
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
+                    <h3 className="text-xl font-semibold">{artisan.name}</h3>
+                    <VerifiedBadge
+                      verified={artisan.verification.isVerified}
+                      verifiedAt={artisan.verification.verifiedAt}
+                      size="sm"
                     />
-                  </h3>
+                  </div>
                   <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mb-2">
                     <MapPin className="w-3 h-3" />
                     {artisan.location.city}, {artisan.location.state}

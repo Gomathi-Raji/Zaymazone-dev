@@ -20,7 +20,7 @@ export function VerificationBadge({
   if (variant === 'icon-only') {
     return (
       <div className={cn("inline-flex items-center", className)} title="Verified Artisan">
-        <CheckCircle className="w-4 h-4 text-blue-500 fill-blue-500" />
+        <CheckCircle className="w-5 h-5 text-blue-500 fill-blue-500" />
       </div>
     );
   }

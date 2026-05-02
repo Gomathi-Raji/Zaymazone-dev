@@ -28,7 +28,7 @@ const Index = () => {
   } = useProductComparison();
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background artisan-pattern">
+    <div className="min-h-screen bg-background artisan-pattern">
       <SEO
         structuredData={{
           "@context": "https://schema.org",
@@ -49,39 +49,30 @@ const Index = () => {
       />
       <Navigation />
       <HeroSection />
-      
       <AnimatedSection>
         <InteractiveStats />
       </AnimatedSection>
-      
       <AnimatedSection delay={0.2}>
         <CategoriesSection />
       </AnimatedSection>
-      
       <AnimatedSection delay={0.4}>
         <FeaturedProducts />
       </AnimatedSection>
-      
       <AnimatedSection delay={0.6}>
         <SkillShowcase />
       </AnimatedSection>
-      
       <AnimatedSection delay={0.8}>
         <ArtisanSpotlight />
       </AnimatedSection>
-      
       <AnimatedSection delay={1.0}>
         <ValuesSection />
       </AnimatedSection>
-      
       <AnimatedSection delay={1.2}>
         <TestimonialSection />
       </AnimatedSection>
-      
       <AnimatedSection delay={1.4}>
         <NewsletterSection />
       </AnimatedSection>
-      
       <Footer />
       <ScrollToTop />
 

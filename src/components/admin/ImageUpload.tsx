@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { buildBackendApiUrl } from '@/lib/backendApi';
 import { 
   Upload, 
   X, 
@@ -85,7 +84,7 @@ export function ImageUpload({
     formData.append('category', fileType);
 
     try {
-      const response = await fetch(buildBackendApiUrl('/api/images/upload'), {
+      const response = await fetch('/api/images/upload', {
         method: 'POST',
         body: formData,
       });

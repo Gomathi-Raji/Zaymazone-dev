@@ -17,9 +17,6 @@ interface Product {
   artisan: {
     name: string;
     location: string;
-    verification?: {
-      isVerified: boolean;
-    };
   } | null;
   featured?: boolean;
   badge?: string;

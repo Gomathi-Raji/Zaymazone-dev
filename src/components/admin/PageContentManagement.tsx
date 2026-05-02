@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Save, X, Eye, Loader2, AlertTriangle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { buildBackendApiUrl, getBackendAuthToken } from "@/lib/backendApi";
+
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://zaymazone-backend.onrender.com');
 
 interface PageContent {
   id: string;
@@ -39,16 +40,12 @@ export const PageContentManagement = () => {
     content.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    loadPageContents();
-  }, []);
-
-  const loadPageContents = async () => {
+  const loadPageContents = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(buildBackendApiUrl('/api/admin/page-content'), {
+      const response = await fetch(`${API_BASE}/api/admin/page-content`, {
         headers: {
-          'Authorization': `Bearer ${getBackendAuthToken()}`
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
         }
       });
 
@@ -103,7 +100,11 @@ export const PageContentManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadPageContents();
+  }, [loadPageContents]);
 
   const handleEdit = (content: PageContent) => {
     setEditingContent({ ...content });
@@ -142,11 +143,11 @@ export const PageContentManagement = () => {
       setSaving(true);
       setShowConfirmDialog(false);
 
-      const response = await fetch(buildBackendApiUrl(`/api/admin/page-content/${editingContent.id}`), {
+      const response = await fetch(`${API_BASE}/api/admin/page-content/${editingContent.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getBackendAuthToken()}`
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
         },
         body: JSON.stringify({
           title: editingContent.title.trim(),

@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckCircle, XCircle, Eye, Package, Users, UserCheck, Clock } from "lucide-react";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
-import { getImageUrl } from "@/lib/api";
 
 export function ApprovalManagement() {
   const [activeTab, setActiveTab] = useState("products");
@@ -111,14 +110,14 @@ export function ApprovalManagement() {
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <Avatar className="w-16 h-16">
-            <AvatarImage src={getImageUrl(product.images?.[0] || "/placeholder.svg")} />
+            <AvatarImage src={product.images?.[0] || "/placeholder.svg"} />
             <AvatarFallback><Package className="w-6 h-6" /></AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold text-lg">{product.name}</h3>
-                <p className="text-sm text-muted-foreground">by {product.artisan?.name || 'Unknown Artisan'}</p>
+                <p className="text-sm text-muted-foreground">by {product.artisanId?.name || product.artisan?.name || 'Unknown Artisan'}</p>
                 <Badge variant="outline" className="mt-1">{product.category}</Badge>
               </div>
               <div className="text-right">
@@ -146,7 +145,7 @@ export function ApprovalManagement() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-medium">Artisan</label>
-                        <p>{product.artisan?.name || 'Unknown'}</p>
+                        <p>{product.artisanId?.name || product.artisan?.name || 'Unknown'}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium">Category</label>

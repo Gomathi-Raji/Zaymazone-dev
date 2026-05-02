@@ -219,7 +219,7 @@ const BlogPost = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
-                  <AvatarImage src={getImageUrl(post.author.avatar)} />
+                  <AvatarImage src={post.author.avatar} />
                   <AvatarFallback>{post.author.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -251,7 +251,7 @@ const BlogPost = () => {
           {/* Featured Image */}
           <div className="aspect-video bg-muted rounded-lg overflow-hidden">
             <img 
-              src={getImageUrl(post.image)} 
+              src={post.image} 
               alt={post.title}
               className="w-full h-full object-cover"
             />

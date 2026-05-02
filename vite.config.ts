@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
     // Proxy API requests to local mock server in development, production backend otherwise
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'http://127.0.0.1:4000',
         changeOrigin: true,
         secure: false,
       }
@@ -39,9 +39,6 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        cleanupOutdatedCaches: true,
-        skipWaiting: true,
-        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg}'],
         runtimeCaching: [
           {

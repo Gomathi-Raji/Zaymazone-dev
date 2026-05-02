@@ -1,8 +1,15 @@
 import { apiRequest } from '@/lib/api';
-import { getBackendApiBaseUrl } from '@/lib/backendApi';
 
-// Base API configuration comes strictly from the environment.
-const API_BASE_URL = `${getBackendApiBaseUrl()}/api`
+// Base API configuration
+let API_BASE_URL: string;
+
+try {
+  const envUrl = import.meta.env.VITE_API_BASE_URL ||
+    (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : undefined);
+  API_BASE_URL = envUrl || (import.meta.env.DEV ? 'http://localhost:4000/api' : 'https://zaymazone-dev.onrender.com/api');
+} catch (error) {
+  API_BASE_URL = import.meta.env.DEV ? 'http://localhost:4000/api' : 'https://zaymazone-dev.onrender.com/api';
+}
 
 // Helper function to handle API responses
 async function handleResponse(response: Response) {
@@ -85,7 +92,8 @@ export interface SellerFormData {
   upiId: string;
   paymentFrequency: string;
   story: string;
-  craftVideo: File | null;
+  /** URL of the already-uploaded video (empty string = not provided) */
+  craftVideo: string;
 }
 
 export const sellerApi = {
@@ -143,7 +151,8 @@ export const sellerApi = {
       productPhotos: formData.productPhotos ? await Promise.all(formData.productPhotos.map(f => fileToBase64(f))) : [],
       gstCertificate: formData.gstCertificate ? await fileToBase64(formData.gstCertificate) : null,
       aadhaarProof: formData.aadhaarProof ? await fileToBase64(formData.aadhaarProof) : null,
-      craftVideo: formData.craftVideo ? await fileToBase64(formData.craftVideo) : null
+      // craftVideo is already a URL from VideoUpload — send it directly, no base64 conversion
+      craftVideo: formData.craftVideo || null
     };
 
     const payloadSize = JSON.stringify(payload).length;
@@ -233,6 +242,15 @@ export const sellerApi = {
       body: JSON.stringify(finalData),
     });
 
+    return handleResponse(response);
+  },
+
+  // Check whether an email is already registered in either account type.
+  // Returns { existsAsCustomer, existsAsArtisan } booleans.
+  async checkEmail(email: string): Promise<{ existsAsCustomer: boolean; existsAsArtisan: boolean }> {
+    const response = await fetch(
+      `${API_BASE_URL}/auth/check-email?email=${encodeURIComponent(email)}`
+    );
     return handleResponse(response);
   },
 

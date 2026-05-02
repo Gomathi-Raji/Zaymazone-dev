@@ -22,6 +22,7 @@ import {
   Share2,
   MessageCircle,
   Package,
+  Verified,
   Clock,
   ArrowLeft,
   Loader2,
@@ -30,7 +31,9 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { api, type Artisan, type Product, getImageUrl } from "@/lib/api";
-import { VerifiedArtisanName } from "@/components/VerifiedArtisanName";
+// Module 11
+import { TrustIndicators } from "@/components/trust/TrustIndicators";
+import { VerifiedBadge } from "@/components/trust/VerifiedBadge";
 
 const ArtisanDetailWithBackend = () => {
   const { id } = useParams<{ id: string }>();
@@ -174,13 +177,14 @@ const ArtisanDetailWithBackend = () => {
                 </Avatar>
                 
                 <div className="text-center sm:text-left">
-                  <h1 className="flex items-center gap-2 justify-center sm:justify-start mb-2">
-                    <VerifiedArtisanName
-                      name={artisan.name}
-                      isVerified={artisan.verification.isVerified}
-                      nameClassName="text-3xl font-bold text-foreground"
+                  <div className="flex items-center gap-2 justify-center sm:justify-start mb-2">
+                    <h1 className="text-3xl font-bold text-foreground">{artisan.name}</h1>
+                    <VerifiedBadge
+                      verified={artisan.verification.isVerified}
+                      verifiedAt={artisan.verification.verifiedAt}
+                      size="lg"
                     />
-                  </h1>
+                  </div>
                   
                   <div className="flex items-center gap-1 text-muted-foreground mb-2 justify-center sm:justify-start">
                     <MapPin className="w-4 h-4" />
@@ -405,27 +409,8 @@ const ArtisanDetailWithBackend = () => {
                   </CardContent>
                 </Card>
 
-                {/* Verification */}
-                {artisan.verification.isVerified && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Award className="w-5 h-5 text-green-600" />
-                        Verified Artisan
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        This artisan has been verified by our team and meets our quality standards.
-                      </p>
-                      {artisan.verification.verifiedAt && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Verified on {new Date(artisan.verification.verifiedAt).toLocaleDateString()}
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
+                {/* Verification + Trust indicators (Module 11) */}
+                <TrustIndicators artisan={artisan} />
               </div>
             </div>
           </TabsContent>

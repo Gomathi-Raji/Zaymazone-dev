@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
-import { imagesApi, getImageUrl } from '@/lib/api';
+import { imagesApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
 interface ImageUploadProps {
@@ -51,7 +51,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         // Simplified - just use file extensions for better compatibility
         return '.pdf,.doc,.docx,.jpg,.jpeg,.png';
       case 'video':
-        return 'video/*';
+        return 'video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogg,.mov';
       case 'any':
         return '*/*';
       default:
@@ -74,10 +74,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       return;
     }
 
-    if (fileType === 'video' && !file.type.startsWith('video/')) {
+    if (fileType === 'video' && !['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'].includes(file.type)) {
       toast({
-        title: 'Invalid file type',
-        description: 'Please select a video file',
+        title: 'Unsupported video format',
+        description: 'Please select an MP4, WebM, MOV or OGG file',
         variant: 'destructive'
       });
       return;
@@ -103,7 +103,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     }
 
     // Increase size limit for documents and videos
-    const maxSize = fileType === 'video' ? 50 * 1024 * 1024 : 10 * 1024 * 1024; // 50MB for videos, 10MB for others
+    const maxSize = fileType === 'video' ? 15 * 1024 * 1024 : 10 * 1024 * 1024; // 15MB for videos, 10MB for others
     if (file.size > maxSize) {
       toast({
         title: 'File too large',
@@ -284,7 +284,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           </div>
           <p className="text-xs text-gray-500">
             {fileType === 'video' 
-              ? 'MP4, WebM, AVI up to 50MB' 
+              ? 'MP4, WebM, MOV or OGG up to 15MB' 
               : fileType === 'document' 
               ? 'PDF, DOC, DOCX, JPG, PNG up to 10MB'
               : 'PNG, JPG, GIF up to 10MB'}
@@ -355,7 +355,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               ) : (
                 <>
                   <img
-                    src={getImageUrl(images[0])}
+                    src={images[0]}
                     alt="Uploaded image"
                     className="w-10 h-10 object-cover rounded border"
                   />
@@ -401,7 +401,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 // Uploaded image preview
                 <div className="flex-1 flex items-center gap-2">
                   <img
-                    src={getImageUrl(image)}
+                    src={image}
                     alt={`Image ${index + 1}`}
                     className="w-10 h-10 object-cover rounded border"
                   />

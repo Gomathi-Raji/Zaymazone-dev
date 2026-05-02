@@ -3,11 +3,7 @@ import path from 'path'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 
-const API_BASE_URL = process.env.API_BASE_URL || process.env.PUBLIC_API_URL || process.env.OPENAPI_SERVER_URL
-
-if (!API_BASE_URL) {
-  throw new Error('Missing API_BASE_URL. Set API_BASE_URL, PUBLIC_API_URL, or OPENAPI_SERVER_URL in the environment.')
-}
+const API_BASE_URL = 'https://zaymazone-test.onrender.com/api'
 
 async function uploadTeamImage(imagePath, filename) {
   try {

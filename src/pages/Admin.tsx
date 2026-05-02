@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductManagement } from "@/components/dashboard/ProductManagement";
 import { ArtisanManagement } from "@/components/dashboard/ArtisanManagement";
+import { OrderManagement } from "@/components/admin/OrderManagement";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { BlogManagement } from "@/components/admin/BlogManagement";
 import { AnalyticsOverview } from "@/components/admin/AnalyticsOverview";
@@ -16,11 +17,14 @@ import { AlertsAndAnnouncements } from "@/components/admin/AlertsAndAnnouncement
 import { CustomerSupport } from "@/components/admin/CustomerSupport";
 import { SellerAlerts } from "@/components/admin/SellerAlerts";
 import { ActivitiesAndNotifications } from "@/components/admin/ActivitiesAndNotifications";
+import AdminUpiVerification from "@/components/admin/AdminUpiVerification";
+import { AdminSettlementManagement } from "@/components/admin/AdminSettlementManagement";
+import { AdminInvoiceView } from "@/components/admin/AdminInvoiceView";
 import { AdminLogin } from "@/components/AdminLogin";
 import { PageContentManagement } from "@/components/admin/PageContentManagement";
 import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
 import { AuditLogManagement } from "@/components/admin/AuditLogManagement";
-import { OrderManagement } from "@/components/admin/OrderManagementEnhanced";
+import { EmailTemplateManagement } from "@/components/admin/EmailTemplateManagement";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -42,7 +46,9 @@ import {
   AlertCircle,
   Activity,
   Settings,
-  Loader2
+  Wallet,
+  Receipt,
+  Mail
 } from "lucide-react";
 
 export default function Admin() {
@@ -73,7 +79,7 @@ export default function Admin() {
       const interval = setInterval(() => {
         loadStats();
       }, 30000);
-      
+
       return () => clearInterval(interval);
     }
   }, [isAuthenticated]);
@@ -116,7 +122,7 @@ export default function Admin() {
   }
 
   const loadStats = async () => {
-    setLoading(true);
+    // Don't set loading to true to avoid blocking the UI
     try {
       const response = await adminService.getStats();
       setStats(response.stats);
@@ -124,56 +130,56 @@ export default function Admin() {
       console.warn('Failed to load admin statistics:', error);
       // Keep default stats on error
     } finally {
-      setLoading(false);
+      // Don't set loading to false since we don't show loading initially
     }
   };
 
   const statsCards = [
-    { 
-      label: "Total Products", 
-      value: stats.totalProducts.toLocaleString(), 
-      icon: Package, 
-      trend: "+12%", 
-      color: "text-blue-600" 
+    {
+      label: "Total Products",
+      value: stats.totalProducts.toLocaleString(),
+      icon: Package,
+      trend: "+12%",
+      color: "text-blue-600"
     },
-    { 
-      label: "Active Artisans", 
-      value: stats.activeArtisans.toString(), 
-      icon: Users, 
-      trend: "+8%", 
-      color: "text-green-600" 
+    {
+      label: "Active Artisans",
+      value: stats.activeArtisans.toString(),
+      icon: Users,
+      trend: "+8%",
+      color: "text-green-600"
     },
-    { 
-      label: "Orders Today", 
-      value: stats.todayOrders.toString(), 
-      icon: ShoppingCart, 
-      trend: "+15%", 
-      color: "text-purple-600" 
+    {
+      label: "Orders Today",
+      value: stats.todayOrders.toString(),
+      icon: ShoppingCart,
+      trend: "+15%",
+      color: "text-purple-600"
     },
-    { 
-      label: "Total Users", 
-      value: stats.totalUsers.toLocaleString(), 
-      icon: UserCheck, 
-      trend: "+5%", 
-      color: "text-orange-600" 
+    {
+      label: "Total Users",
+      value: stats.totalUsers.toLocaleString(),
+      icon: UserCheck,
+      trend: "+5%",
+      color: "text-orange-600"
     },
   ];
 
   const alerts = [
-    { 
-      type: "warning", 
-      message: `${stats.pendingApprovals.products} products pending approval`, 
-      severity: "medium" 
+    {
+      type: "warning",
+      message: `${stats.pendingApprovals.products} products pending approval`,
+      severity: "medium"
     },
-    { 
-      type: "info", 
-      message: `${stats.pendingApprovals.artisans} artisan applications pending`, 
-      severity: "low" 
+    {
+      type: "info",
+      message: `${stats.pendingApprovals.artisans} artisan applications pending`,
+      severity: "low"
     },
-    { 
-      type: "error", 
-      message: "Payment gateway maintenance scheduled", 
-      severity: "high" 
+    {
+      type: "error",
+      message: "Payment gateway maintenance scheduled",
+      severity: "high"
     },
   ];
 
@@ -188,8 +194,12 @@ export default function Admin() {
     { id: "page-content", label: "Page Content", icon: FileText },
     { id: "categories", label: "Categories", icon: Package },
     { id: "audit-logs", label: "Audit Logs", icon: Activity },
+    { id: "email-templates", label: "Email Templates", icon: Mail },
     { id: "reports", label: "Reports", icon: FileBarChart },
     { id: "payments", label: "Payments", icon: CreditCard },
+    { id: "upi-verification", label: "UPI Verification", icon: CheckCircle },
+    { id: "settlements", label: "Settlements", icon: Wallet },
+    { id: "invoices", label: "Invoices", icon: Receipt },
     { id: "auth", label: "Auth Management", icon: Shield },
     { id: "alerts", label: "Alerts & Announcements", icon: Bell },
     { id: "support", label: "Customer Support", icon: HeadphonesIcon },
@@ -238,27 +248,15 @@ export default function Admin() {
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
               <p className="text-muted-foreground">Manage your marketplace data and operations</p>
-              {loading && (
-                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Syncing admin data...
-                </div>
-              )}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button variant="outline" onClick={() => void loadStats()} disabled={loading} className="flex items-center gap-2">
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Activity className="w-4 h-4" />}
-                Refresh Stats
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                className="flex items-center gap-2"
-              >
-                <Settings className="w-4 h-4" />
-                Logout
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="flex items-center gap-2"
+            >
+              <Settings className="w-4 h-4" />
+              Logout
+            </Button>
           </div>
 
           {activeTab === "overview" && (
@@ -301,15 +299,14 @@ export default function Admin() {
                   <CardContent className="space-y-4">
                     {alerts.map((alert, index) => (
                       <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${
-                          alert.severity === 'high' ? 'bg-red-500' :
-                          alert.severity === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
-                        }`} />
+                        <div className={`w-2 h-2 rounded-full mt-2 ${alert.severity === 'high' ? 'bg-red-500' :
+                            alert.severity === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
+                          }`} />
                         <div className="flex-1">
                           <p className="text-sm text-foreground">{alert.message}</p>
                           <Badge variant={
                             alert.severity === 'high' ? 'destructive' :
-                            alert.severity === 'medium' ? 'secondary' : 'outline'
+                              alert.severity === 'medium' ? 'secondary' : 'outline'
                           } className="mt-1">
                             {alert.severity}
                           </Badge>
@@ -331,8 +328,12 @@ export default function Admin() {
           {activeTab === "page-content" && <PageContentManagement />}
           {activeTab === "categories" && <CategoriesManagement />}
           {activeTab === "audit-logs" && <AuditLogManagement />}
+          {activeTab === "email-templates" && <EmailTemplateManagement />}
           {activeTab === "reports" && <ReportsAndInvoices />}
           {activeTab === "payments" && <PaymentsManagement />}
+          {activeTab === "upi-verification" && <AdminUpiVerification />}
+          {activeTab === "settlements" && <AdminSettlementManagement />}
+          {activeTab === "invoices" && <AdminInvoiceView />}
           {activeTab === "auth" && <AuthManagement />}
           {activeTab === "alerts" && <AlertsAndAnnouncements />}
           {activeTab === "support" && <CustomerSupport />}

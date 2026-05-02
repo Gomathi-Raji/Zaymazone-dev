@@ -404,8 +404,8 @@ const ArtisanProducts = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {products.map((p, idx) => (
-                      <TableRow key={p._id || `product-${idx}`}>
+                    {products.map((p) => (
+                      <TableRow key={p._id}>
                         <TableCell>{p.name}</TableCell>
                         <TableCell>{formatPrice(p.price)}</TableCell>
                         <TableCell>

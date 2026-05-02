@@ -34,8 +34,7 @@ const upsertSchema = z.object({
 // Enhanced products listing with search, filter, and pagination
 router.get('/', 
 	validate(z.object({
-		page: z.coerce.number().int().min(1).default(1),
-		limit: z.coerce.number().int().min(1).max(100).optional(),
+		...paginationSchema.shape,
 		...searchSchema.shape,
 		featured: z.coerce.boolean().optional(),
 		sortBy: z.enum(['name', 'price', 'rating', 'createdAt', 'salesCount']).optional().default('createdAt')
@@ -44,7 +43,7 @@ router.get('/',
 		try {
 			const {
 				page = 1,
-				limit,
+				limit = 20,
 				q,
 				category,
 				minPrice,
@@ -81,7 +80,7 @@ router.get('/',
 			}
 
 			if (inStock) {
-				filter.stockCount = { $gt: 0 }
+				filter.stock = { $gt: 0 }
 			}
 
 			if (featured !== undefined) {
@@ -96,16 +95,14 @@ router.get('/',
 				sort[sortBy] = order === 'desc' ? -1 : 1
 			}
 
-			const usePagination = typeof limit === 'number'
-
-			// Execute query with optional pagination
-			const skip = usePagination ? (page - 1) * limit : 0
+			// Execute query with pagination
+			const skip = (page - 1) * limit
 			const [products, total] = await Promise.all([
 				Product.find(filter)
 					.sort(sort)
 					.skip(skip)
-					.limit(usePagination ? limit : 0)
-					.populate('artisanId', 'name location.city location.state bio avatar rating totalProducts verification.isVerified')
+					.limit(limit)
+					.populate('artisanId', 'name location.city location.state bio avatar rating totalProducts')
 					.lean(),
 				Product.countDocuments(filter)
 			])
@@ -124,8 +121,8 @@ router.get('/',
 				dimensions: product.dimensions,
 				weight: product.weight,
 				colors: Array.isArray(product.colors) ? product.colors : [],
-				inStock: product.inStock,
-				stockCount: product.stockCount,
+				inStock: product.inStock ?? ((product.stock ?? product.stockCount ?? 0) > 0),
+				stockCount: product.stock ?? product.stockCount ?? 0,
 				artisan: product.artisanId ? {
 					id: product.artisanId._id.toString(), 
 					name: product.artisanId.name,
@@ -148,17 +145,17 @@ router.get('/',
 				careInstructions: product.careInstructions || null
 			}))
 
-			const totalPages = usePagination ? Math.ceil(total / limit) : 1
+			const totalPages = Math.ceil(total / limit)
 
 			return res.json({
 				products: transformedProducts,
 				pagination: {
-					page: usePagination ? page : 1,
-					limit: usePagination ? limit : total,
+					page,
+					limit,
 					total,
 					totalPages,
-					hasNext: usePagination ? page < totalPages : false,
-					hasPrev: usePagination ? page > 1 : false
+					hasNext: page < totalPages,
+					hasPrev: page > 1
 				}
 			})
 		} catch (error) {
@@ -272,8 +269,8 @@ router.get('/:id', optionalAuth, async (req, res) => {
 			dimensions: product.dimensions,
 			weight: product.weight,
 			colors: Array.isArray(product.colors) ? product.colors : [],
-			inStock: product.inStock,
-			stockCount: product.stockCount,
+			inStock: product.inStock ?? ((product.stock ?? product.stockCount ?? 0) > 0),
+			stockCount: product.stock ?? product.stockCount ?? 0,
 			artisan: product.artisanId ? {
 				id: product.artisanId._id.toString(),
 				name: product.artisanId.name,
@@ -281,12 +278,7 @@ router.get('/:id', optionalAuth, async (req, res) => {
 				bio: product.artisanId.bio,
 				avatar: product.artisanId.avatar,
 				rating: product.artisanId.rating,
-				totalProducts: product.artisanId.totalProducts,
-				verification: {
-					isVerified: product.artisanId.verification && typeof product.artisanId.verification.isVerified !== 'undefined'
-						? Boolean(product.artisanId.verification.isVerified)
-						: false
-				}
+				totalProducts: product.artisanId.totalProducts
 			} : null,
 			rating: product.rating,
 			reviewCount: product.reviewCount,

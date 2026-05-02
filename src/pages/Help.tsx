@@ -166,10 +166,10 @@ const Help = () => {
               <CardDescription>Speak directly with a support agent</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="font-semibold text-foreground mb-2">+91 6380456410</p>
+              <p className="font-semibold text-foreground mb-2">+1-800-CRAFTS</p>
               <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
                 <Clock className="w-3 h-3" />
-                <span>Mon-Fri, 9 AM-6 PM IST</span>
+                <span>Mon-Fri, 9 AM-6 PM EST</span>
               </div>
             </CardContent>
           </Card>

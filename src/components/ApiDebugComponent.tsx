@@ -5,7 +5,7 @@ import { useProducts } from '@/hooks/useProducts';
 // Remove or disable in production builds
 const ApiDebugComponent = () => {
   // Always call hooks at the top level (React Hooks rule)
-  const { data: productsData, isLoading, error } = useProducts();
+  const { data: productsData, isLoading, error } = useProducts({ limit: 1 });
 
   // Only show in development mode
   if (import.meta.env.PROD) {

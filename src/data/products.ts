@@ -56,10 +56,6 @@ export interface Product {
     avatar: string;
     rating: number;
     totalProducts: number;
-    verification?: {
-      isVerified: boolean;
-      verifiedAt?: string;
-    };
   };
   rating: number;
   reviewCount: number;

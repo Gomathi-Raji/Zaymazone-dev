@@ -4,6 +4,7 @@ import Artisan from '../models/Artisan.js';
 import Product from '../models/Product.js';
 import BlogPost from '../models/BlogPost.js';
 import User from '../models/User.js';
+import emailService from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -38,8 +39,7 @@ router.get('/pending-artisans', requireAuth, requireAdmin, async (req, res) => {
     console.error('Error fetching pending artisans:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch pending artisans',
-      error: error.message
+      message: 'Failed to fetch pending artisans'
     });
   }
 });
@@ -71,8 +71,7 @@ router.get('/artisan-details/:artisanId', requireAuth, requireAdmin, async (req,
     console.error('Error fetching artisan details:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch artisan details',
-      error: error.message
+      message: 'Failed to fetch artisan details'
     });
   }
 });
@@ -90,8 +89,6 @@ router.patch('/approve-artisan/:artisanId', requireAuth, requireAdmin, async (re
         approvalNotes: approvalNotes || '',
         approvedBy: adminId,
         approvedAt: new Date(),
-        'verification.isVerified': true,
-        'verification.verifiedAt': new Date(),
         $unset: { rejectionReason: 1 }
       },
       { new: true }
@@ -132,6 +129,12 @@ router.patch('/approve-artisan/:artisanId', requireAuth, requireAdmin, async (re
       }
     );
 
+    // Fire-and-forget approval email
+    const _approvedEmailArtisan = { ...artisan.toObject(), email: artisan.email || artisan.userId?.email };
+    emailService.sendArtisanApproved(_approvedEmailArtisan).catch(e =>
+      console.error('[admin-approvals] approval email error:', e.message)
+    );
+
     res.json({
       success: true,
       message: `Artisan ${artisan.name} has been approved successfully. ${productsUpdateResult.modifiedCount} products and ${blogsUpdateResult.modifiedCount} blogs were also auto-approved.`,
@@ -151,8 +154,7 @@ router.patch('/approve-artisan/:artisanId', requireAuth, requireAdmin, async (re
     console.error('Error approving artisan:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to approve artisan',
-      error: error.message
+      message: 'Failed to approve artisan'
     });
   }
 });
@@ -216,6 +218,12 @@ router.patch('/reject-artisan/:artisanId', requireAuth, requireAdmin, async (req
       }
     );
 
+    // Fire-and-forget rejection email
+    const _rejectedEmailArtisan = { ...artisan.toObject(), email: artisan.email || artisan.userId?.email };
+    emailService.sendArtisanRejected(_rejectedEmailArtisan, rejectionReason).catch(e =>
+      console.error('[admin-approvals] rejection email error:', e.message)
+    );
+
     res.json({
       success: true,
       message: `Artisan ${artisan.name} has been rejected. ${productsUpdateResult.modifiedCount} pending products and ${blogsUpdateResult.modifiedCount} pending blogs were also auto-rejected.`,
@@ -235,8 +243,7 @@ router.patch('/reject-artisan/:artisanId', requireAuth, requireAdmin, async (req
     console.error('Error rejecting artisan:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to reject artisan',
-      error: error.message
+      message: 'Failed to reject artisan'
     });
   }
 });
@@ -273,8 +280,7 @@ router.get('/pending-products', requireAuth, requireAdmin, async (req, res) => {
     console.error('Error fetching pending products:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch pending products',
-      error: error.message
+      message: 'Failed to fetch pending products'
     });
   }
 });
@@ -330,8 +336,7 @@ router.patch('/approve-product/:productId', requireAuth, requireAdmin, async (re
     console.error('Error approving product:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to approve product',
-      error: error.message
+      message: 'Failed to approve product'
     });
   }
 });
@@ -384,8 +389,7 @@ router.patch('/reject-product/:productId', requireAuth, requireAdmin, async (req
     console.error('Error rejecting product:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to reject product',
-      error: error.message
+      message: 'Failed to reject product'
     });
   }
 });
@@ -422,8 +426,7 @@ router.get('/pending-blogs', requireAuth, requireAdmin, async (req, res) => {
     console.error('Error fetching pending blogs:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch pending blogs',
-      error: error.message
+      message: 'Failed to fetch pending blogs'
     });
   }
 });
@@ -469,8 +472,7 @@ router.patch('/approve-blog/:blogId', requireAuth, requireAdmin, async (req, res
     console.error('Error approving blog:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to approve blog',
-      error: error.message
+      message: 'Failed to approve blog'
     });
   }
 });
@@ -524,8 +526,7 @@ router.patch('/reject-blog/:blogId', requireAuth, requireAdmin, async (req, res)
     console.error('Error rejecting blog:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to reject blog',
-      error: error.message
+      message: 'Failed to reject blog'
     });
   }
 });
@@ -564,8 +565,7 @@ router.patch('/clear-artisan-changes/:artisanId', requireAuth, requireAdmin, asy
     console.error('Error clearing artisan changes:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to clear artisan changes',
-      error: error.message
+      message: 'Failed to clear artisan changes'
     });
   }
 });

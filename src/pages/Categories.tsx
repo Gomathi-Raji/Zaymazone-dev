@@ -93,7 +93,7 @@ const Categories = () => {
                 <Card key={category.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
                   <div className="aspect-video bg-muted overflow-hidden relative">
                     <img 
-                      src={getImageUrl(category.image)} 
+                      src={category.image} 
                       alt={category.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

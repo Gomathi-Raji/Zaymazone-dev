@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { DocumentPreview } from '@/components/admin/DocumentPreview';
-import { buildBackendApiUrl, getBackendAuthToken } from '@/lib/backendApi';
 import { 
   Plus, 
   Eye, 
@@ -155,7 +154,7 @@ export function AdminSellerApprovals() {
   const fetchApplications = useCallback(async () => {
     setLoading(true);
     try {
-      const token = getBackendAuthToken();
+      const token = localStorage.getItem('admin_token');
       const params = new URLSearchParams({
         page: page.toString(),
         limit: '10'
@@ -165,7 +164,7 @@ export function AdminSellerApprovals() {
         params.append('status', statusFilter);
       }
 
-      const response = await fetch(buildBackendApiUrl(`/api/admin/sellers?${params}`), {
+      const response = await fetch(`/api/admin/sellers?${params}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -231,7 +230,7 @@ export function AdminSellerApprovals() {
 
     setActionLoading(true);
     try {
-      const token = getBackendAuthToken();
+      const token = localStorage.getItem('admin_token');
       const endpoint = modalData.type === 'approve' ? 'approve' : 'reject';
       
       const body = modalData.type === 'approve' 
@@ -241,7 +240,7 @@ export function AdminSellerApprovals() {
           }
         : { rejectionReason: modalData.rejectionReason, approvalNotes: modalData.notes };
 
-      const response = await fetch(buildBackendApiUrl(`/api/admin/sellers/${modalData.application._id}/${endpoint}`), {
+      const response = await fetch(`/api/admin/sellers/${modalData.application._id}/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

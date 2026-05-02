@@ -4,11 +4,7 @@ import Product from '../src/models/Product.js'
 import Artisan from '../src/models/Artisan.js'
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/zaymazone'
-const API_BASE_URL = process.env.API_BASE_URL || process.env.PUBLIC_API_URL || process.env.OPENAPI_SERVER_URL
-
-if (!API_BASE_URL) {
-  throw new Error('Missing API_BASE_URL. Set API_BASE_URL, PUBLIC_API_URL, or OPENAPI_SERVER_URL in the environment.')
-}
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000'
 
 // Function to convert asset paths to API URLs
 function convertImagePath(path) {

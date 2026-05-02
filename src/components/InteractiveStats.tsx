@@ -1,23 +1,37 @@
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Package, MapPin, Star } from "lucide-react";
-import { buildBackendApiUrl } from "@/lib/backendApi";
 
-interface ImpactStats {
-  artisansSupported: number;
-  statesReached: number;
-  productsListed: number;
-  averageRating: number;
-  totalRevenue: number;
-}
-
-interface StatItem {
-  icon: any;
-  label: string;
-  value: number;
-  suffix: string;
-  description: string;
-}
+const stats = [
+  {
+    icon: Users,
+    label: "Master Artisans",
+    value: 150,
+    suffix: "+",
+    description: "Skilled craftspeople from across India"
+  },
+  {
+    icon: Package,
+    label: "Handcrafted Products",
+    value: 2500,
+    suffix: "+",
+    description: "Unique pieces made with love"
+  },
+  {
+    icon: MapPin,
+    label: "Regions Covered",
+    value: 28,
+    suffix: "",
+    description: "States and territories represented"
+  },
+  {
+    icon: Star,
+    label: "Customer Rating",
+    value: 4.9,
+    suffix: "/5",
+    description: "Average satisfaction score"
+  }
+];
 
 interface CounterProps {
   end: number;
@@ -82,105 +96,42 @@ const Counter = ({ end, duration, suffix }: CounterProps) => {
 };
 
 export const InteractiveStats = () => {
-  const [statsData, setStatsData] = useState<ImpactStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch(buildBackendApiUrl('/api/artisans/stats/impact'));
-        if (response.ok) {
-          const data = await response.json();
-          setStatsData(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch impact stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
-
-  // Build stats array from real data
-  const stats: StatItem[] = [
-    {
-      icon: Users,
-      label: "Master Artisans",
-      value: statsData?.artisansSupported || 0,
-      suffix: "+",
-      description: "Skilled craftspeople from India"
-    },
-    {
-      icon: Package,
-      label: "Handcrafted Products",
-      value: statsData?.productsListed || 0,
-      suffix: "+",
-      description: "Unique pieces made with love"
-    },
-    {
-      icon: MapPin,
-      label: "Regions Covered",
-      value: statsData?.statesReached || 0,
-      suffix: "",
-      description: "States and territories represented"
-    },
-    {
-      icon: Star,
-      label: "Customer Rating",
-      value: statsData?.averageRating || 0,
-      suffix: "/5",
-      description: "Average satisfaction score"
-    }
-  ];
-
   return (
-    <section className="relative py-16 md:py-20 bg-gradient-subtle dark:bg-gradient-to-br dark:from-background dark:via-background/98 dark:to-accent/10 overflow-hidden">
-      {/* Interactive stats light mode enhancement */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary-glow))_0%,transparent_70%)] opacity-[0.01] pointer-events-none"></div>
-      
-      {/* Interactive stats dark mode enhancement - stronger glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary))_0%,transparent_70%)] opacity-[0.04] dark:opacity-[0.06] pointer-events-none"></div>
-      
-      {/* Additional accent glow for dark mode */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,hsl(var(--accent))_0%,transparent_70%)] opacity-[0.02] dark:opacity-[0.03] pointer-events-none"></div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-16 bg-gradient-subtle dark:bg-gradient-to-br dark:from-background dark:via-background/98 dark:to-accent/8 overflow-hidden">
+      {/* Interactive stats dark mode enhancement */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary-glow))_0%,transparent_70%)] opacity-[0.01] dark:opacity-[0.03] pointer-events-none"></div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             
             return (
-              <div key={index} className="group perspective">
-                <Card 
-                  className="relative hover:shadow-elegant dark:hover:shadow-glow hover:scale-105 transition-all duration-300 cursor-pointer 
-                             dark:border-primary/20 dark:bg-card/50 dark:hover:bg-card/80
-                             border border-border/50 hover:border-primary/30 dark:hover:border-primary/40"
-                >
-                  <CardContent className="p-6 text-center">
-                    <div className="mb-4 flex justify-center">
-                      <div className="p-3 rounded-full bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors duration-300">
-                        <Icon className="h-8 w-8 text-primary dark:text-primary-300 group-hover:scale-110 transition-transform duration-300" />
-                      </div>
+              <Card 
+                key={index} 
+                className="group hover:shadow-elegant hover:scale-105 transition-all duration-300 cursor-pointer"
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="mb-4 flex justify-center">
+                    <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+                      <Icon className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
                     </div>
-                    
-                    <Counter 
-                      end={stat.value} 
-                      duration={2000} 
-                      suffix={stat.suffix}
-                    />
-                    
-                    <h3 className="text-lg font-semibold text-foreground dark:text-foreground mt-2 mb-1">
-                      {stat.label}
-                    </h3>
-                    
-                    <p className="text-sm text-muted-foreground dark:text-muted-foreground/90">
-                      {stat.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+                  </div>
+                  
+                  <Counter 
+                    end={stat.value} 
+                    duration={2000} 
+                    suffix={stat.suffix}
+                  />
+                  
+                  <h3 className="text-lg font-semibold text-foreground mt-2 mb-1">
+                    {stat.label}
+                  </h3>
+                  
+                  <p className="text-sm text-muted-foreground">
+                    {stat.description}
+                  </p>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

@@ -8,12 +8,6 @@ Zaymazone is a comprehensive e-commerce backend API for an artisan marketplace p
 http://localhost:4000
 ```
 
-## Swagger / OpenAPI
-- **GET** `/api-docs` - Interactive Swagger UI for the full API surface
-- **GET** `/api-docs.json` - Generated OpenAPI 3.0 specification
-
-The Swagger spec is generated from the live route files, so the docs stay aligned with the backend implementation.
-
 ## Authentication
 The API uses JWT (JSON Web Tokens) for authentication. Include the token in the Authorization header:
 ```
@@ -210,12 +204,3 @@ npm run seed
 ```
 
 The backend is fully functional and ready for frontend integration!
-
-## Deployment Notes
-- Deploy the backend from the `server/` folder on Vercel so `server/index.js` is used as the function entrypoint.
-- Set these environment variables in Vercel:
-  - `MONGODB_URI`
-  - `JWT_SECRET`
-  - `CORS_ORIGIN` including `https://zaymazone-test2.vercel.app`
-  - `NODE_ENV=production`
-- If the frontend is deployed separately, set its API base URL to the backend deployment URL.
