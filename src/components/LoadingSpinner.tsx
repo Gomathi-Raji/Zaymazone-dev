@@ -67,3 +67,6 @@ export const InfiniteLoading = ({ isLoading, hasMore }: InfiniteLoadingProps) =>
 
   return null;
 };
+
+export default LoadingSpinner;
+ 
