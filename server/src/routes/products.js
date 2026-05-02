@@ -10,6 +10,20 @@ import { validate, paginationSchema, searchSchema } from '../middleware/validati
 
 const router = Router()
 
+const TEST_PRODUCT_PATTERN = /(\btest\b|\bmock\b|\bdemo\b|paytm payment gateway|payment testing)/i
+
+const isPublicTestProduct = (product) => {
+	if (!product) return false
+	const tags = Array.isArray(product.tags) ? product.tags : []
+	return (
+		String(product.name || '').match(TEST_PRODUCT_PATTERN)
+		|| String(product.description || '').match(TEST_PRODUCT_PATTERN)
+		|| String(product.category || '').toLowerCase() === 'test'
+		|| String(product.artisanId?.name || '').match(TEST_PRODUCT_PATTERN)
+		|| tags.some((tag) => TEST_PRODUCT_PATTERN.test(String(tag || '')))
+	)
+}
+
 const upsertSchema = z.object({
 	name: z.string().min(1).max(200),
 	description: z.string().max(4000).optional().default(''),
@@ -107,8 +121,10 @@ router.get('/',
 				Product.countDocuments(filter)
 			])
 
+			const publicProducts = products.filter((product) => !isPublicTestProduct(product))
+
 			// Transform products to match frontend interface
-			const transformedProducts = products.map(product => ({
+			const transformedProducts = publicProducts.map(product => ({
 				id: product._id.toString(),
 				name: product.name,
 				description: product.description,
@@ -145,7 +161,7 @@ router.get('/',
 				careInstructions: product.careInstructions || null
 			}))
 
-			const totalPages = Math.ceil(total / limit)
+			const totalPages = Math.ceil(Math.max(publicProducts.length, total - (products.length - publicProducts.length)) / limit)
 
 			return res.json({
 				products: transformedProducts,
@@ -251,7 +267,7 @@ router.get('/:id', optionalAuth, async (req, res) => {
 			.populate('artisanId', 'name bio location.city location.state rating totalProducts avatar')
 			.lean()
 
-		if (!product || !product.isActive) {
+		if (!product || !product.isActive || isPublicTestProduct(product)) {
 			return res.status(404).json({ error: 'Product not found' })
 		}
 

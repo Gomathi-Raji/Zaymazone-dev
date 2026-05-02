@@ -17,6 +17,7 @@ import { productsApi, Product } from "@/lib/api";
 import { artisanAnimations } from "@/lib/animations";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { pageContentApi } from "@/services/api";
+import { filterTestProducts } from "@/lib/productFilters";
 
 import { SkeletonGrid } from "@/components/SkeletonCard";
 
@@ -85,51 +86,13 @@ const ShopWithBackend = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Mock product for Paytm testing
-  const mockProduct: Product = {
-    id: "mock-paytm-test-product",
-    name: "🧪 TEST PRODUCT - Paytm Payment Gateway",
-    description: "This is a test product for demonstrating the Paytm payment gateway integration. Click to test the complete payment flow without real money. Features mock payment simulation.",
-    price: 1, // Very low price to indicate it's a test
-    images: ["/placeholder.svg"],
-    category: "test",
-    subcategory: "payment-testing",
-    materials: ["test"],
-    dimensions: "N/A",
-    weight: "0kg",
-    colors: ["test"],
-    inStock: true,
-    stockCount: 999,
-    artisan: {
-      id: "test-artisan",
-      name: "Payment Test Team",
-      location: "Online",
-      bio: "Specialized in testing payment integrations",
-      avatar: "/placeholder.svg",
-      rating: 5.0,
-      totalProducts: 1
-    },
-    rating: 5.0,
-    reviewCount: 100,
-    tags: ["test", "mock", "paytm", "payment", "demo"],
-    isHandmade: false,
-    shippingTime: "Instant (test)",
-    featured: true, // Make it featured so it stands out
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-
-  // Combine mock product with backend products
   const allProducts = useMemo(() => {
-    // Always include mock product at the beginning
-    const mockProducts = [mockProduct];
-
     if (productsData && productsData.products) {
-      return [...mockProducts, ...productsData.products];
+      return filterTestProducts(productsData.products);
     }
 
-    return mockProducts;
-  }, [productsData, mockProduct]);  const categories = [
+    return [];
+  }, [productsData]);  const categories = [
     "pottery", "textiles", "jewelry", "woodwork", 
     "metalwork", "paintings", "crafts", "toys"
   ];
@@ -284,7 +247,7 @@ const ShopWithBackend = () => {
             {isLoading ? (
               "Loading products..."
             ) : (
-              `Showing ${allProducts.length} products${productsData ? ` (${productsData.pagination.total} from backend + 1 test product)` : ' (test product only - backend not available)'}`
+              `Showing ${allProducts.length} products${productsData ? ` (${productsData.pagination.total} from backend)` : ''}`
             )}
           </p>
 
@@ -324,7 +287,7 @@ const ShopWithBackend = () => {
             )}
 
             <motion.div
-              className="shop-products-grid grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-5 xl:gap-6 mb-8 px-2 sm:px-0"
+              className="shop-products-grid grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4 mb-8 px-2 sm:px-0 items-stretch"
               variants={artisanAnimations.container}
               initial="hidden"
               animate="visible"
@@ -338,6 +301,7 @@ const ShopWithBackend = () => {
                   key={product.id}
                   variants={artisanAnimations.gridItem}
                   custom={index}
+                  className="h-full"
                 >
                   <ProductCard
                     product={product}
@@ -387,7 +351,7 @@ const ShopWithBackend = () => {
         {error && allProducts.length > 0 && (
           <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-yellow-800 text-sm">
-              ⚠️ Backend products couldn't be loaded, but test products are available for testing Paytm payments.
+              ⚠️ Backend products couldn't be loaded, showing cached product data only.
             </p>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { logEvent } from "./security";
+import { filterProductsResponse } from "./productFilters";
 
 // Determine API base URL based on environment
 const getApiBaseUrl = () => {
@@ -745,7 +746,8 @@ export const productsApi = {
 			});
 		}
 		const queryString = searchParams.toString();
-		return apiRequest<{ products: Product[]; pagination: Pagination }>(`/api/products${queryString ? `?${queryString}` : ''}`);
+		return apiRequest<{ products: Product[]; pagination: Pagination }>(`/api/products${queryString ? `?${queryString}` : ''}`)
+			.then(filterProductsResponse);
 	},
 
 	getById: (id: string) =>

@@ -13,12 +13,7 @@ export const FeaturedProducts = () => {
 
   // Get products from API - show first 6 as featured since backend doesn't support featured filtering
   const { data: productsData, isLoading, error } = useProducts({ limit: 6 });
-  let featuredProducts = productsData?.products || [];
-
-  // Development logging
-  if (import.meta.env.DEV) {
-    console.log('Featured Products State:', { isLoading, error, count: featuredProducts.length, productsData });
-  }
+  const featuredProducts = productsData?.products || [];
 
   // Show loading state
   if (isLoading) {
@@ -65,106 +60,6 @@ export const FeaturedProducts = () => {
         </div>
       </section>
     );
-  }
-
-  // Use mock data only in development for testing
-  if (import.meta.env.DEV && (!isLoading && featuredProducts.length === 0)) {
-    console.warn('DEV MODE: Using mock data for testing');
-    featuredProducts = [
-      {
-        id: "1",
-        name: "Handwoven Silk Scarf",
-        description: "Beautiful handwoven silk scarf with intricate traditional patterns",
-        price: 2500,
-        originalPrice: 3000,
-        images: ["/assets/silk-scarf.jpg"],
-        rating: 4.5,
-        reviewCount: 24,
-        inStock: true,
-        stockCount: 10,
-        category: "Textiles",
-        subcategory: "Scarves",
-        materials: ["Silk"],
-        dimensions: "180cm x 45cm x 0.1cm",
-        weight: "0.2kg",
-        colors: ["Red", "Blue", "Green"],
-        artisan: {
-          id: "1",
-          name: "Priya Kumar",
-          location: "Varanasi, India",
-          bio: "Master weaver with 20 years experience in traditional silk weaving techniques",
-          avatar: "/assets/artisan-avatar-1.jpg",
-          rating: 4.8,
-          totalProducts: 25
-        },
-        tags: ["handwoven", "silk", "traditional"],
-        isHandmade: true,
-        shippingTime: "5-7 days",
-        featured: true
-      },
-      {
-        id: "2",
-        name: "Blue Pottery Vase",
-        description: "Traditional blue pottery vase with hand-painted floral motifs",
-        price: 1800,
-        originalPrice: 2200,
-        images: ["/assets/blue-pottery-set.jpg"],
-        rating: 4.3,
-        reviewCount: 18,
-        inStock: true,
-        stockCount: 5,
-        category: "Pottery",
-        subcategory: "Vases",
-        materials: ["Clay", "Glaze"],
-        dimensions: "15cm x 15cm x 25cm",
-        weight: "1.2kg",
-        colors: ["Blue", "White"],
-        artisan: {
-          id: "2",
-          name: "Rajesh Mehra",
-          location: "Jaipur, India",
-          bio: "Traditional pottery artisan specializing in Rajasthani blue pottery",
-          avatar: "/assets/artisan-avatar-2.jpg",
-          rating: 4.6,
-          totalProducts: 18
-        },
-        tags: ["pottery", "traditional", "blue"],
-        isHandmade: true,
-        shippingTime: "3-5 days",
-        featured: true
-      },
-      {
-        id: "3",
-        name: "Brass Decorative Bowl",
-        description: "Handcrafted brass decorative bowl with intricate engraving",
-        price: 1200,
-        originalPrice: 1500,
-        images: ["/assets/brass-bowl.jpg"],
-        rating: 4.7,
-        reviewCount: 32,
-        inStock: true,
-        stockCount: 8,
-        category: "Metal Craft",
-        subcategory: "Decorative",
-        materials: ["Brass"],
-        dimensions: "20cm x 20cm x 8cm",
-        weight: "0.8kg",
-        colors: ["Gold", "Brass"],
-        artisan: {
-          id: "3",
-          name: "Anita Sharma",
-          location: "Moradabad, India",
-          bio: "Expert in metal craft with specialization in brass work",
-          avatar: "/assets/artisan-avatar-3.jpg",
-          rating: 4.9,
-          totalProducts: 40
-        },
-        tags: ["brass", "decorative", "metal"],
-        isHandmade: true,
-        shippingTime: "4-6 days",
-        featured: true
-      }
-    ];
   }
 
   const containerVariants = {
@@ -256,7 +151,7 @@ export const FeaturedProducts = () => {
 
         {/* Products Grid with Enhanced Layout */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-12 md:mb-16 items-stretch"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

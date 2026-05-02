@@ -48,7 +48,6 @@ const ArtisanDetail = lazy(() => import("./pages/ArtisanDetail"));
 const ArtisanDetailWithBackend = lazy(() => import("./pages/ArtisanDetailWithBackend"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Admin = lazy(() => import("./pages/Admin"));
-const APITestPage = lazy(() => import("./pages/APITestPage"));
 const SignIn = lazy(() => import("./pages/SignIn"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const SignInArtisan = lazy(() => import("./pages/SignInArtisan"));
@@ -114,7 +113,7 @@ const App = () => (
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/shop" element={<ShopWithBackend />} />
-                    <Route path="/shop-mock" element={<Shop />} />
+                    <Route path="/shop-mock" element={<Navigate to="/shop" replace />} />
                     <Route path="/categories" element={<Categories />} />
                     <Route path="/artisans" element={<Artisans />} />
                     <Route path="/artisan/:id" element={<ArtisanDetailWithBackend />} />
@@ -150,9 +149,9 @@ const App = () => (
                         <Admin />
                       </AdminRoute>
                     } />
-                    <Route path="/api-test" element={<APITestPage />} />
-                    <Route path="/mock-payment" element={<MockPayment />} />
-                    <Route path="/mock-payment/paytm" element={<MockPaytmPayment />} />
+                    <Route path="/api-test" element={<Navigate to="/" replace />} />
+                    <Route path="/mock-payment" element={<Navigate to="/shop" replace />} />
+                    <Route path="/mock-payment/paytm" element={<Navigate to="/shop" replace />} />
 
                     {/* Authentication Routes */}
                     <Route path="/sign-in" element={<SignIn />} />

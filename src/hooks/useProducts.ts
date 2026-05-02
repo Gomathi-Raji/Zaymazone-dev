@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Product, apiRequest } from '@/lib/api';
+import { filterProductsResponse } from '@/lib/productFilters';
 
 export interface ProductsResponse {
   products: Product[];
@@ -37,7 +38,7 @@ export const useProducts = (params: UseProductsParams = {}) => {
 
   return useQuery<ProductsResponse>({
     queryKey: ['products', params],
-    queryFn: () => apiRequest<ProductsResponse>(url),
+    queryFn: () => apiRequest<ProductsResponse>(url).then(filterProductsResponse),
   });
 };
 
@@ -45,6 +46,6 @@ export const useProduct = (id: string) => {
   return useQuery<Product>({
     queryKey: ['product', id],
     queryFn: () => apiRequest<Product>(`/api/products/${id}`),
-    enabled: !!id && id !== 'mock-paytm-test-product', // Disable API call for mock product
+    enabled: !!id && id !== 'mock-paytm-test-product',
   });
 };

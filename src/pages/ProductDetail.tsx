@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, Share2, Star, MapPin, Truck, Shield, RotateCcw, ArrowLeft, ShoppingCart, ShoppingBag, FileText, Settings, MessageSquare, Play, Ruler, Box, Pause, ZoomIn, ZoomOut, RotateCcw as ResetIcon, RotateCw } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
@@ -54,51 +54,11 @@ const ProductDetail = () => {
     );
   }, [isHovering, mousePosition.x, mousePosition.y, zoomLevel]);
 
-  // Mock product for Paytm testing
-  const mockProduct = useMemo<Product | null>(() => {
-    if (id === 'mock-paytm-test-product') {
-      return {
-        id: "mock-paytm-test-product",
-        name: "🧪 TEST PRODUCT - Paytm Payment Gateway",
-        description: "This is a test product for demonstrating the Paytm payment gateway integration. Click to test the complete payment flow without real money. Features mock payment simulation.",
-        price: 1, // Very low price to indicate it's a test
-        images: ["/placeholder.svg"],
-        category: "test",
-        subcategory: "payment-testing",
-        materials: ["test"],
-        dimensions: "N/A",
-        weight: "0kg",
-        colors: ["test"],
-        inStock: true,
-        stockCount: 999,
-        artisan: {
-          id: "test-artisan",
-          name: "Payment Test Team",
-          location: "Online",
-          bio: "Specialized in testing payment integrations",
-          avatar: "/placeholder.svg",
-          rating: 5.0,
-          totalProducts: 1
-        },
-        rating: 5.0,
-        reviewCount: 100,
-        tags: ["test", "mock", "paytm", "payment", "demo"],
-        isHandmade: false,
-        shippingTime: "Instant (test)",
-        featured: true, // Make it featured so it stands out
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-    }
-    return null;
-  }, [id]);
-
   const { data: apiProduct, isLoading, error } = useProduct(id || '');
   const { addToCart, isLoading: cartLoading } = useCart();
   const { isAuthenticated } = useAuth();
 
-  // Use mock product if available, otherwise use API product
-  const product = mockProduct || apiProduct;
+  const product = apiProduct;
 
   // Track product view - moved to top before any conditional returns
   useEffect(() => {
@@ -159,11 +119,6 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     // For mock products, skip cart and show success message
-    if (product?.id === 'mock-paytm-test-product') {
-      toast.success('Mock product added to cart (test mode)');
-      return;
-    }
-
     if (!isAuthenticated) {
       toast.error('Please sign in to add items to cart');
       return;
@@ -190,17 +145,6 @@ const ProductDetail = () => {
 
   const handleBuyNow = async () => {
     // For mock products, go directly to checkout
-    if (product?.id === 'mock-paytm-test-product') {
-      navigate('/checkout', {
-        state: {
-          directPurchase: true,
-          product: product,
-          quantity: quantity
-        }
-      });
-      return;
-    }
-
     if (!isAuthenticated) {
       toast.error('Please sign in to purchase');
       navigate('/sign-in');

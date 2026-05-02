@@ -92,11 +92,9 @@ export const ProductCard = ({ product, onQuickView, onAddToComparison }: Product
     ? Math.round(((safeProduct.originalPrice - safeProduct.price) / safeProduct.originalPrice) * 100)
     : 0;
 
-  const isMockProduct = safeProduct.id === 'mock-paytm-test-product';
-
   return (
     <motion.div
-      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-shadow duration-300 w-full min-w-0 flex flex-col"
+      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-shadow duration-300 w-full min-w-0 flex flex-col h-full"
       whileHover={{ y: -4 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -107,35 +105,25 @@ export const ProductCard = ({ product, onQuickView, onAddToComparison }: Product
 
         {/* Image — zooms on hover via CSS */}
         <div className="w-full h-full transition-transform duration-500 ease-out group-hover:scale-105">
-          {isMockProduct ? (
-            <div onClick={() => handleBuyNow()} className="w-full h-full cursor-pointer">
+          <>
+            <Link to={`/product/${safeProduct.id}`} className="hidden md:block w-full h-full">
               <LazyImage
                 src={getImageUrl(safeProduct.images[0])}
                 alt={safeProduct.name}
                 className="w-full h-full object-cover object-center"
               />
+            </Link>
+            <div
+              className="md:hidden w-full h-full cursor-pointer"
+              onClick={() => setShowMobileActions(!showMobileActions)}
+            >
+              <MobileOptimizedImage
+                src={getImageUrl(safeProduct.images[0])}
+                alt={safeProduct.name}
+                className="w-full h-full object-cover object-center"
+              />
             </div>
-          ) : (
-            <>
-              <Link to={`/product/${safeProduct.id}`} className="hidden md:block w-full h-full">
-                <LazyImage
-                  src={getImageUrl(safeProduct.images[0])}
-                  alt={safeProduct.name}
-                  className="w-full h-full object-cover object-center"
-                />
-              </Link>
-              <div
-                className="md:hidden w-full h-full cursor-pointer"
-                onClick={() => setShowMobileActions(!showMobileActions)}
-              >
-                <MobileOptimizedImage
-                  src={getImageUrl(safeProduct.images[0])}
-                  alt={safeProduct.name}
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-            </>
-          )}
+          </>
         </div>
 
         {/* Out-of-stock dim overlay */}
@@ -286,20 +274,11 @@ export const ProductCard = ({ product, onQuickView, onAddToComparison }: Product
         )}
 
         {/* Product name */}
-        {isMockProduct ? (
-          <h3
-            className="font-semibold text-foreground leading-snug line-clamp-2 text-sm cursor-pointer hover:text-primary transition-colors"
-            onClick={() => handleBuyNow()}
-          >
+        <Link to={`/product/${product.id}`}>
+          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 text-sm hover:text-primary transition-colors cursor-pointer">
             {safeProduct.name}
           </h3>
-        ) : (
-          <Link to={`/product/${product.id}`}>
-            <h3 className="font-semibold text-foreground leading-snug line-clamp-2 text-sm hover:text-primary transition-colors cursor-pointer">
-              {safeProduct.name}
-            </h3>
-          </Link>
-        )}
+        </Link>
 
         {/* Rating */}
         <div className="flex items-center gap-1.5">
