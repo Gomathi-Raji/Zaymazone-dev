@@ -124,15 +124,11 @@ export const Navigation = () => {
       </motion.div>
 
       <motion.nav
-        className="bg-background/98 backdrop-blur-xl border-b border-border/50 sticky top-0 z-50 shadow-lg shadow-primary/5 dark:bg-gradient-to-br dark:from-background dark:via-background/90 dark:to-background/95 dark:backdrop-blur-2xl dark:shadow-dark-elegant dark:border-border/40"
-        animate={{
-          backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.95)",
-          backdropFilter: isScrolled ? "blur(20px)" : "blur(16px)",
-          boxShadow: isScrolled 
-            ? "0 10px 30px -10px rgba(0, 0, 0, 0.1)" 
-            : "0 4px 20px -4px rgba(0, 0, 0, 0.05)",
-        }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className={`sticky top-0 z-50 border-b border-border/50 transition-[background-color,backdrop-filter,box-shadow] duration-300 ease-in-out ${
+          isScrolled
+            ? "bg-background/98 backdrop-blur-xl shadow-lg shadow-primary/5 dark:bg-background/95 dark:backdrop-blur-2xl dark:shadow-dark-elegant dark:border-border/40"
+            : "bg-background/95 backdrop-blur-lg shadow-md shadow-primary/5 dark:bg-background/90 dark:backdrop-blur-xl dark:shadow-dark-soft dark:border-border/40"
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-20">
