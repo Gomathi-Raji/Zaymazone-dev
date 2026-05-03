@@ -154,15 +154,17 @@ const ArtisanDetailWithBackend = () => {
         {/* Artisan Header */}
         <div className="bg-card rounded-xl overflow-hidden mb-8">
           {/* Cover Image */}
-          <div className="h-64 bg-gradient-to-r from-primary/20 to-primary/10 relative">
+          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/30 dark:from-primary/30 dark:via-primary/15 dark:to-secondary/10">
             {artisan.coverImage && (
               <img 
                 src={getImageUrl(artisan.coverImage)} 
                 alt={`${artisan.name} cover`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain object-center"
               />
             )}
-            <div className="absolute inset-0 bg-black/20"></div>
+            {artisan.coverImage && (
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+            )}
           </div>
 
           {/* Profile Info */}
