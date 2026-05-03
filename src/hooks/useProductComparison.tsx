@@ -1,12 +1,15 @@
 import { useState, useCallback } from "react";
-import { Product } from "@/data/products";
+import type { Product as ApiProduct } from "@/lib/api";
+import type { Product as MockProduct } from "@/data/products";
 import { toast } from "sonner";
 
+type ComparisonProduct = ApiProduct | MockProduct;
+
 export const useProductComparison = () => {
-  const [comparisonProducts, setComparisonProducts] = useState<Product[]>([]);
+  const [comparisonProducts, setComparisonProducts] = useState<ComparisonProduct[]>([]);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
 
-  const addToComparison = useCallback((product: Product) => {
+  const addToComparison = useCallback((product: ComparisonProduct) => {
     setComparisonProducts(prev => {
       // Check if already in comparison
       if (prev.find(p => p.id === product.id)) {

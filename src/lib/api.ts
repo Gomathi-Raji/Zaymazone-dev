@@ -1,50 +1,8 @@
 import { logEvent } from "./security";
 import { filterProductsResponse } from "./productFilters";
+import { ENV } from "@/config/env";
 
-// Determine API base URL based on environment
-const getApiBaseUrl = () => {
-	// Sanitize and validate environment variable
-	let apiUrl = import.meta.env.VITE_API_URL;
-
-	// Handle potential malformed URLs with comma-separated values
-	if (apiUrl && typeof apiUrl === 'string') {
-		// If there are multiple URLs (comma-separated), take the first valid one
-		if (apiUrl.includes(',')) {
-			const urls = apiUrl.split(',').map(url => url.trim());
-			apiUrl = urls.find(url =>
-				url.startsWith('http') &&
-				!url.includes('%20') &&
-				url.includes('zaymazone-backend.onrender.com')
-			) || urls[0];
-		}
-
-		// Clean up URL
-		apiUrl = apiUrl.replace(/\s+/g, '').replace('/api', '');
-
-		// Validate URL format
-		if (apiUrl.startsWith('http') && !apiUrl.includes('%20')) {
-			return apiUrl;
-		}
-	}
-
-	// In development, use localhost
-	if (import.meta.env.DEV) {
-		return "http://localhost:4000";
-	}
-
-	// Fallback to localhost for development
-	const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-	const isLocalhost = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
-
-	if (isLocalhost) {
-		return "http://localhost:4000";
-	}
-
-	// Production fallback
-	return "https://zaymazone-dev.onrender.com";
-};
-
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL = ENV.apiOrigin || (ENV.apiBaseUrl ? ENV.apiBaseUrl.replace(/\/api$/, "") : "");
 const TOKEN_KEY = "auth_token";
 const FIREBASE_TOKEN_KEY = "firebase_id_token";
 

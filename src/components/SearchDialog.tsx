@@ -1,26 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Star, MapPin } from "lucide-react";
-import { mockProducts } from "@/data/products";
-import { getImageUrl } from "@/lib/api";
+import { api, getImageUrl, type Product } from "@/lib/api";
 import { Link } from "react-router-dom";
 
 export const SearchDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredProducts = mockProducts.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (product.artisan?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
-  );
+  const [results, setResults] = useState<Product[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const recentSearches = ["pottery", "handwoven textiles", "brass items", "wooden toys"];
+
+  useEffect(() => {
+    const query = searchQuery.trim();
+    if (!query) {
+      setResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    const handle = window.setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const data = await api.getProducts({ q: query, limit: 8, page: 1 });
+        setResults(data.products || []);
+      } catch {
+        setResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 250);
+
+    return () => window.clearTimeout(handle);
+  }, [searchQuery]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -68,10 +84,10 @@ export const SearchDialog = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">
-                  Search Results ({filteredProducts.length})
+                  Search Results ({results.length})
                 </h3>
-                {filteredProducts.length > 0 && (
-                  <Link to="/shop" onClick={() => setIsOpen(false)}>
+                {results.length > 0 && (
+                  <Link to={`/shop?q=${encodeURIComponent(searchQuery)}`} onClick={() => setIsOpen(false)}>
                     <Button variant="outline" size="sm">
                       View All
                     </Button>
@@ -80,14 +96,19 @@ export const SearchDialog = () => {
               </div>
 
               <div className="max-h-96 overflow-y-auto space-y-3">
-                {filteredProducts.length === 0 ? (
+                {isSearching ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Searching...</p>
+                  </div>
+                ) : results.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No products found for "{searchQuery}"</p>
                     <p className="text-sm">Try different keywords or browse our categories</p>
                   </div>
                 ) : (
-                  filteredProducts.slice(0, 5).map((product) => (
+                  results.slice(0, 5).map((product) => (
                     <Link 
                       key={product.id} 
                       to={`/product/${product.id}`}

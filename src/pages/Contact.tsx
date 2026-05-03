@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { ENV } from "@/config/env";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -45,75 +46,77 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="lg:col-span-1">
             <div className="space-y-6">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-primary" />
+              {ENV.supportAddress ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <MapPin className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Visit Us</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">
+                          {ENV.supportAddress}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold">Visit Us</h3>
-                      <p className="text-sm text-muted-foreground">
-                        123 Craftman St<br />
-                        Porur, Chennai - 600116
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ) : null}
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-primary" />
+              {ENV.supportPhone ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Phone className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Call Us</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">
+                          {ENV.supportPhone}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold">Call Us</h3>
-                      <p className="text-sm text-muted-foreground">
-                        +91 63804 56410 <br />
-                        +91 93447 86408<br />
-                        Mon-Fri 9AM-6PM IST
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ) : null}
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Mail className="w-6 h-6 text-primary" />
+              {ENV.supportEmail ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Mail className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Email Us</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">
+                          {ENV.supportEmail}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold">Email Us</h3>
-                      <p className="text-sm text-muted-foreground">
-                        admin@thenamsoftwaresolutions.com<br />
-                        support@zaymazone.com
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ) : null}
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-primary" />
+              {ENV.supportHours ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Clock className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Business Hours</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">
+                          {ENV.supportHours}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold">Business Hours</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Monday - Friday: 9:00 AM - 6:00 PM<br />
-                        Saturday: 10:00 AM - 4:00 PM<br />
-                        Sunday: Closed
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ) : null}
             </div>
           </div>
 

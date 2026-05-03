@@ -23,25 +23,25 @@ const categories = [
 
 export const CategoriesSection = () => {
   return (
-    <section className="relative py-20 bg-gradient-subtle dark:bg-gradient-to-br dark:from-background dark:via-background/95 dark:to-primary/5 overflow-hidden">
+    <section className="relative py-14 sm:py-20 bg-gradient-subtle dark:bg-gradient-to-br dark:from-background dark:via-background/95 dark:to-primary/5 overflow-hidden">
       {/* Dark mode overlay for enhanced depth */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-primary/[0.05] dark:from-primary/[0.03] dark:via-primary/[0.08] dark:to-primary/[0.12] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
+        <div className="text-center mb-10 sm:mb-16">
+          <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
             Explore Our Collections
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Each piece tells a story of cultural heritage and masterful craftsmanship
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:mx-0 md:px-0">
           {categories.map((category, index) => (
             <Link
               key={category.title}
               to={category.href}
-              className="category-card group block"
+              className="category-card group block min-w-[82%] sm:min-w-[60%] md:min-w-0 snap-start"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <div className="relative h-80 overflow-hidden">

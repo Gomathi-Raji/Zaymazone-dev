@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ENV } from "@/config/env";
 
 const Privacy = () => {
   return (
@@ -168,10 +169,10 @@ const Privacy = () => {
               <p className="text-muted-foreground">
                 If you have any questions about this Privacy Policy or our data practices, please contact us at:
               </p>
-              <div className="text-muted-foreground">
-                <p>Email: privacy@zaymazone.com</p>
-                <p>Phone: +91 98765 43210</p>
-                <p>Address: 123 Craft Street, Delhi, India 110001</p>
+              <div className="text-muted-foreground space-y-1">
+                {ENV.supportEmail ? <p>Email: {ENV.supportEmail}</p> : null}
+                {ENV.supportPhone ? <p>Phone: {ENV.supportPhone}</p> : null}
+                {ENV.supportAddress ? <p>Address: {ENV.supportAddress}</p> : null}
               </div>
             </CardContent>
           </Card>

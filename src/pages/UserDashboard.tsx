@@ -323,8 +323,6 @@ export default function UserDashboard() {
         <UserSidebar
           activeSection={activeSection}
           onNavigate={handleNavigate}
-          userName={user?.name}
-          userInitials={user?.name?.split(" ").map(n=>n[0]).join("").slice(0,2).toUpperCase()}
           pendingOrders={orders.length}
           wishlistCount={wishlist.length}
         />
@@ -789,6 +787,7 @@ export default function UserDashboard() {
             </TabsContent>
           </Tabs>
         </div>
+      </div>
 
       <Footer />
 
@@ -846,8 +845,7 @@ export default function UserDashboard() {
           loadUserData();
         }}
       />
-        </div>
-      </div>
+
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { ENV } from "@/config/env";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
@@ -400,11 +401,20 @@ export default function InvoiceViewer() {
 
               {/* Footer */}
               <div className="px-8 py-6 border-t bg-slate-50 text-center space-y-1">
-                <p className="text-sm font-semibold text-foreground">Thank you for shopping with Zaymazone!</p>
-                <p className="text-xs text-muted-foreground">
-                  For queries, contact us at <span className="font-medium text-foreground">support@zaymazone.com</span>
-                  {" "}or visit <span className="font-medium text-foreground">www.zaymazone.com/help</span>
-                </p>
+                {ENV.companyName ? (
+                  <p className="text-sm font-semibold text-foreground">Thank you for shopping with {ENV.companyName}!</p>
+                ) : null}
+                {(ENV.supportEmail || ENV.helpUrl) ? (
+                  <p className="text-xs text-muted-foreground">
+                    {ENV.supportEmail ? (
+                      <>For queries, contact us at <span className="font-medium text-foreground">{ENV.supportEmail}</span></>
+                    ) : null}
+                    {ENV.supportEmail && ENV.helpUrl ? " or visit " : null}
+                    {ENV.helpUrl ? (
+                      <span className="font-medium text-foreground">{ENV.helpUrl}</span>
+                    ) : null}
+                  </p>
+                ) : null}
                 <p className="text-xs text-muted-foreground">
                   This is a computer-generated invoice and does not require a signature.
                 </p>

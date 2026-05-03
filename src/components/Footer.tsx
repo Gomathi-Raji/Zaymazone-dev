@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getImageUrl } from "@/lib/api";
+import { ENV, formatCurrency } from "@/config/env";
 
 const footerSections = [
   {
@@ -76,7 +77,9 @@ const socialLinks = [
 
 const trustBadges = [
   { icon: <Shield className="h-6 w-6" />, title: "Secure Payment", desc: "256-bit SSL encryption" },
-  { icon: <Truck className="h-6 w-6" />, title: "Free Shipping", desc: "On orders over ₹999" },
+  ...(ENV.freeShippingThreshold
+    ? [{ icon: <Truck className="h-6 w-6" />, title: "Free Shipping", desc: `On orders over ${formatCurrency(ENV.freeShippingThreshold)}` }]
+    : []),
   { icon: <Award className="h-6 w-6" />, title: "Authentic Crafts", desc: "Verified artisans only" },
   { icon: <Heart className="h-6 w-6" />, title: "Satisfaction", desc: "30-day return policy" }
 ];

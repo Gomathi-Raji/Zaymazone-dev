@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { ENV } from '@/config/env';
 
 // ── Section type ─────────────────────────────────────────────────────────────
 export type UserSection = 'dashboard' | 'orders' | 'wishlist' | 'profile' | 'settings';
@@ -181,9 +182,11 @@ export function UserSidebar({
             <p className="text-sm font-medium text-foreground truncate leading-tight">
               {user?.name || 'Customer'}
             </p>
-            <p className="text-[11px] text-muted-foreground truncate leading-tight">
-              {user?.email || 'customer@zaymazone.com'}
-            </p>
+            {user?.email || ENV.customerEmail ? (
+              <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                {user?.email || ENV.customerEmail}
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

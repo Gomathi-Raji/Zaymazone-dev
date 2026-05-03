@@ -60,6 +60,7 @@ async function compressImage(file: File, maxSizePx = 512, quality = 0.80): Promi
   });
 }
 import { useAuth } from "@/contexts/AuthContext";
+import { ENV } from "@/config/env";
 import { ProfileCompletionBar } from "@/components/profile/ProfileCompletionBar";
 import { ProfilePreviewCard } from "@/components/profile/ProfilePreviewCard";
 import { SensitiveChangeModal } from "@/components/profile/SensitiveChangeModal";
@@ -507,7 +508,7 @@ const Profile = () => {
                         disabled={!isEditing}
                         onChange={(e) => setUserData({...userData, phone: e.target.value})}
                         className={validationErrors.phone ? 'border-destructive focus-visible:ring-destructive' : ''}
-                        placeholder="+91 98765 43210"
+                        placeholder={ENV.supportPhone || "Enter phone number"}
                       />
                       {validationErrors.phone && (
                         <p className="flex items-center gap-1 text-xs text-destructive">

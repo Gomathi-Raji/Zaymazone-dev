@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { ENV } from "@/config/env";
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Shield } from 'lucide-react'
 import { adminService } from '@/services/adminService'
@@ -56,7 +57,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder="admin@zaymazone.com"
+                  placeholder={ENV.adminEmail || "Admin email"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -103,7 +104,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           <div className="mt-6 rounded-2xl border border-border/60 bg-background/70 p-4 text-sm shadow-sm dark:bg-background/35">
             <h4 className="text-sm font-medium text-foreground mb-2">Demo Credentials:</h4>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div><strong>Email:</strong> admin@zaymazone.com</div>
+              {ENV.adminEmail ? <div><strong>Email:</strong> {ENV.adminEmail}</div> : null}
               <div><strong>Password:</strong> admin123</div>
             </div>
           </div>

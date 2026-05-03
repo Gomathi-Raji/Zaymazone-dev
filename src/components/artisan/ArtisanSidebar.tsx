@@ -1,6 +1,5 @@
 // ── Module 8: Admin-style Sidebar for Artisan Dashboard ──────────────────────
 // Module 14: added onClose for mobile drawer, keyboard arrow-nav, ARIA attrs
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -20,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
+import { ENV } from '@/config/env';
 
 // ── Section type ─────────────────────────────────────────────────────────────
 export type ArtisanSection =
@@ -180,7 +180,7 @@ export function ArtisanSidebar({
   return (
     <aside
       id="artisan-sidebar"
-      className="w-64 bg-card border-r border-border min-h-screen flex flex-col shrink-0"
+      className="w-64 min-h-screen flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-l border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-slide-in-right hidden lg:flex lg:order-last"
       aria-label="Artisan dashboard sidebar"
     >
 
@@ -220,9 +220,11 @@ export function ArtisanSidebar({
             <p className="text-sm font-medium text-foreground truncate leading-tight">
               {user?.name || 'Artisan'}
             </p>
-            <p className="text-[11px] text-muted-foreground truncate leading-tight">
-              {user?.email || 'artisan@zaymazone.com'}
-            </p>
+            {user?.email || ENV.artisanEmail ? (
+              <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                {user?.email || ENV.artisanEmail}
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

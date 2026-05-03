@@ -6,19 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProductCard } from "@/components/ProductCard";
-import { getImageUrl } from "@/lib/api";
+import { api, getImageUrl, type Artisan, type Product } from "@/lib/api";
 import { 
   MapPin, 
   Star, 
   Users, 
-  Award, 
   Calendar,
-  Phone,
-  Mail,
-  Globe,
   Heart,
   Share2,
   MessageCircle,
@@ -30,81 +25,11 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface Artisan {
-  id: string;
-  name: string;
-  avatar?: string;
-  coverImage?: string;
-  location: {
-    city: string;
-    state: string;
-    country: string;
-  };
-  bio: string;
-  specialization: string[];
-  yearsOfExperience: number;
-  isVerified: boolean;
-  rating: number;
-  totalReviews: number;
-  totalProducts: number;
-  joinedDate: string;
-  contact: {
-    phone?: string;
-    email?: string;
-    website?: string;
-  };
-  socialMedia: {
-    facebook?: string;
-    instagram?: string;
-    twitter?: string;
-  };
-  achievements: Array<{
-    title: string;
-    description: string;
-    year: number;
-  }>;
-  story: string;
-  techniques: string[];
-  materials: string[];
-}
-
-interface ArtisanProduct {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  images: string[];
-  description: string;
-  category: string;
-  subcategory: string;
-  materials: string[];
-  dimensions: string;
-  weight: string;
-  colors: string[];
-  stockCount: number;
-  rating: number;
-  reviewCount: number;
-  isHandmade: boolean;
-  shippingTime: string;
-  inStock: boolean;
-  artisan: {
-    id: string;
-    name: string;
-    location: string;
-    bio: string;
-    avatar: string;
-    rating: number;
-    totalProducts: number;
-  };
-  tags: string[];
-  featured: boolean;
-}
-
 export default function ArtisanDetail() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const [artisan, setArtisan] = useState<Artisan | null>(null);
-  const [products, setProducts] = useState<ArtisanProduct[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -118,157 +43,13 @@ export default function ArtisanDetail() {
   const loadArtisanData = async () => {
     setLoading(true);
     try {
-      // Mock data - replace with actual API calls
-      const mockArtisan: Artisan = {
-        id: id!,
-        name: "Meera Devi",
-        avatar: getImageUrl('artisan-avatar-1.jpg'),
-        coverImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=400&fit=crop",
-        location: {
-          city: "Srinagar",
-          state: "Kashmir",
-          country: "India"
-        },
-        bio: "Master craftsperson specializing in traditional Kashmiri shawls and textiles. Passionate about preserving ancient weaving techniques passed down through generations.",
-        specialization: ["Kashmiri Shawls", "Pashmina", "Traditional Weaving"],
-        yearsOfExperience: 25,
-        isVerified: true,
-        rating: 4.8,
-        totalReviews: 156,
-        totalProducts: 42,
-        joinedDate: "2019-03-15",
-        contact: {
-          phone: "+91 9876543210",
-          email: "meera@kashmiricrafts.com",
-          website: "www.kashmiricrafts.com"
-        },
-        socialMedia: {
-          facebook: "facebook.com/meeracrafts",
-          instagram: "@meera_kashmiri_crafts"
-        },
-        achievements: [
-          {
-            title: "UNESCO Craft Excellence Award",
-            description: "Recognized for exceptional contribution to traditional crafts",
-            year: 2022
-          },
-          {
-            title: "National Handicrafts Award",
-            description: "Government of India recognition for master craftsperson",
-            year: 2020
-          }
-        ],
-        story: "Born into a family of weavers in the heart of Kashmir, Meera learned the art of Pashmina weaving from her grandmother. Over 25 years, she has mastered traditional techniques while innovating contemporary designs that appeal to modern customers. Her work represents the perfect blend of heritage and contemporary aesthetics.",
-        techniques: ["Hand Spinning", "Traditional Loom Weaving", "Natural Dyeing", "Embroidery"],
-        materials: ["Pashmina Wool", "Silk", "Natural Dyes", "Traditional Threads"]
-      };
+      const [artisanData, productsData] = await Promise.all([
+        api.getArtisan(id!),
+        api.getProducts({ artisanId: id!, limit: 24, page: 1 })
+      ]);
 
-      const mockProducts: ArtisanProduct[] = [
-        {
-          id: "1",
-          name: "Handwoven Kashmiri Shawl",
-          price: 4500,
-          originalPrice: 5200,
-          images: [
-            "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-            "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop"
-          ],
-          description: "Exquisite handwoven Kashmiri shawl made with traditional techniques passed down through generations",
-          category: "Textiles",
-          subcategory: "Shawls",
-          materials: ["Pashmina Wool", "Natural Dyes"],
-          dimensions: "200cm x 70cm x 1cm",
-          weight: "200g",
-          colors: ["Beige", "Brown", "Gold"],
-          stockCount: 5,
-          rating: 4.9,
-          reviewCount: 45,
-          isHandmade: true,
-          shippingTime: "7-10 days",
-          inStock: true,
-          artisan: { 
-            id: id!, 
-            name: mockArtisan.name, 
-            location: `${mockArtisan.location.city}, ${mockArtisan.location.state}`,
-            bio: mockArtisan.bio,
-            avatar: mockArtisan.avatar,
-            rating: mockArtisan.rating,
-            totalProducts: mockArtisan.totalProducts
-          },
-          tags: ["handmade", "kashmiri", "shawl", "pashmina"],
-          featured: true
-        },
-        {
-          id: "2",
-          name: "Pure Pashmina Stole",
-          price: 6200,
-          originalPrice: 7000,
-          images: [
-            "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop",
-            "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop"
-          ],
-          description: "Luxurious pure Pashmina stole with intricate hand embroidery and fine craftsmanship",
-          category: "Textiles",
-          subcategory: "Stoles",
-          materials: ["Pure Pashmina", "Silk Thread"],
-          dimensions: "180cm x 60cm x 1cm",
-          weight: "150g",
-          colors: ["Cream", "Gold", "Rose"],
-          stockCount: 3,
-          rating: 4.8,
-          reviewCount: 32,
-          isHandmade: true,
-          shippingTime: "10-14 days",
-          inStock: true,
-          artisan: { 
-            id: id!, 
-            name: mockArtisan.name, 
-            location: `${mockArtisan.location.city}, ${mockArtisan.location.state}`,
-            bio: mockArtisan.bio,
-            avatar: mockArtisan.avatar,
-            rating: mockArtisan.rating,
-            totalProducts: mockArtisan.totalProducts
-          },
-          tags: ["handmade", "pashmina", "stole", "luxury"],
-          featured: true
-        },
-        {
-          id: "3",
-          name: "Embroidered Wool Scarf",
-          price: 2800,
-          images: [
-            "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=400&h=400&fit=crop",
-            "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=400&h=400&fit=crop"
-          ],
-          description: "Beautifully embroidered wool scarf featuring traditional Kashmiri motifs and patterns",
-          category: "Textiles",
-          subcategory: "Scarves",
-          materials: ["Wool", "Cotton Thread", "Natural Dyes"],
-          dimensions: "160cm x 40cm x 1cm",
-          weight: "120g",
-          colors: ["Blue", "White", "Silver"],
-          stockCount: 0,
-          rating: 4.7,
-          reviewCount: 28,
-          isHandmade: true,
-          shippingTime: "5-7 days",
-          inStock: false,
-          artisan: { 
-            id: id!, 
-            name: mockArtisan.name, 
-            location: `${mockArtisan.location.city}, ${mockArtisan.location.state}`,
-            bio: mockArtisan.bio,
-            avatar: mockArtisan.avatar,
-            rating: mockArtisan.rating,
-            totalProducts: mockArtisan.totalProducts
-          },
-          tags: ["handmade", "embroidered", "scarf", "wool"],
-          featured: false
-        }
-      ];
-
-      setArtisan(mockArtisan);
-      setProducts(mockProducts);
+      setArtisan(artisanData);
+      setProducts(productsData.products || []);
       setReviews([]);
     } catch (error) {
       toast({
@@ -296,6 +77,10 @@ export default function ArtisanDetail() {
       description: "Artisan profile link copied to clipboard",
     });
   };
+
+  const coverImageUrl = artisan?.coverImage ? getImageUrl(artisan.coverImage) : "";
+  const avatarUrl = artisan?.avatar ? getImageUrl(artisan.avatar) : "";
+  const specialties = artisan?.specialties || [];
 
   if (loading) {
     return (
@@ -337,9 +122,9 @@ export default function ArtisanDetail() {
       <div className="pt-16">
         {/* Cover Image & Header */}
         <div className="relative h-80 bg-gradient-to-r from-primary/20 to-secondary/20 overflow-hidden">
-          {artisan.coverImage && (
+          {coverImageUrl && (
             <img 
-              src={artisan.coverImage} 
+              src={coverImageUrl} 
               alt={artisan.name}
               className="w-full h-full object-cover"
             />
@@ -360,7 +145,7 @@ export default function ArtisanDetail() {
           <div className="absolute bottom-6 left-6 right-6 z-10">
             <div className="flex items-end gap-6">
               <Avatar className="w-24 h-24 border-4 border-white">
-                <AvatarImage src={artisan.avatar} alt={artisan.name} />
+                <AvatarImage src={avatarUrl} alt={artisan.name} />
                 <AvatarFallback className="text-2xl font-bold">
                   {artisan.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
@@ -369,7 +154,7 @@ export default function ArtisanDetail() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2">
                   <h1 className="text-3xl font-bold text-white">{artisan.name}</h1>
-                  {artisan.isVerified && (
+                  {artisan.verification?.isVerified && (
                     <Verified className="w-6 h-6 text-blue-400" />
                   )}
                 </div>
@@ -382,11 +167,11 @@ export default function ArtisanDetail() {
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-current text-yellow-400" />
                     <span>{artisan.rating}</span>
-                    <span>({artisan.totalReviews} reviews)</span>
+                    <span>({artisan.totalRatings} reviews)</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    <span>{artisan.yearsOfExperience} years experience</span>
+                    <span>{artisan.experience} years experience</span>
                   </div>
                 </div>
                 
@@ -436,7 +221,7 @@ export default function ArtisanDetail() {
             <Card>
               <CardContent className="p-4 text-center">
                 <Users className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold">{artisan.totalReviews}</div>
+                <div className="text-2xl font-bold">{artisan.totalRatings}</div>
                 <div className="text-sm text-muted-foreground">Reviews</div>
               </CardContent>
             </Card>
@@ -444,7 +229,7 @@ export default function ArtisanDetail() {
             <Card>
               <CardContent className="p-4 text-center">
                 <Calendar className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold">{artisan.yearsOfExperience}</div>
+                <div className="text-2xl font-bold">{artisan.experience}</div>
                 <div className="text-sm text-muted-foreground">Years</div>
               </CardContent>
             </Card>
@@ -486,66 +271,9 @@ export default function ArtisanDetail() {
                       <CardTitle>Artisan Story</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-muted-foreground leading-relaxed">{artisan.story}</p>
-                    </CardContent>
-                  </Card>
-
-                  {/* Techniques & Materials */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Techniques</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {artisan.techniques.map((technique) => (
-                            <Badge key={technique} variant="secondary">
-                              {technique}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Materials</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {artisan.materials.map((material) => (
-                            <Badge key={material} variant="outline">
-                              {material}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Achievements */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Award className="w-5 h-5" />
-                        Achievements
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {artisan.achievements.map((achievement, index) => (
-                          <div key={index} className="flex gap-4">
-                            <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                              <Award className="w-6 h-6 text-primary" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium">{achievement.title}</h4>
-                              <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                              <p className="text-xs text-muted-foreground mt-1">{achievement.year}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {artisan.bio || "No story has been provided yet."}
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
@@ -558,13 +286,17 @@ export default function ArtisanDetail() {
                       <CardTitle className="text-lg">Specializations</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2">
-                        {artisan.specialization.map((spec) => (
-                          <Badge key={spec} className="mr-2 mb-2">
-                            {spec}
-                          </Badge>
-                        ))}
-                      </div>
+                      {specialties.length > 0 ? (
+                        <div className="space-y-2">
+                          {specialties.map((spec) => (
+                            <Badge key={spec} className="mr-2 mb-2">
+                              {spec}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No specializations listed.</p>
+                      )}
                     </CardContent>
                   </Card>
 
@@ -576,7 +308,7 @@ export default function ArtisanDetail() {
                     <CardContent className="space-y-4">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Experience</span>
-                        <span className="font-medium">{artisan.yearsOfExperience} years</span>
+                        <span className="font-medium">{artisan.experience} years</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Joined</span>
@@ -615,64 +347,9 @@ export default function ArtisanDetail() {
                     <CardTitle>Contact Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {artisan.contact.phone && (
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">Phone</p>
-                          <p className="text-sm text-muted-foreground">{artisan.contact.phone}</p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {artisan.contact.email && (
-                      <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">Email</p>
-                          <p className="text-sm text-muted-foreground">{artisan.contact.email}</p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {artisan.contact.website && (
-                      <div className="flex items-center gap-3">
-                        <Globe className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">Website</p>
-                          <a 
-                            href={`https://${artisan.contact.website}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-sm text-primary hover:underline"
-                          >
-                            {artisan.contact.website}
-                          </a>
-                        </div>
-                      </div>
-                    )}
-
-                    <Separator />
-
-                    <div className="space-y-2">
-                      <p className="font-medium">Social Media</p>
-                      <div className="flex gap-2">
-                        {artisan.socialMedia.facebook && (
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={`https://${artisan.socialMedia.facebook}`} target="_blank" rel="noopener noreferrer">
-                              Facebook
-                            </a>
-                          </Button>
-                        )}
-                        {artisan.socialMedia.instagram && (
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={`https://${artisan.socialMedia.instagram}`} target="_blank" rel="noopener noreferrer">
-                              Instagram
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Contact details are not available for this artisan yet.
+                    </p>
                   </CardContent>
                 </Card>
 
