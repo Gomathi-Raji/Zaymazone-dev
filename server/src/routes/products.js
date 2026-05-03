@@ -232,7 +232,6 @@ router.get('/artisans', async (req, res) => {
 		console.log(`🔍 Found ${artisans.length} artisans`)
 		
 		// Transform artisans to match frontend interface
-		const baseUrl = `${req.protocol}://${req.get('host')}`
 		const transformedArtisans = artisans.map(artisan => ({
 			id: artisan._id.toString(),
 			name: artisan.name,
@@ -241,7 +240,7 @@ router.get('/artisans', async (req, res) => {
 			experience: `${artisan.experience} years`,
 			rating: artisan.rating || 0,
 			products: artisan.totalProducts || 0,
-			image: artisan.coverImage ? `${baseUrl}/api/images/${artisan.coverImage.split('/').pop()}` : '/placeholder.svg',
+			image: artisan.coverImage || '/placeholder.svg',
 			avatar: artisan.avatar || '/placeholder.svg',
 			description: artisan.bio || '',
 			achievements: [

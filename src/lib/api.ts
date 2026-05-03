@@ -2124,32 +2124,69 @@ export const api = {
 export function getImageUrl(path: string): string {
 	if (!path) return '/placeholder.svg';
 
+	const trimmedPath = path.trim();
+	const apiOrigin = API_BASE_URL.replace(/\/api$/, '');
+
+	const isLocalhostHost = (hostname: string) =>
+		hostname === 'localhost' || hostname === '127.0.0.1';
+
+	const normalizeApiUrl = (url: URL) => {
+		if (url.pathname.startsWith('/api/images/')) {
+			return `${API_BASE_URL}${url.pathname}`;
+		}
+
+		if (url.pathname.startsWith('/uploads/')) {
+			return `${apiOrigin}${url.pathname}`;
+		}
+
+		return trimmedPath;
+	};
+
 	// Rewrite old hardcoded localhost image URLs to the current API base (handles DB-stored old URLs)
 	// Extract hostname from API_BASE_URL to match against old hardcoded URLs
 	try {
-		const oldLocalhostUrls = ['localhost:4000/api/images/', '127.0.0.1:4000/api/images/'];
-		for (const oldUrl of oldLocalhostUrls) {
-			if (path.includes(oldUrl)) {
-				const filename = path.split('/api/images/').pop() || '';
-				return `${API_BASE_URL}/api/images/${filename}`;
+		const parsed = new URL(trimmedPath);
+		if (parsed.pathname.startsWith('/api/images/')) {
+			if (isLocalhostHost(parsed.hostname) || parsed.host === new URL(apiOrigin).host) {
+				return `${API_BASE_URL}${parsed.pathname}`;
 			}
 		}
+
+		if (parsed.pathname.startsWith('/uploads/')) {
+			if (isLocalhostHost(parsed.hostname) || parsed.host === new URL(apiOrigin).host) {
+				return `${apiOrigin}${parsed.pathname}`;
+			}
+		}
+
+		return normalizeApiUrl(parsed);
 	} catch (e) {
 		// Silently ignore URL parsing errors
 	}
 
-	// If it's already a full URL or data URL, return as is
-	if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
-		return path;
+	// Preserve inline, local static, and already-resolved URLs
+	if (
+		trimmedPath.startsWith('data:') ||
+		trimmedPath.startsWith('blob:') ||
+		trimmedPath === '/placeholder.svg' ||
+		trimmedPath.startsWith('/assets/')
+	) {
+		return trimmedPath;
 	}
 
-	// If it's already an API image path, use it directly
-	if (path.startsWith('/api/images/')) {
-		return `${API_BASE_URL}${path}`;
+	if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) {
+		return trimmedPath;
 	}
 
-	// For all other paths (including /assets/ paths), serve from database via API
-	// Extract filename from path
-	const filename = path.split('/').pop() || path;
+	// If it's already an API or uploads path, resolve it against the backend host.
+	if (trimmedPath.startsWith('/api/images/')) {
+		return `${API_BASE_URL}${trimmedPath}`;
+	}
+
+	if (trimmedPath.startsWith('/uploads/')) {
+		return `${apiOrigin}${trimmedPath}`;
+	}
+
+	// For all other paths, assume a stored filename and serve via the image API.
+	const filename = trimmedPath.split('/').pop() || trimmedPath;
 	return `${API_BASE_URL}/api/images/${filename}`;
 }

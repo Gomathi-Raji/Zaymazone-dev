@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Star, Award, Package, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { VerificationBadge } from "./VerificationBadge";
+import { getImageUrl } from "@/lib/api";
 
 interface ArtisanProfileProps {
   artisan: {
@@ -26,12 +27,15 @@ interface ArtisanProfileProps {
 }
 
 export const ArtisanProfile = ({ artisan }: ArtisanProfileProps) => {
+  const coverImage = getImageUrl(artisan.image);
+  const avatarImage = getImageUrl(artisan.avatar || artisan.image);
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
       {/* Hero Image */}
       <div className="aspect-video bg-muted overflow-hidden relative">
         <img 
-          src={artisan.image} 
+          src={coverImage} 
           alt={`${artisan.name} at work`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -40,7 +44,7 @@ export const ArtisanProfile = ({ artisan }: ArtisanProfileProps) => {
         {/* Avatar positioned over the hero image */}
         <div className="absolute bottom-4 left-4">
           <Avatar className="h-16 w-16 border-4 border-white shadow-lg">
-            <AvatarImage src={artisan.avatar || artisan.image} alt={artisan.name} />
+            <AvatarImage src={avatarImage} alt={artisan.name} />
             <AvatarFallback className="text-lg font-semibold">
               {artisan.name.split(' ').map(n => n[0]).join('')}
             </AvatarFallback>

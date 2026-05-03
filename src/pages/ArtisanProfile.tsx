@@ -41,7 +41,7 @@ import {
   Info,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, getImageUrl } from '@/lib/api';
 // Module 11
 import { VerificationTimeline } from '@/components/trust/VerificationTimeline';
 
@@ -193,6 +193,7 @@ const ArtisanProfile = () => {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
+  const bannerSrc = editing ? editData.bannerImage : getImageUrl(profile?.bannerImage || '');
 
   const defaultEdit = (p?: ArtisanProfile | null): EditData => ({
     profilePic:    p?.profilePic   ?? '',
@@ -366,9 +367,9 @@ const ArtisanProfile = () => {
 
         {/* ── Banner ── */}
         <div className="relative w-full rounded-2xl overflow-hidden mb-6 aspect-[4/1] min-h-[120px] max-h-[220px] bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/30 dark:from-primary/30 dark:via-primary/15 dark:to-secondary/10 shadow-card">
-          {(editing ? editData.bannerImage : profile.bannerImage) ? (
+          {bannerSrc ? (
             <img
-              src={editing ? editData.bannerImage : profile.bannerImage}
+              src={bannerSrc}
               alt="Shop banner"
               className="w-full h-full object-cover"
             />
@@ -380,7 +381,7 @@ const ArtisanProfile = () => {
           )}
 
           {/* Gradient overlay at bottom for contrast */}
-          {(editing ? editData.bannerImage : profile.bannerImage) && (
+          {bannerSrc && (
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
           )}
 
@@ -426,7 +427,7 @@ const ArtisanProfile = () => {
           {/* Avatar */}
           <div className="relative flex-shrink-0">
             <Avatar className="w-24 h-24 ring-2 ring-border">
-              <AvatarImage src={editing ? editData.profilePic : profile.profilePic} alt={profile.fullName} />
+              <AvatarImage src={editing ? editData.profilePic : getImageUrl(profile.profilePic)} alt={profile.fullName} />
               <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
                 {getInitials(profile.fullName)}
               </AvatarFallback>

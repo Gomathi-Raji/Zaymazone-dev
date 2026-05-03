@@ -33,11 +33,12 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="relative min-h-screen overflow-hidden bg-background flex items-center justify-center p-4">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.12),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.95))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
+      <Card className="relative z-10 w-full max-w-md border-border/70 bg-card/85 backdrop-blur-xl shadow-2xl dark:bg-card/75 dark:border-white/10">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-            <Shield className="h-8 w-8 text-purple-600" />
+          <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center bg-primary/10 text-primary ring-1 ring-primary/15">
+            <Shield className="h-8 w-8" />
           </div>
           <div>
             <CardTitle className="text-2xl font-bold">Admin Panel</CardTitle>
@@ -99,9 +100,9 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h4>
-            <div className="text-xs text-gray-600 space-y-1">
+          <div className="mt-6 rounded-2xl border border-border/60 bg-background/70 p-4 text-sm shadow-sm dark:bg-background/35">
+            <h4 className="text-sm font-medium text-foreground mb-2">Demo Credentials:</h4>
+            <div className="text-xs text-muted-foreground space-y-1">
               <div><strong>Email:</strong> admin@zaymazone.com</div>
               <div><strong>Password:</strong> admin123</div>
             </div>

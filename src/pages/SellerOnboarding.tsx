@@ -444,9 +444,10 @@ export default function SellerOnboarding() {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="pt-20 pb-16 bg-gradient-warm">
+      <section className="pt-20 pb-16 relative overflow-hidden bg-background">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.08),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.9))] dark:bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.12),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))]" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="relative z-10 text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
               Join the Zaymazone Artisan Community
             </h1>
@@ -457,9 +458,9 @@ export default function SellerOnboarding() {
           </div>
 
           {/* Benefits Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="text-center border-muted hover:shadow-elegant transition-shadow">
+              <Card key={index} className="text-center border-border/70 bg-card/85 backdrop-blur-xl shadow-lg transition-shadow hover:shadow-xl dark:bg-card/75 dark:border-white/10">
                 <CardContent className="pt-6">
                   <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <benefit.icon className="w-6 h-6 text-primary" />
@@ -474,7 +475,7 @@ export default function SellerOnboarding() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16">
+      <section className="py-16 relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Progress Bar */}
           <div className="mb-8">
@@ -488,7 +489,7 @@ export default function SellerOnboarding() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Registration Form */}
             <div className="lg:col-span-2">
-              <Card className="shadow-elegant">
+              <Card className="border-border/70 bg-card/85 backdrop-blur-xl shadow-lg dark:bg-card/75 dark:border-white/10">
                 <CardHeader>
                   <CardTitle>
                     {currentStep === 1 && "Basic Information"}
