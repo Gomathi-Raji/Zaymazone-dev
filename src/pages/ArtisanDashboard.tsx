@@ -205,7 +205,7 @@ const ArtisanDashboard = () => {
   // ── Loading skeleton ──────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-subtle artisan-pattern flex">
+      <div className="min-h-screen bg-gradient-subtle artisan-pattern flex flex-col lg:flex-row-reverse">
         <aside className="hidden lg:flex flex-col w-64 bg-card border-r min-h-screen animate-pulse shrink-0">
           <div className="p-5 border-b"><div className="h-9 bg-muted rounded-lg" /></div>
           <div className="p-4 border-b"><div className="h-8 bg-muted rounded-full w-3/4" /></div>

@@ -789,6 +789,7 @@ export default function UserDashboard() {
             </TabsContent>
           </Tabs>
         </div>
+      </div>
 
       <Footer />
 
@@ -846,8 +847,7 @@ export default function UserDashboard() {
           loadUserData();
         }}
       />
-        </div>
-      </div>
+
     </div>
   );
 }

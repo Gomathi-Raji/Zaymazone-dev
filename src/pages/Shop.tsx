@@ -99,14 +99,14 @@ const Shop = () => {
     <div className="min-h-screen bg-background pb-24 md:pb-0">
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Hero Section with Search */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 mb-8">
-          <div className="text-center mb-6">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
+        <div className="bg-gradient-to-br from-primary/10 via-background to-primary-glow/10 rounded-3xl p-5 sm:p-8 mb-6 sm:mb-8 border border-border/60">
+          <div className="text-center mb-4 sm:mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-3 sm:mb-4">
               Shop Artisan Crafts
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-4 sm:mb-6">
               Discover authentic handcrafted treasures from skilled artisans across India
             </p>
           </div>
@@ -119,18 +119,39 @@ const Shop = () => {
                 placeholder="Search products, artisans, or materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-3 text-lg rounded-xl border-2 border-transparent focus:border-primary"
+                className="pl-12 pr-4 py-3 text-base sm:text-lg rounded-xl border-2 border-transparent focus:border-primary"
               />
+            </div>
+            <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              {[
+                { label: "Handmade", active: handmadeFilter, onClick: () => setHandmadeFilter(!handmadeFilter) },
+                { label: "Under 1k", active: priceFilter === "under-1000", onClick: () => setPriceFilter("under-1000") },
+                { label: "Textiles", active: categoryFilter === "textiles", onClick: () => setCategoryFilter("textiles") },
+                { label: "Pottery", active: categoryFilter === "pottery", onClick: () => setCategoryFilter("pottery") },
+              ].map((chip) => (
+                <button
+                  key={chip.label}
+                  type="button"
+                  onClick={chip.onClick}
+                  className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold border transition-colors ${
+                    chip.active
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background/70 text-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Main Content Layout - 4 Section Structure */}
                 {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-6">
+        <div className="lg:hidden mb-6 sticky top-16 sm:top-20 z-20">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="w-full bg-card border rounded-lg p-4 flex items-center justify-between hover:bg-muted transition-colors"
+            className="w-full bg-background/95 border border-border/60 rounded-2xl p-4 flex items-center justify-between hover:bg-muted transition-colors backdrop-blur"
           >
             <div className="flex items-center">
               <Filter className="w-5 h-5 mr-2" />
@@ -140,7 +161,7 @@ const Shop = () => {
           </button>
 
           {showMobileFilters && (
-            <div className="mt-4 bg-card rounded-lg p-4 border space-y-4">
+            <div className="mt-3 bg-card/95 rounded-2xl p-4 border border-border/60 space-y-4 backdrop-blur">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Category Filter */}
                 <div>
@@ -328,7 +349,7 @@ const Shop = () => {
                 </div>
               </div>
             ) : filteredAndSortedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-3 lg:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
                 {filteredAndSortedProducts.map(product => (
                   <ProductCard
                     key={product.id}

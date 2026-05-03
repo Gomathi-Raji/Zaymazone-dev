@@ -75,6 +75,23 @@ export const Navigation = () => {
     },
   ];
 
+  const mobileQuickActions = [
+    { to: "/shop", label: "Start shopping", icon: <ShoppingBag className="h-4 w-4" /> },
+    { to: "/start-selling", label: "Become an artisan", icon: <Crown className="h-4 w-4" /> },
+  ];
+
+  const mobileResources = [
+    { to: "/help", label: "Help & Support", icon: <Heart className="h-4 w-4" /> },
+    { to: "/sustainability", label: "Sustainability", icon: <Sparkles className="h-4 w-4" /> },
+    { to: "/start-selling", label: "Start Selling", icon: <Crown className="h-4 w-4" /> },
+  ];
+
+  const mobileAccountItems = [
+    { to: user?.role === 'artisan' ? '/artisan/profile' : '/profile', label: "My Profile", icon: <User className="h-4 w-4" /> },
+    { to: "/orders", label: "My Orders", icon: <ShoppingBag className="h-4 w-4" /> },
+    { to: "/wishlist", label: "Wishlist", icon: <Heart className="h-4 w-4" /> },
+  ];
+
   const NavLinks = () => (
     <>
       {navigationItems.map((item) => (
@@ -257,10 +274,10 @@ export const Navigation = () => {
                     </Button>
                   </motion.div>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background/98 backdrop-blur-xl border-primary/20 dark:bg-background/98 dark:backdrop-blur-2xl dark:border-primary/30 dark:shadow-dark-floating overflow-y-auto">
+                <SheetContent side="right" className="w-[320px] sm:w-[420px] bg-background/98 backdrop-blur-xl border-primary/20 dark:bg-background/98 dark:backdrop-blur-2xl dark:border-primary/30 dark:shadow-dark-floating overflow-y-auto">
                   <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <motion.div
-                    className="flex flex-col space-y-6 mt-6 pb-6"
+                    className="flex flex-col space-y-6 mt-4 pb-10"
                     initial="hidden"
                     animate="visible"
                     variants={{
@@ -274,10 +291,63 @@ export const Navigation = () => {
                       },
                     }}
                   >
+                    {/* Decorative header */}
+                    <div className="px-4">
+                      <div className="relative overflow-hidden rounded-[28px] border border-border/60 bg-gradient-to-br from-primary/15 via-background to-primary-glow/15 p-5 shadow-sm">
+                        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,hsl(var(--primary)/0.18),transparent_45%),radial-gradient(circle_at_80%_0%,hsl(var(--primary)/0.12),transparent_35%)]" />
+                        <div className="relative flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Explore</p>
+                            <p className="text-lg font-semibold text-foreground">Handcrafted edits</p>
+                            <p className="text-[11px] text-muted-foreground">New drops from local makers</p>
+                          </div>
+                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white shadow-sm">
+                            <Sparkles className="h-5 w-5" />
+                          </div>
+                        </div>
+                        <div className="relative mt-4 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+                          <span>Free shipping over 999</span>
+                          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Today</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Brand + quick actions */}
+                    <div className="px-4">
+                      <div className="rounded-3xl border border-border/60 bg-gradient-to-br from-primary/10 via-background to-primary-glow/10 p-4 shadow-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white">
+                            <Sparkles className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Zaymazone</p>
+                            <p className="text-base font-semibold text-foreground truncate">Handcrafted marketplace</p>
+                            <p className="text-[11px] text-muted-foreground truncate">Discover artisan-made goods</p>
+                          </div>
+                        </div>
+                        <div className="mt-4 grid grid-cols-2 gap-2">
+                          {mobileQuickActions.map((item) => (
+                            <Link
+                              key={item.to}
+                              to={item.to}
+                              onClick={() => setIsOpen(false)}
+                              className="flex items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-background/70 px-3 py-2 text-xs font-semibold text-foreground hover:bg-primary/10 transition-colors"
+                            >
+                              {item.icon}
+                              <span className="truncate">{item.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                        <div className="mt-3 rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+                          Handpicked, small-batch, and made with care
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Browse Section */}
                     <div>
-                      <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-3 mb-3">Browse</p>
-                      <div className="space-y-1">
+                      <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-4 mb-3">Browse</p>
+                      <div className="space-y-1 px-3">
                         {navigationItems.map((item) => (
                           <motion.div
                             key={item.to}
@@ -292,7 +362,7 @@ export const Navigation = () => {
                           >
                             <Link
                               to={item.to}
-                              className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
+                              className="flex items-center gap-3 p-3 rounded-2xl text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group border border-transparent hover:border-primary/20"
                               onClick={() => {
                                 if (item.onClick) item.onClick();
                                 setIsOpen(false);
@@ -310,13 +380,9 @@ export const Navigation = () => {
 
                     {/* Resources Section */}
                     <div>
-                      <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-3 mb-3">Resources</p>
-                      <div className="space-y-1">
-                        {[
-                          { to: "/help", label: "Help & Support", icon: <Heart className="h-4 w-4" /> },
-                          { to: "/sustainability", label: "Sustainability", icon: <Sparkles className="h-4 w-4" /> },
-                          { to: "/start-selling", label: "Start Selling", icon: <Crown className="h-4 w-4" /> },
-                        ].map((item) => (
+                      <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-4 mb-3">Resources</p>
+                      <div className="space-y-1 px-3">
+                        {mobileResources.map((item) => (
                           <motion.div
                             key={item.to}
                             variants={{
@@ -330,7 +396,7 @@ export const Navigation = () => {
                           >
                             <Link
                               to={item.to}
-                              className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
+                              className="flex items-center gap-3 p-3 rounded-2xl text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group border border-transparent hover:border-primary/20"
                               onClick={() => setIsOpen(false)}
                             >
                               <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
@@ -346,13 +412,9 @@ export const Navigation = () => {
                     {/* Account Section - Only show if authenticated */}
                     {isAuthenticated && (
                       <div>
-                        <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-3 mb-3">Account</p>
-                        <div className="space-y-1">
-                          {[
-                            { to: user?.role === 'artisan' ? '/artisan/profile' : '/profile', label: "My Profile", icon: <User className="h-4 w-4" /> },
-                            { to: "/orders", label: "My Orders", icon: <ShoppingBag className="h-4 w-4" /> },
-                            { to: "/wishlist", label: "Wishlist", icon: <Heart className="h-4 w-4" /> },
-                          ].map((item) => (
+                        <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-4 mb-3">Account</p>
+                        <div className="space-y-1 px-3">
+                          {mobileAccountItems.map((item) => (
                             <motion.div
                               key={item.to}
                               variants={{
@@ -366,7 +428,7 @@ export const Navigation = () => {
                             >
                               <Link
                                 to={item.to}
-                                className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
+                                className="flex items-center gap-3 p-3 rounded-2xl text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group border border-transparent hover:border-primary/20"
                                 onClick={() => setIsOpen(false)}
                               >
                                 <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
@@ -379,6 +441,23 @@ export const Navigation = () => {
                         </div>
                       </div>
                     )}
+
+                    {/* Footer CTA */}
+                    <div className="px-4">
+                      <div className="rounded-3xl border border-border/60 bg-background/70 p-4 flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">Get artisan updates</p>
+                          <p className="text-xs text-muted-foreground">New drops, limited runs</p>
+                        </div>
+                        <Link
+                          to="/sign-up"
+                          onClick={() => setIsOpen(false)}
+                          className="inline-flex items-center justify-center rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                        >
+                          Join
+                        </Link>
+                      </div>
+                    </div>
                   </motion.div>
                 </SheetContent>
               </Sheet>

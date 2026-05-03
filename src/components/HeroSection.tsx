@@ -7,7 +7,7 @@ export const HeroSection = () => {
   const titleWords = ["Crafting Culture.", "Empowering Artisans."];
 
   return (
-    <section className="relative min-h-[70vh] md:min-h-screen flex items-center justify-center overflow-hidden mobile-section">
+    <section className="relative min-h-[72vh] md:min-h-screen flex items-center justify-center overflow-hidden mobile-section">
       {/* Background Image with Parallax */}
       <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -21,14 +21,14 @@ export const HeroSection = () => {
 
       {/* Content */}
       <motion.div
-        className="relative z-10 text-center mobile-container max-w-5xl mx-auto"
+        className="relative z-10 text-center mobile-container max-w-5xl mx-auto px-4 py-8"
         initial="hidden"
         animate="visible"
         variants={artisanAnimations.container}
       >
         <div>
           <motion.h1
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-5 sm:mb-6 leading-tight"
             variants={artisanAnimations.heroText}
             custom={0}
           >
@@ -44,7 +44,7 @@ export const HeroSection = () => {
           </motion.h1>
 
           <motion.p
-            className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-base sm:text-xl md:text-2xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed"
             variants={artisanAnimations.heroText}
             custom={2}
           >
