@@ -95,7 +95,7 @@ export function ReturnRefundModal({
           <div className="flex items-center gap-3">
             <div className={`p-2 rounded-full ${mode === 'return' ? 'bg-orange-100' : 'bg-purple-100'}`}>
               {mode === 'return'
-                ? <RotateCcw className="w-5 h-5 text-orange-600" />
+                ? <RotateCcw className="w-5 h-5 text-primary" />
                 : <Banknote  className="w-5 h-5 text-purple-600" />}
             </div>
             <div>
@@ -106,7 +106,7 @@ export function ReturnRefundModal({
                 <DialogDescription className="mt-0.5 text-sm">
                   Order <span className="font-medium">#{order.orderNumber}</span>
                   {' · '}{order.shippingAddress?.fullName}
-                  {' · '}<span className="font-medium text-orange-600">{fmt(order.total)}</span>
+                  {' · '}<span className="font-medium text-primary">{fmt(order.total)}</span>
                 </DialogDescription>
               )}
             </div>
@@ -124,7 +124,7 @@ export function ReturnRefundModal({
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
                     mode === m
                       ? m === 'return'
-                        ? 'border-orange-500 bg-orange-50 text-orange-700'
+                        ? 'border-primary bg-primary/5 text-primary'
                         : 'border-purple-500 bg-purple-50 text-purple-700'
                       : 'border-border bg-card text-muted-foreground hover:bg-muted/50'
                   }`}
@@ -156,7 +156,7 @@ export function ReturnRefundModal({
                 <span className="text-muted-foreground">Customer</span>
                 <span className="font-medium text-right">{order.shippingAddress?.fullName}</span>
                 <span className="text-muted-foreground">Order Total</span>
-                <span className="font-semibold text-orange-600 text-right">{fmt(order.total)}</span>
+                <span className="font-semibold text-primary text-right">{fmt(order.total)}</span>
                 <span className="text-muted-foreground">Payment</span>
                 <div className="flex justify-end">
                   <Badge variant="outline" className="text-[10px] h-4 px-1.5 uppercase">
@@ -224,7 +224,7 @@ export function ReturnRefundModal({
             disabled={submitting || !reason.trim()}
             className={`flex-1 sm:flex-none ${
               mode === 'return'
-                ? 'bg-orange-600 hover:bg-orange-700'
+                ? 'bg-primary hover:bg-primary/90'
                 : 'bg-purple-600 hover:bg-purple-700'
             }`}
           >

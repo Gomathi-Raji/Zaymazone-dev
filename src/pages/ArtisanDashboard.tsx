@@ -205,8 +205,9 @@ const ArtisanDashboard = () => {
   // ── Loading skeleton ──────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex">
-        <aside className="hidden lg:flex flex-col w-64 bg-card border-r min-h-screen animate-pulse shrink-0">
+      <div className="relative min-h-screen overflow-hidden bg-background flex">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.09),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
+        <aside className="hidden lg:flex flex-col w-64 bg-card/80 backdrop-blur-xl border-r border-border/50 dark:bg-card/55 dark:border-white/10 min-h-screen animate-pulse shrink-0 relative z-10">
           <div className="p-5 border-b"><div className="h-9 bg-muted rounded-lg" /></div>
           <div className="p-4 border-b"><div className="h-8 bg-muted rounded-full w-3/4" /></div>
           <div className="p-3 space-y-2">
@@ -215,7 +216,7 @@ const ArtisanDashboard = () => {
             ))}
           </div>
         </aside>
-        <main className="flex-1 p-8 space-y-6">
+        <main className="flex-1 p-8 space-y-6 relative z-10">
           <div className="h-10 bg-muted rounded-lg w-64 animate-pulse" />
           <div className="grid grid-cols-6 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -259,7 +260,7 @@ const ArtisanDashboard = () => {
                 key={p}
                 onClick={() => handlePeriodChange(p)}
                 className={`px-3 py-1.5 font-medium transition-colors ${
-                  period === p ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground hover:bg-muted'
+                  period === p ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-primary/5'
                 }`}
               >
                 {p === '7days' ? '7D' : p === '30days' ? '30D' : p === '90days' ? '90D' : '1Y'}
@@ -271,7 +272,7 @@ const ArtisanDashboard = () => {
             Refresh
           </Button>
           <Link to="/artisan/products">
-            <Button size="sm" className="bg-orange-600 hover:bg-orange-700 h-8">
+            <Button size="sm" className="btn-artisan-primary h-8">
               <Plus className="w-3.5 h-3.5 mr-1.5" />Add Product
             </Button>
           </Link>
@@ -461,7 +462,7 @@ const ArtisanDashboard = () => {
         </div>
         <div className="flex gap-2">
           <Link to="/artisan/products"><Button variant="outline" size="sm">Manage <ExternalLink className="w-3.5 h-3.5 ml-1.5" /></Button></Link>
-          <Link to="/artisan/products"><Button size="sm" className="bg-orange-600 hover:bg-orange-700"><Plus className="w-3.5 h-3.5 mr-1.5" />Add</Button></Link>
+          <Link to="/artisan/products"><Button size="sm" className="btn-artisan-primary"><Plus className="w-3.5 h-3.5 mr-1.5" />Add</Button></Link>
         </div>
       </div>
 
@@ -481,7 +482,7 @@ const ArtisanDashboard = () => {
             <Package className="w-16 h-16 text-muted-foreground/40 mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">No products yet</p>
             <Link to="/artisan/products">
-              <Button className="bg-orange-600 hover:bg-orange-700"><Plus className="w-4 h-4 mr-2" />Add Your First Product</Button>
+              <Button className="btn-artisan-primary"><Plus className="w-4 h-4 mr-2" />Add Your First Product</Button>
             </Link>
           </CardContent>
         </Card>
@@ -547,7 +548,7 @@ const ArtisanDashboard = () => {
                 key={p}
                 onClick={() => handlePeriodChange(p)}
                 className={`px-3 py-1.5 font-medium transition-colors ${
-                  period === p ? 'bg-orange-600 text-white' : 'bg-card text-muted-foreground hover:bg-muted'
+                  period === p ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-primary/5'
                 }`}
               >
                 {p === '7days' ? '7D' : p === '30days' ? '30D' : p === '90days' ? '90D' : '1Y'}
@@ -619,13 +620,13 @@ const ArtisanDashboard = () => {
       </div>
       <Card className="max-w-md">
         <CardContent className="py-12 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center mx-auto mb-4">
-            <Icon className="w-7 h-7 text-orange-600" />
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <Icon className="w-7 h-7 text-primary" />
           </div>
           <h3 className="text-lg font-semibold mb-2">{SECTION_LABELS[section]}</h3>
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{description}</p>
           <Link to={href}>
-            <Button className="bg-orange-600 hover:bg-orange-700 gap-2">
+            <Button className="btn-artisan-primary gap-2">
               Open {SECTION_LABELS[section]} <ExternalLink className="w-3.5 h-3.5" />
             </Button>
           </Link>
@@ -639,7 +640,8 @@ const ArtisanDashboard = () => {
     <>
       {/* Module 14: skip-navigation link for keyboard users */}
       <a href="#artisan-main-content" className="skip-link">Skip to main content</a>
-      <div className="min-h-screen bg-background flex">
+      <div className="relative min-h-screen overflow-hidden bg-background flex">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.09),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
 
       {/* ── Sidebar ────────────────────────────────────────────────────── */}
       <ArtisanSidebar
@@ -652,17 +654,17 @@ const ArtisanDashboard = () => {
       />
 
       {/* ── Main pane ──────────────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col min-h-screen overflow-auto">
+      <div className="relative z-10 flex-1 flex flex-col min-h-screen overflow-auto backdrop-blur-sm">
 
         {/* Top bar */}
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border px-6 py-3 flex items-center justify-between">
+        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 px-6 py-3 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
             <h2 className="text-sm font-semibold">{SECTION_LABELS[activeSection]}</h2>
             {/* New-order alert badge */}
             {alertActive && (
               <button
                 onClick={() => { clearAlert(); setActiveSection('orders'); }}
-                className="flex items-center gap-1.5 text-xs text-orange-700 bg-orange-100 border border-orange-300 rounded-full px-2.5 py-0.5 hover:bg-orange-200 transition-colors animate-pulse"
+                className="flex items-center gap-1.5 text-xs text-primary bg-primary/10 border border-primary/20 rounded-full px-2.5 py-0.5 hover:bg-primary/15 transition-colors animate-pulse"
               >
                 <Zap className="w-3 h-3" />
                 {newOrderIds.length} new!
@@ -761,7 +763,7 @@ const ArtisanDashboard = () => {
         </main>
 
         {/* Footer strip — hidden on mobile (replaced by bottom nav) */}
-        <footer className="hidden lg:flex border-t border-border px-6 py-3 items-center justify-between text-[11px] text-muted-foreground">
+        <footer className="hidden lg:flex border-t border-border/50 bg-background/35 backdrop-blur-xl px-6 py-3 items-center justify-between text-[11px] text-muted-foreground dark:border-white/10 dark:bg-card/25">
           <span>Zaymazone Artisan Panel · Module 14</span>
           <span>
             Auto-refreshes every 30s · Last synced{' '}

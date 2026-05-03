@@ -30,13 +30,13 @@ function GrowthChip({ value }: { value: number }) {
   }
   if (value > 0) {
     return (
-      <Badge className="text-xs px-1.5 gap-0.5 bg-green-100 text-green-700 border-green-200 hover:bg-green-100">
+      <Badge className="text-xs px-1.5 gap-0.5 bg-green-100 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-950/40 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-950/40">
         <TrendingUp className="w-3 h-3" /> {pct(value)}
       </Badge>
     );
   }
   return (
-    <Badge className="text-xs px-1.5 gap-0.5 bg-red-100 text-red-700 border-red-200 hover:bg-red-100">
+    <Badge className="text-xs px-1.5 gap-0.5 bg-red-100 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800 dark:hover:bg-red-950/40">
       <TrendingDown className="w-3 h-3" /> {pct(value)}
     </Badge>
   );
@@ -80,7 +80,7 @@ export function DashboardStatsRow({ orderCounts, revenue, performance, loading }
       subLabel: `${orderCounts?.newToday ?? 0} new today`,
       icon: ShoppingCart,
       iconColor: 'text-blue-600',
-      iconBg: 'bg-blue-50',
+      iconBg: 'bg-blue-50 dark:bg-blue-950/40',
     },
     {
       label: 'Pending Action',
@@ -88,7 +88,7 @@ export function DashboardStatsRow({ orderCounts, revenue, performance, loading }
       subLabel: `${orderCounts?.byStatus?.placed ?? 0} need review`,
       icon: Clock,
       iconColor: 'text-amber-600',
-      iconBg: 'bg-amber-50',
+      iconBg: 'bg-amber-50 dark:bg-amber-950/40',
       highlight: (orderCounts?.byStatus?.placed ?? 0) > 0,
     },
     {
@@ -97,7 +97,7 @@ export function DashboardStatsRow({ orderCounts, revenue, performance, loading }
       subLabel: `${orderCounts?.cancelled ?? 0} cancelled`,
       icon: CheckCircle2,
       iconColor: 'text-green-600',
-      iconBg: 'bg-green-50',
+      iconBg: 'bg-green-50 dark:bg-green-950/40',
     },
     {
       label: 'Revenue (Period)',
@@ -106,15 +106,15 @@ export function DashboardStatsRow({ orderCounts, revenue, performance, loading }
       chip: revenue ? <GrowthChip value={revenue.growthPct} /> : undefined,
       icon: IndianRupee,
       iconColor: 'text-purple-600',
-      iconBg: 'bg-purple-50',
+      iconBg: 'bg-purple-50 dark:bg-purple-950/40',
     },
     {
       label: 'All-Time Revenue',
       value: fmt(revenue?.allTime ?? 0),
       subLabel: `${fmt(revenue?.pending ?? 0)} pending`,
       icon: Sparkles,
-      iconColor: 'text-orange-600',
-      iconBg: 'bg-orange-50',
+      iconColor: 'text-primary',
+      iconBg: 'bg-primary/10 dark:bg-primary/20',
     },
     {
       label: 'Fulfillment Rate',
@@ -122,7 +122,7 @@ export function DashboardStatsRow({ orderCounts, revenue, performance, loading }
       subLabel: `Avg rating ${(performance?.avgRating ?? 0).toFixed(1)} ★`,
       icon: Award,
       iconColor: 'text-indigo-600',
-      iconBg: 'bg-indigo-50',
+      iconBg: 'bg-indigo-50 dark:bg-indigo-950/40',
     },
   ];
 
@@ -133,7 +133,7 @@ export function DashboardStatsRow({ orderCounts, revenue, performance, loading }
         return (
           <Card
             key={stat.label}
-            className={stat.highlight ? 'border-amber-300 bg-amber-50/40 shadow-sm' : ''}
+            className={`card-artisan ${stat.highlight ? 'border-primary/30 bg-primary/5 shadow-sm dark:bg-primary/10 dark:border-primary/40' : ''}`}
           >
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">

@@ -35,7 +35,7 @@ const ACTIONS: QuickAction[] = [
     href: '/artisan/products/new',
     primary: true,
     iconColor: 'text-white',
-    iconBg: 'bg-orange-600',
+    iconBg: 'bg-primary',
   },
   {
     label: 'Process Orders',
@@ -43,7 +43,7 @@ const ACTIONS: QuickAction[] = [
     icon: ShoppingCart,
     href: '/artisan/orders',
     iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-50',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/40',
   },
   {
     label: 'Analytics',
@@ -51,7 +51,7 @@ const ACTIONS: QuickAction[] = [
     icon: BarChart3,
     href: '/artisan/analytics',
     iconColor: 'text-purple-600',
-    iconBg: 'bg-purple-50',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/40',
   },
   {
     label: 'Customers',
@@ -59,7 +59,7 @@ const ACTIONS: QuickAction[] = [
     icon: Users,
     href: '/artisan/customers',
     iconColor: 'text-green-600',
-    iconBg: 'bg-green-50',
+    iconBg: 'bg-green-50 dark:bg-green-950/40',
   },
   {
     label: 'Messages',
@@ -67,7 +67,7 @@ const ACTIONS: QuickAction[] = [
     icon: MessageSquare,
     href: '/artisan/messages',
     iconColor: 'text-indigo-600',
-    iconBg: 'bg-indigo-50',
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/40',
   },
   {
     label: 'My Products',
@@ -75,7 +75,7 @@ const ACTIONS: QuickAction[] = [
     icon: Package,
     href: '/artisan/products',
     iconColor: 'text-amber-600',
-    iconBg: 'bg-amber-50',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/40',
   },
   {
     label: 'Reviews',
@@ -83,7 +83,7 @@ const ACTIONS: QuickAction[] = [
     icon: FileText,
     href: '/artisan/reviews',
     iconColor: 'text-pink-600',
-    iconBg: 'bg-pink-50',
+    iconBg: 'bg-pink-50 dark:bg-pink-950/40',
   },
   {
     label: 'Profile',
@@ -91,24 +91,24 @@ const ACTIONS: QuickAction[] = [
     icon: UserCircle,
     href: '/artisan/profile',
     iconColor: 'text-gray-600',
-    iconBg: 'bg-gray-100',
+    iconBg: 'bg-gray-100 dark:bg-gray-800',
   },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function QuickActionsPanel() {
   return (
-    <Card className="shadow-sm">
+    <Card className="card-artisan">
       <CardHeader className="pb-3 pt-4 px-4">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <Zap className="w-4 h-4 text-orange-500" />
+          <Zap className="w-4 h-4 text-primary" />
           Quick Actions
         </CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4">
         {/* Primary action – full width */}
         <Link to={ACTIONS[0].href} className="block mb-3">
-          <Button className="w-full bg-orange-600 hover:bg-orange-700 gap-2 h-10">
+          <Button className="w-full btn-artisan-primary gap-2 h-10">
             <Plus className="w-4 h-4" />
             Add New Product
           </Button>
@@ -118,7 +118,7 @@ export function QuickActionsPanel() {
         <div className="grid grid-cols-2 gap-2">
           {ACTIONS.slice(1).map(({ label, description, icon: Icon, href, iconColor, iconBg }) => (
             <Link key={label} to={href}>
-              <button className="w-full flex items-center gap-2 p-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors text-left group">
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-lg border border-border hover:bg-primary/5 transition-colors text-left group">
                 <div className={`w-7 h-7 rounded-md ${iconBg} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
                   <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
                 </div>

@@ -142,7 +142,9 @@ const ArtisanProducts = () => {
   const formatPrice = (price) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(price);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen overflow-hidden bg-background">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.12),transparent_32%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_28%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
+      <div className="relative z-10">
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -177,7 +179,7 @@ const ArtisanProducts = () => {
                 </div>
                 <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
-                    <Button onClick={() => resetForm()} className="gap-2 bg-orange-600 hover:bg-orange-700">
+                    <Button onClick={() => resetForm()} className="gap-2 btn-artisan-primary">
                       <Plus className="w-4 h-4" />
                       Add Product
                     </Button>
@@ -442,6 +444,7 @@ const ArtisanProducts = () => {
       </main>
 
       <Footer />
+      </div>
     </div>
   );
 };

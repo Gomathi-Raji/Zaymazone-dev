@@ -313,7 +313,7 @@ const ArtisanProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-subtle artisan-pattern">
         <Navigation />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -328,7 +328,7 @@ const ArtisanProfile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-subtle artisan-pattern">
         <Navigation />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -345,7 +345,7 @@ const ArtisanProfile = () => {
   const StatusIcon = statusConfig[profile.approvalStatus].icon;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-subtle artisan-pattern">
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
@@ -365,7 +365,7 @@ const ArtisanProfile = () => {
         )}
 
         {/* ── Banner ── */}
-        <div className="relative w-full rounded-xl overflow-hidden mb-6 aspect-[4/1] min-h-[120px] max-h-[220px] bg-gradient-to-br from-primary/20 via-primary/10 to-orange-100 dark:from-primary/30 dark:via-primary/15 dark:to-orange-900/20">
+        <div className="relative w-full rounded-2xl overflow-hidden mb-6 aspect-[4/1] min-h-[120px] max-h-[220px] bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/30 dark:from-primary/30 dark:via-primary/15 dark:to-secondary/10 shadow-card">
           {(editing ? editData.bannerImage : profile.bannerImage) ? (
             <img
               src={editing ? editData.bannerImage : profile.bannerImage}

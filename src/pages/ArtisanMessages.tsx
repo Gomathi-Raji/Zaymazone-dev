@@ -296,7 +296,7 @@ const ArtisanMessages = () => {
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold text-foreground">Messages</h1>
               {unreadTotal > 0 && (
-                <Badge className="bg-orange-500 text-white text-sm px-2 py-0.5">
+                <Badge className="bg-primary text-primary-foreground text-sm px-2 py-0.5">
                   {unreadTotal} unread
                 </Badge>
               )}
@@ -376,7 +376,7 @@ const ArtisanMessages = () => {
                             </AvatarFallback>
                           </Avatar>
                           {conv.unreadByArtisan > 0 && (
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-[10px] text-primary-foreground flex items-center justify-center font-bold">
                               {conv.unreadByArtisan}
                             </span>
                           )}

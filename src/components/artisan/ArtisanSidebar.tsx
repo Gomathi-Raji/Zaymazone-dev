@@ -151,8 +151,8 @@ export function ArtisanSidebar({
         size="sm"
         className={`w-full justify-start gap-2.5 h-9 px-3 font-normal ${
           isActive
-            ? 'bg-orange-600 hover:bg-orange-700 text-white shadow-sm'
-            : 'hover:bg-muted text-foreground'
+            ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm'
+            : 'hover:bg-primary/5 text-foreground'
         }`}
         aria-current={isActive ? 'page' : undefined}
         onClick={() => onNavigate(item.id)}
@@ -164,7 +164,7 @@ export function ArtisanSidebar({
           <Badge
             className={`text-[10px] px-1.5 min-w-[18px] h-4 flex items-center justify-center leading-none ${
               isActive
-                ? 'bg-white/20 text-white border-white/30'
+                  ? 'bg-background/15 text-white border-background/25 dark:bg-background/20 dark:text-white dark:border-background/30'
                 : item.badgeVariant === 'warning'
                 ? 'bg-amber-100 text-amber-700 border-amber-200'
                 : 'bg-blue-100 text-blue-700 border-blue-200'
@@ -180,14 +180,14 @@ export function ArtisanSidebar({
   return (
     <aside
       id="artisan-sidebar"
-      className="w-64 bg-card border-r border-border min-h-screen flex flex-col shrink-0"
+      className="w-64 min-h-screen flex flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-r border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)]"
       aria-label="Artisan dashboard sidebar"
     >
 
       {/* ── Brand ─────────────────────────────────────────────────────────── */}
-      <div className="px-5 py-4 border-b border-border">
+      <div className="px-5 py-4 border-b border-border/70 dark:border-white/10 bg-background/20 dark:bg-background/10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
             <Store className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0 flex-1">
@@ -209,10 +209,10 @@ export function ArtisanSidebar({
       </div>
 
       {/* ── User info ─────────────────────────────────────────────────────── */}
-      <div className="px-4 py-3 border-b border-border">
+      <div className="px-4 py-3 border-b border-border/70 dark:border-white/10 bg-background/10 dark:bg-background/5">
         <div className="flex items-center gap-2.5">
           <Avatar className="w-8 h-8 shrink-0">
-            <AvatarFallback className="bg-orange-100 text-orange-700 text-xs font-bold">
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -246,7 +246,7 @@ export function ArtisanSidebar({
 
       {/* ── Stats summary ─────────────────────────────────────────────────── */}
       {(totalProducts > 0 || totalReviews > 0) && (
-        <div className="px-4 py-3 border-t border-border bg-muted/30">
+        <div className="px-4 py-3 border-t border-border/70 bg-muted/40 dark:border-white/10 dark:bg-background/10">
           <div className="flex gap-4 justify-around text-center">
             <div>
               <p className="text-xs font-bold text-foreground">{totalProducts}</p>
@@ -267,12 +267,12 @@ export function ArtisanSidebar({
       )}
 
       {/* ── Profile link ──────────────────────────────────────────────────── */}
-      <div className="px-3 py-3 border-t border-border space-y-0.5">
+      <div className="px-3 py-3 border-t border-border/70 dark:border-white/10 space-y-0.5 bg-background/10 dark:bg-background/5">
         <Link to="/artisan/profile">
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal"
+            className="w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal hover:bg-primary/10 dark:hover:bg-white/10"
           >
             <UserCircle className="w-4 h-4" />
             Profile &amp; Settings

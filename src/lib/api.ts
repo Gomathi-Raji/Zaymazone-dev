@@ -2124,10 +2124,18 @@ export const api = {
 export function getImageUrl(path: string): string {
 	if (!path) return '/placeholder.svg';
 
-	// Rewrite localhost image URLs to the current API base (handles DB-stored localhost URLs)
-	if (path.includes('localhost:4000/api/images/') || path.includes('127.0.0.1:4000/api/images/')) {
-		const filename = path.split('/api/images/').pop() || '';
-		return `${API_BASE_URL}/api/images/${filename}`;
+	// Rewrite old hardcoded localhost image URLs to the current API base (handles DB-stored old URLs)
+	// Extract hostname from API_BASE_URL to match against old hardcoded URLs
+	try {
+		const oldLocalhostUrls = ['localhost:4000/api/images/', '127.0.0.1:4000/api/images/'];
+		for (const oldUrl of oldLocalhostUrls) {
+			if (path.includes(oldUrl)) {
+				const filename = path.split('/api/images/').pop() || '';
+				return `${API_BASE_URL}/api/images/${filename}`;
+			}
+		}
+	} catch (e) {
+		// Silently ignore URL parsing errors
 	}
 
 	// If it's already a full URL or data URL, return as is

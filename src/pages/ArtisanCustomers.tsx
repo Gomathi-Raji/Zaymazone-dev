@@ -262,9 +262,9 @@ const ArtisanCustomers = () => {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">At Risk Customers</p>
                   <p className="text-2xl font-bold">{getCustomerStats().atRisk}</p>
-                  <p className="text-xs text-orange-600">Need attention</p>
+                  <p className="text-xs text-primary">Need attention</p>
                 </div>
-                <AlertTriangle className="w-8 h-8 text-orange-600" />
+                <AlertTriangle className="w-8 h-8 text-primary" />
               </div>
             </CardContent>
           </Card>

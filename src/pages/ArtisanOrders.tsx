@@ -313,7 +313,7 @@ const ArtisanOrders = () => {
                   <p className="text-xs font-medium text-muted-foreground">Shipped</p>
                   <p className="text-xl font-bold">{stats.shipped}</p>
                 </div>
-                <Truck className="w-6 h-6 text-orange-600" />
+                <Truck className="w-6 h-6 text-primary" />
               </div>
             </CardContent>
           </Card>
@@ -458,7 +458,7 @@ const ArtisanOrders = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-orange-300 text-orange-700 hover:bg-orange-50 hover:border-orange-400"
+                            className="border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/40"
                             onClick={() => openCancelDialog(order)}
                           >
                             <XCircle className="w-4 h-4 mr-2" />
@@ -609,7 +609,7 @@ const ArtisanOrders = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-orange-300 text-orange-700 hover:bg-orange-50 hover:border-orange-400"
+                            className="border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/40"
                             onClick={() => openCancelDialog(selectedOrder)}
                           >
                             <XCircle className="w-4 h-4 mr-2" />
@@ -654,11 +654,11 @@ const ArtisanOrders = () => {
                     )}
                     {/* Show cancellation reason if cancelled */}
                     {selectedOrder.status === 'cancelled' && selectedOrder.cancellationReason && (
-                      <div className="flex items-start gap-2 p-3 rounded-md bg-orange-50 border border-orange-200">
+                      <div className="flex items-start gap-2 p-3 rounded-md bg-primary/5 border border-primary/20">
                         <MessageSquare className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-xs font-semibold text-orange-700 mb-0.5">Cancellation Reason</p>
-                          <p className="text-sm text-orange-600">{selectedOrder.cancellationReason}</p>
+                          <p className="text-xs font-semibold text-primary mb-0.5">Cancellation Reason</p>
+                          <p className="text-sm text-primary">{selectedOrder.cancellationReason}</p>
                         </div>
                       </div>
                     )}

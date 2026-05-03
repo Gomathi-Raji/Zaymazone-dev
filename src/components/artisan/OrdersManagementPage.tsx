@@ -296,7 +296,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
           </Button>
 
           <Link to="/artisan/orders">
-            <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+            <Button size="sm" className="btn-artisan-primary">
               Full View <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
             </Button>
           </Link>
@@ -305,13 +305,13 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
 
       {/* ── Alert banner (new orders) ─────────────────────────────────────── */}
       {alertActive && (
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-orange-300 bg-orange-50 shadow-sm">
-          <Zap className="w-5 h-5 text-orange-600 shrink-0 animate-pulse" />
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-primary/20 bg-primary/5 shadow-sm">
+          <Zap className="w-5 h-5 text-primary shrink-0 animate-pulse" />
           <div className="flex-1">
             <p className="text-sm font-semibold text-orange-900">
               {newOrderIds.length} new order{newOrderIds.length !== 1 ? 's' : ''} just arrived!
             </p>
-            <p className="text-xs text-orange-700 mt-0.5">
+            <p className="text-xs text-primary mt-0.5">
               Review and accept or reject before they expire.
             </p>
           </div>
@@ -319,7 +319,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
             <Button
               size="sm"
               variant="outline"
-              className="border-orange-400 text-orange-700 hover:bg-orange-100 h-7 text-xs"
+              className="border-primary/30 text-primary hover:bg-primary/10 h-7 text-xs"
               onClick={() => { clearAlert(); applyFilter('placed'); }}
             >
               View Pending
@@ -327,7 +327,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 text-xs text-orange-600"
+              className="h-7 text-xs text-primary"
               onClick={clearAlert}
             >
               Dismiss
@@ -338,20 +338,20 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
 
       {/* ── Pending action alert ──────────────────────────────────────────── */}
       {!alertActive && pendingOrders.length > 0 && (
-        <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-amber-300 bg-amber-50">
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-amber-300 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/35">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-semibold text-amber-900">
+            <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
               {pendingOrders.length} order{pendingOrders.length !== 1 ? 's' : ''} awaiting your action
             </p>
-            <p className="text-xs text-amber-700 mt-0.5">
+            <p className="text-xs text-amber-700 mt-0.5 dark:text-amber-300">
               Unactioned placed orders may auto-cancel after 24 hours.
             </p>
           </div>
           <Button
             size="sm"
             variant="outline"
-            className="border-amber-400 text-amber-800 hover:bg-amber-100 h-7 text-xs shrink-0"
+            className="border-amber-400 text-amber-800 hover:bg-amber-100 h-7 text-xs shrink-0 dark:border-amber-700 dark:text-amber-200 dark:hover:bg-amber-950/40"
             onClick={() => applyFilter('placed')}
           >
             Review <ChevronRight className="w-3 h-3 ml-1" />
@@ -372,14 +372,14 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                 onClick={() => applyFilter(f.id)}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all ${
                   filter === f.id
-                    ? 'bg-orange-600 text-white border-orange-600'
-                    : 'bg-card text-muted-foreground border-border hover:border-orange-300 hover:text-foreground'
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground'
                 }`}
               >
                 {f.label}
                 {count > 0 && (
                   <span className={`text-[10px] px-1.5 py-0 rounded-full font-bold ${
-                    filter === f.id ? 'bg-white/20' : 'bg-muted'
+                    filter === f.id ? 'bg-background/15 text-primary-foreground border border-background/20 dark:bg-background/20' : 'bg-muted dark:bg-muted/80'
                   }`}>
                     {count}
                   </span>
@@ -448,9 +448,9 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                 <Card
                   key={order._id}
                   className={`transition-all ${
-                    isNew     ? 'border-orange-400 shadow-orange-100 shadow-sm' :
-                    canAct    ? 'border-amber-300 bg-amber-50/30' :
-                    selected  ? 'border-blue-300 bg-blue-50/20' :
+                    isNew     ? 'border-orange-400 shadow-orange-100 shadow-sm dark:shadow-orange-950/30' :
+                    canAct    ? 'border-amber-300 bg-amber-50/30 dark:border-amber-800 dark:bg-amber-950/20' :
+                    selected  ? 'border-blue-300 bg-blue-50/20 dark:border-blue-800 dark:bg-blue-950/20' :
                     'border-border hover:border-border/70'
                   }`}
                 >
@@ -469,14 +469,14 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
 
                       {/* Status icon */}
                       <div className={`p-2 rounded-lg shrink-0 ${
-                        isNew     ? 'bg-orange-100' :
-                        canAct    ? 'bg-amber-100' :
-                        order.status === 'delivered' ? 'bg-green-100' :
-                        order.status === 'rejected' || order.status === 'cancelled' ? 'bg-red-100' :
-                        'bg-muted/50'
+                        isNew     ? 'bg-orange-100 dark:bg-orange-950/40' :
+                        canAct    ? 'bg-amber-100 dark:bg-amber-950/40' :
+                        order.status === 'delivered' ? 'bg-green-100 dark:bg-green-950/40' :
+                        order.status === 'rejected' || order.status === 'cancelled' ? 'bg-red-100 dark:bg-red-950/40' :
+                        'bg-muted/50 dark:bg-muted/30'
                       }`}>
                         <StatusIcon className={`w-4 h-4 ${
-                          isNew     ? 'text-orange-600' :
+                          isNew     ? 'text-primary' :
                           canAct    ? 'text-amber-600' :
                           order.status === 'delivered' ? 'text-green-600' :
                           order.status === 'rejected' || order.status === 'cancelled' ? 'text-red-500' :
@@ -489,12 +489,12 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                         <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
                           <span className="font-semibold text-sm">#{order.orderNumber}</span>
                           {isNew && (
-                            <Badge className="text-[10px] px-1.5 bg-orange-500 text-white animate-pulse">
+                            <Badge className="text-[10px] px-1.5 bg-primary text-primary-foreground animate-pulse">
                               New!
                             </Badge>
                           )}
                           {canAct && !isNew && (
-                            <Badge className="text-[10px] px-1.5 bg-amber-500 text-white">
+                            <Badge className="text-[10px] px-1.5 bg-amber-500 text-white dark:bg-amber-400 dark:text-amber-950">
                               Needs Action
                             </Badge>
                           )}
@@ -571,7 +571,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-7 w-7 p-0 border-orange-300 text-orange-600 hover:bg-orange-50"
+                            className="h-7 w-7 p-0 border-primary/30 text-primary hover:bg-primary/5"
                             title="Process return or refund"
                             onClick={() => setReturnRefundOrder(order)}
                           >
@@ -608,7 +608,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                       key={pageNum}
                       size="sm"
                       variant={page === pageNum ? 'default' : 'outline'}
-                      className={`h-7 w-7 p-0 text-xs ${page === pageNum ? 'bg-orange-600 hover:bg-orange-700' : ''}`}
+                      className={`h-7 w-7 p-0 text-xs ${page === pageNum ? 'bg-primary hover:bg-primary/90' : ''}`}
                       onClick={() => setPage(pageNum)}
                     >
                       {pageNum}

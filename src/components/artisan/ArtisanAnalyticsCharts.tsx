@@ -52,9 +52,9 @@ interface ChartTooltipProps {
 function RevTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border bg-white shadow-sm px-3 py-2 text-sm">
+    <div className="rounded-lg border bg-popover/95 backdrop-blur-sm shadow-sm px-3 py-2 text-sm text-popover-foreground dark:bg-popover/90">
       <p className="font-medium mb-1">{shortDate(label ?? '')}</p>
-      <p className="text-purple-700 font-semibold">{fmt(payload[0]?.value ?? 0)}</p>
+      <p className="text-primary font-semibold">{fmt(payload[0]?.value ?? 0)}</p>
       {payload[1] && (
         <p className="text-muted-foreground">{payload[1].value} orders</p>
       )}
@@ -96,7 +96,7 @@ function DonutTooltip({ active, payload }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   const { name, value } = payload[0];
   return (
-    <div className="rounded-lg border bg-white shadow-sm px-3 py-2 text-sm">
+    <div className="rounded-lg border bg-popover/95 backdrop-blur-sm shadow-sm px-3 py-2 text-sm text-popover-foreground dark:bg-popover/90">
       <p className="font-medium">{STATUS_LABELS[name ?? ''] ?? (name ?? '')}</p>
       <p className="text-muted-foreground">{value} orders</p>
     </div>
@@ -107,9 +107,9 @@ function DonutTooltip({ active, payload }: ChartTooltipProps) {
 function ProductTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border bg-white shadow-sm px-3 py-2 text-sm max-w-[200px]">
+    <div className="rounded-lg border bg-popover/95 backdrop-blur-sm shadow-sm px-3 py-2 text-sm max-w-[200px] text-popover-foreground dark:bg-popover/90">
       <p className="font-medium line-clamp-2 mb-1">{label}</p>
-      <p className="text-orange-700 font-semibold">{fmt(payload[0]?.value ?? 0)}</p>
+      <p className="text-primary font-semibold">{fmt(payload[0]?.value ?? 0)}</p>
       {payload[1] && <p className="text-muted-foreground">{payload[1].value} sold</p>}
     </div>
   );
@@ -313,7 +313,7 @@ export function ArtisanAnalyticsCharts({
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-orange-600" />
+              <BarChart3 className="w-5 h-5 text-primary" />
               <div>
                 <CardTitle className="text-base">Top Products</CardTitle>
                 <CardDescription className="text-xs">By revenue earned</CardDescription>

@@ -238,7 +238,7 @@ export function OrderDetailDrawer({
               <TabsTrigger
                 key={id}
                 value={id}
-                className="h-10 rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 data-[state=active]:bg-transparent px-4 text-xs font-medium gap-1.5"
+                className="h-10 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent px-4 text-xs font-medium gap-1.5"
               >
                 <Icon className="w-3.5 h-3.5" />
                 {label}
@@ -294,7 +294,7 @@ export function OrderDetailDrawer({
                     ))}
                     <div className="flex justify-between text-sm font-bold border-t pt-1.5 mt-1.5">
                       <span>Total</span>
-                      <span className="text-orange-600">{fmt(order.total)}</span>
+                      <span className="text-primary">{fmt(order.total)}</span>
                     </div>
                   </div>
                 </div>
@@ -441,9 +441,9 @@ export function OrderDetailDrawer({
                         return (
                           <div key={idx} className="flex gap-4">
                             <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center shrink-0 z-10 ${
-                              idx === 0 ? 'bg-orange-100 border-orange-400' : 'bg-card border-border'
+                              idx === 0 ? 'bg-primary/10 border-primary/30' : 'bg-card border-border'
                             }`}>
-                              <EntryIcon className={`w-4 h-4 ${idx === 0 ? 'text-orange-600' : 'text-muted-foreground'}`} />
+                              <EntryIcon className={`w-4 h-4 ${idx === 0 ? 'text-primary' : 'text-muted-foreground'}`} />
                             </div>
                             <div className="flex-1 min-w-0 pt-1.5">
                               <div className="flex items-center gap-2">
@@ -522,7 +522,7 @@ export function OrderDetailDrawer({
                     </div>
 
                     <Button
-                      className="w-full bg-orange-600 hover:bg-orange-700 gap-2"
+                      className="w-full btn-artisan-primary gap-2"
                       disabled={msgSending || !msgText.trim()}
                       onClick={handleSendMessage}
                     >
@@ -537,7 +537,7 @@ export function OrderDetailDrawer({
                       <span>View and continue conversations on the</span>
                       <Link
                         to="/artisan/messages"
-                        className="text-orange-600 hover:underline inline-flex items-center gap-0.5"
+                        className="text-primary hover:underline inline-flex items-center gap-0.5"
                       >
                         Messages page <ExternalLink className="w-2.5 h-2.5" />
                       </Link>
@@ -575,7 +575,7 @@ export function OrderDetailDrawer({
               <Button
                 size="sm"
                 variant="outline"
-                className="flex-1 border-orange-300 text-orange-700 hover:bg-orange-50 gap-1.5 h-8"
+                className="flex-1 border-primary/30 text-primary hover:bg-primary/5 gap-1.5 h-8"
                 onClick={() => { onReturnRefund(order); closeAndReset(); }}
               >
                 <RotateCcw className="w-3.5 h-3.5" /> Return / Refund
