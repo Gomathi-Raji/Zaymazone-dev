@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
+import { ENV } from '@/config/env';
 
 // ── Section type ─────────────────────────────────────────────────────────────
 export type ArtisanSection =
@@ -219,9 +220,11 @@ export function ArtisanSidebar({
             <p className="text-sm font-medium text-foreground truncate leading-tight">
               {user?.name || 'Artisan'}
             </p>
-            <p className="text-[11px] text-muted-foreground truncate leading-tight">
-              {user?.email || 'artisan@zaymazone.com'}
-            </p>
+            {user?.email || ENV.artisanEmail ? (
+              <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                {user?.email || ENV.artisanEmail}
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

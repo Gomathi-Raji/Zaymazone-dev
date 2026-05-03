@@ -1,5 +1,7 @@
-const _apiOrigin = (import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/api$/, '');
-const API_BASE_URL = `${_apiOrigin}/api`;
+import { ENV } from '@/config/env';
+
+const _apiOrigin = (ENV.apiOrigin || '').replace(/\/api$/, '');
+const API_BASE_URL = _apiOrigin ? `${_apiOrigin}/api` : ENV.apiBaseUrl;
 
 class AdminService {
   private token: string | null = null

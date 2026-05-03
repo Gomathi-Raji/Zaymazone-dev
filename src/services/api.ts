@@ -1,15 +1,8 @@
 import { apiRequest } from '@/lib/api';
+import { ENV } from '@/config/env';
 
 // Base API configuration
-let API_BASE_URL: string;
-
-try {
-  const envUrl = import.meta.env.VITE_API_BASE_URL ||
-    (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : undefined);
-  API_BASE_URL = envUrl || (import.meta.env.DEV ? 'http://localhost:4000/api' : 'https://zaymazone-dev.onrender.com/api');
-} catch (error) {
-  API_BASE_URL = import.meta.env.DEV ? 'http://localhost:4000/api' : 'https://zaymazone-dev.onrender.com/api';
-}
+const API_BASE_URL = ENV.apiBaseUrl;
 
 // Helper function to handle API responses
 async function handleResponse(response: Response) {

@@ -20,6 +20,7 @@ import { ProductVideoPlayer } from "@/components/ProductVideoPlayer";
 import { MaterialCareGuide } from "@/components/MaterialCareGuide";
 import { parseVideoUrl } from "@/lib/videoUtils";
 import { VideoEmbed } from "@/components/VideoEmbed";
+import { ENV, formatCurrency } from "@/config/env";
 
 const RATING_BARS = [
   { pct: 'w-[82%]', count: 42 },
@@ -613,10 +614,12 @@ const ProductDetail = () => {
 
             {/* Shipping Info */}
             <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Truck className="w-4 h-4 text-primary shrink-0" />
-                <span className="break-words">Free shipping on orders above ₹999</span>
-              </div>
+                {ENV.freeShippingThreshold ? (
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Truck className="w-4 h-4 text-primary shrink-0" />
+                    <span className="break-words">Free shipping on orders above {formatCurrency(ENV.freeShippingThreshold)}</span>
+                  </div>
+                ) : null}
               <div className="flex items-center gap-2 sm:gap-3">
                 <RotateCcw className="w-4 h-4 text-primary shrink-0" />
                 <span className="break-words">7-day return policy</span>

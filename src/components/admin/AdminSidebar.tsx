@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { ENV } from '@/config/env';
 
 // ── Section type ─────────────────────────────────────────────────────────────
 export type AdminSection =
@@ -220,9 +221,11 @@ export function AdminSidebar({
                 <p className="text-sm font-medium text-foreground truncate leading-tight">
                   {user?.name || 'Admin'}
                 </p>
-                <p className="text-[11px] text-muted-foreground truncate leading-tight">
-                  {user?.email || 'admin@zaymazone.com'}
-                </p>
+                {user?.email || ENV.adminEmail ? (
+                  <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                    {user?.email || ENV.adminEmail}
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>
@@ -254,9 +257,11 @@ export function AdminSidebar({
                 <p className="text-sm font-medium text-foreground truncate leading-tight">
                   {user?.name || 'Admin'}
                 </p>
-                <p className="text-[11px] text-muted-foreground truncate leading-tight">
-                  {user?.email || 'admin@zaymazone.com'}
-                </p>
+                {user?.email || ENV.adminEmail ? (
+                  <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                    {user?.email || ENV.adminEmail}
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>

@@ -33,6 +33,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { scrollToTop } from "@/lib/scrollUtils";
 import { getImageUrl } from "@/lib/api";
+import { ENV, formatCurrency } from "@/config/env";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +42,10 @@ export const Navigation = () => {
   const { isAuthenticated, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { scrollY } = useScroll();
+  const promoBarText = ENV.promoBarText;
+  const freeShippingText = ENV.freeShippingThreshold
+    ? `Free shipping over ${formatCurrency(ENV.freeShippingThreshold)}`
+    : "";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
@@ -127,18 +132,20 @@ export const Navigation = () => {
   return (
     <>
       {/* Top promotional bar */}
-      <motion.div 
-        className="bg-gradient-to-r from-primary via-primary-glow to-primary text-white dark:bg-gradient-to-r dark:from-primary/95 dark:via-primary-glow/95 dark:to-primary/95 dark:text-foreground text-center py-2 text-sm font-medium shadow-lg dark:shadow-dark-soft backdrop-blur-sm"
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center justify-center gap-2">
-          <Sparkles className="h-4 w-4 animate-pulse" />
-          <span className="drop-shadow-sm">Free shipping on orders over ₹999 • Handcrafted with love</span>
-          <Sparkles className="h-4 w-4 animate-pulse" />
-        </div>
-      </motion.div>
+      {promoBarText && (
+        <motion.div 
+          className="bg-gradient-to-r from-primary via-primary-glow to-primary text-white dark:bg-gradient-to-r dark:from-primary/95 dark:via-primary-glow/95 dark:to-primary/95 dark:text-foreground text-center py-2 text-sm font-medium shadow-lg dark:shadow-dark-soft backdrop-blur-sm"
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center justify-center gap-2">
+            <Sparkles className="h-4 w-4 animate-pulse" />
+            <span className="drop-shadow-sm">{promoBarText}</span>
+            <Sparkles className="h-4 w-4 animate-pulse" />
+          </div>
+        </motion.div>
+      )}
 
       <motion.nav
         className={`sticky top-0 z-50 border-b border-border/50 transition-[background-color,backdrop-filter,box-shadow] duration-300 ease-in-out ${
@@ -305,10 +312,12 @@ export const Navigation = () => {
                             <Sparkles className="h-5 w-5" />
                           </div>
                         </div>
-                        <div className="relative mt-4 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
-                          <span>Free shipping over 999</span>
-                          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Today</span>
-                        </div>
+                        {freeShippingText && (
+                          <div className="relative mt-4 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+                            <span>{freeShippingText}</span>
+                            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Today</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
