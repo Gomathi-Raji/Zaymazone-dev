@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ENV } from "@/config/env";
 import { CheckCircle, XCircle, Clock, ArrowRight, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
@@ -221,17 +222,21 @@ export default function PaymentSuccess() {
                 )}
               </div>
 
-              {paymentStatus === 'failed' && (
+              {paymentStatus === 'failed' && (ENV.supportEmail || ENV.supportPhone) && (
                 <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-800">
                     <strong>Need help?</strong> Contact our support team at{' '}
-                    <a href="mailto:support@zaymazone.com" className="underline">
-                      support@zaymazone.com
-                    </a>{' '}
-                    or call{' '}
-                    <a href="tel:+911234567890" className="underline">
-                      +91 1234 567 890
-                    </a>
+                    {ENV.supportEmail ? (
+                      <a href={`mailto:${ENV.supportEmail}`} className="underline">
+                        {ENV.supportEmail}
+                      </a>
+                    ) : null}
+                    {ENV.supportEmail && ENV.supportPhone ? ' or call ' : null}
+                    {ENV.supportPhone ? (
+                      <a href={`tel:${ENV.supportPhone}`} className="underline">
+                        {ENV.supportPhone}
+                      </a>
+                    ) : null}
                   </p>
                 </div>
               )}

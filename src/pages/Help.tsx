@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ENV } from "@/config/env";
 
 const Help = () => {
   const { toast } = useToast();
@@ -37,6 +38,14 @@ const Help = () => {
     { id: "account", name: "Account & Security", icon: Shield },
     { id: "shopping", name: "Shopping Help", icon: ShoppingBag }
   ];
+
+  const supportContactText = (() => {
+    const parts: string[] = [];
+    if (ENV.supportEmail) parts.push(`email at ${ENV.supportEmail}`);
+    if (ENV.supportPhone) parts.push(`phone at ${ENV.supportPhone}`);
+    if (parts.length === 0) return "Please contact our support team for help.";
+    return `You can reach us through: ${parts.join(", ")}.`;
+  })();
 
   const faqs = [
     {
@@ -84,7 +93,7 @@ const Help = () => {
     {
       id: 8,
       question: "How can I contact customer support?",
-      answer: "You can reach us through multiple channels: email at support@zaymazone.com, phone at +1-800-CRAFTS, live chat on our website, or through the contact form below. Our support team is available Monday-Friday, 9 AM-6 PM EST.",
+      answer: supportContactText,
       category: "account"
     },
     {
@@ -159,35 +168,41 @@ const Help = () => {
             </CardContent>
           </Card>
 
-          <Card className="text-center hover:shadow-md transition-shadow">
-            <CardHeader>
-              <Phone className="w-8 h-8 text-primary mx-auto mb-2" />
-              <CardTitle>Call Us</CardTitle>
-              <CardDescription>Speak directly with a support agent</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="font-semibold text-foreground mb-2">+1-800-CRAFTS</p>
-              <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                <Clock className="w-3 h-3" />
-                <span>Mon-Fri, 9 AM-6 PM EST</span>
-              </div>
-            </CardContent>
-          </Card>
+          {ENV.supportPhone ? (
+            <Card className="text-center hover:shadow-md transition-shadow">
+              <CardHeader>
+                <Phone className="w-8 h-8 text-primary mx-auto mb-2" />
+                <CardTitle>Call Us</CardTitle>
+                <CardDescription>Speak directly with a support agent</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="font-semibold text-foreground mb-2">{ENV.supportPhone}</p>
+                {ENV.supportHours ? (
+                  <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="w-3 h-3" />
+                    <span>{ENV.supportHours}</span>
+                  </div>
+                ) : null}
+              </CardContent>
+            </Card>
+          ) : null}
 
-          <Card className="text-center hover:shadow-md transition-shadow">
-            <CardHeader>
-              <Mail className="w-8 h-8 text-primary mx-auto mb-2" />
-              <CardTitle>Email Support</CardTitle>
-              <CardDescription>Send us a detailed message</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="font-semibold text-foreground mb-2">support@zaymazone.com</p>
-              <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                <Clock className="w-3 h-3" />
-                <span>Response within 24 hours</span>
-              </div>
-            </CardContent>
-          </Card>
+          {ENV.supportEmail ? (
+            <Card className="text-center hover:shadow-md transition-shadow">
+              <CardHeader>
+                <Mail className="w-8 h-8 text-primary mx-auto mb-2" />
+                <CardTitle>Email Support</CardTitle>
+                <CardDescription>Send us a detailed message</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="font-semibold text-foreground mb-2">{ENV.supportEmail}</p>
+                <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  <span>Response within 24 hours</span>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
         </div>
 
         {/* FAQ Section */}
