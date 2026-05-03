@@ -1,5 +1,5 @@
 // ── Module 8: Artisan Dashboard Overhaul (UI) ───────────────────────────────
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -322,7 +322,7 @@ const ArtisanDashboard = () => {
                 : undefined}
               color={(bundle?.revenue?.growthPct ?? 0) > 0 ? 'text-green-600' : (bundle?.revenue?.growthPct ?? 0) < 0 ? 'text-red-600' : 'text-foreground'}
             />
-            <KpiCard label="Avg Order Value" value={fmt(bundle?.revenue?.avgOrderValue ?? 0)} sub="per order" />
+            <KpiCard label="Avg Order Value" value={fmt(bundle?.performance?.avgOrderValue ?? 0)} sub="per order" />
             <KpiCard
               label="Total Orders"
               value={String(bundle?.orderCounts?.total ?? 0)}

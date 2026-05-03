@@ -1,6 +1,5 @@
 // ── Module 8: Admin-style Sidebar for Artisan Dashboard ──────────────────────
 // Module 14: added onClose for mobile drawer, keyboard arrow-nav, ARIA attrs
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
