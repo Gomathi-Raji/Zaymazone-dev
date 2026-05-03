@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { sellerApi } from '@/services/api';
@@ -25,6 +26,7 @@ const SignIn = () => {
   const { signIn, signInWithGoogle, signOut, user, isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const onboardingMessage = (location.state as { message?: string } | null)?.message;
 
   // If the user is already authenticated, send them to their dashboard immediately
   // so they never see the sign-in form while logged in (avoids redirect loops).
@@ -126,6 +128,15 @@ const SignIn = () => {
               Access your Zaymazone account
             </p>
           </div>
+
+          {onboardingMessage && (
+            <Alert className="mb-6 border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+              <AlertTitle>Account required</AlertTitle>
+              <AlertDescription>
+                {onboardingMessage}
+              </AlertDescription>
+            </Alert>
+          )}
 
           <form onSubmit={handleEmailSignIn} className="space-y-6">
             <div>

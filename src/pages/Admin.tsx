@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductManagement } from "@/components/dashboard/ProductManagement";
@@ -17,6 +18,7 @@ import { AlertsAndAnnouncements } from "@/components/admin/AlertsAndAnnouncement
 import { CustomerSupport } from "@/components/admin/CustomerSupport";
 import { SellerAlerts } from "@/components/admin/SellerAlerts";
 import { ActivitiesAndNotifications } from "@/components/admin/ActivitiesAndNotifications";
+import AdminMobileBottomNav from "@/components/admin/AdminMobileBottomNav";
 import AdminUpiVerification from "@/components/admin/AdminUpiVerification";
 import { AdminSettlementManagement } from "@/components/admin/AdminSettlementManagement";
 import { AdminInvoiceView } from "@/components/admin/AdminInvoiceView";
@@ -53,6 +55,7 @@ import {
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [stats, setStats] = useState({
@@ -207,6 +210,36 @@ export default function Admin() {
     { id: "activities", label: "Activities", icon: Activity },
   ];
 
+  const mobileGroups = [
+    {
+      title: "Dashboard",
+      items: ["overview", "approvals", "products", "orders"],
+    },
+    {
+      title: "Management",
+      items: ["artisans", "users", "blog", "page-content", "categories", "audit-logs", "email-templates"],
+    },
+    {
+      title: "Operations",
+      items: ["reports", "payments", "upi-verification", "settlements", "invoices", "auth", "alerts", "support", "seller-alerts", "activities"],
+    },
+  ];
+
+  const renderSidebarButton = (item: typeof sidebarItems[number], closeMobile = false) => (
+    <Button
+      key={item.id}
+      variant={activeTab === item.id ? "default" : "ghost"}
+      className="w-full justify-start gap-2.5 h-11 px-4 rounded-xl border border-transparent hover:border-border/60 hover:bg-primary/5 transition-all"
+      onClick={() => {
+        setActiveTab(item.id);
+        if (closeMobile) setMobileNavOpen(false);
+      }}
+    >
+      <item.icon className="w-4 h-4 mr-2" />
+      <span className="truncate">{item.label}</span>
+    </Button>
+  );
+
   // Temporarily remove loading check for immediate access
   // if (loading) {
   //   return (
@@ -220,50 +253,98 @@ export default function Admin() {
   // }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-card border-r border-border min-h-screen">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-foreground mb-6">Admin Panel</h2>
-            <nav className="space-y-2">
-              {sidebarItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant={activeTab === item.id ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setActiveTab(item.id)}
-                >
-                  <item.icon className="w-4 h-4 mr-2" />
-                  {item.label}
-                </Button>
-              ))}
-            </nav>
+    <div className="relative min-h-screen overflow-hidden bg-background flex flex-col lg:flex-row">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.1),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.95))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
+      <div className="lg:hidden sticky top-0 z-30 border-b border-border/60 bg-background/90 backdrop-blur-xl shadow-sm">
+        <div className="flex items-center justify-between gap-3 px-3 sm:px-4 py-3">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Admin Panel</p>
+            <h1 className="text-base sm:text-lg font-bold text-foreground truncate">Dashboard</h1>
+            <p className="text-[11px] text-muted-foreground truncate">Manage data and operations</p>
           </div>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-6">
-          <div className="mb-8 flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-              <p className="text-muted-foreground">Manage your marketplace data and operations</p>
+      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+        <SheetContent side="left" className="w-[92vw] max-w-[420px] h-[100dvh] p-0 overflow-hidden bg-background/95 backdrop-blur-xl border-r border-border/60 shadow-2xl">
+          <SheetHeader className="px-4 py-4 border-b border-border/60 bg-card/50 sticky top-0 z-10 backdrop-blur-xl">
+            <SheetTitle>Admin Panel</SheetTitle>
+          </SheetHeader>
+          <div className="p-4 space-y-3 overflow-y-auto h-[calc(100dvh-72px)]">
+            <div className="rounded-3xl border border-border/60 bg-card/80 backdrop-blur-xl p-4 shadow-sm">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Quick status</p>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Marketplace operations</p>
+                  <p className="text-xs text-muted-foreground">Manage approvals, sales, users, and reports</p>
+                </div>
+                <Badge variant="secondary" className="shrink-0 rounded-full px-3 py-1">
+                  {stats.pendingApprovals.products + stats.pendingApprovals.artisans} pending
+                </Badge>
+              </div>
             </div>
-            <Button
-              variant="outline"
-              onClick={handleLogout}
-              className="flex items-center gap-2"
-            >
-              <Settings className="w-4 h-4" />
-              Logout
-            </Button>
+
+            {mobileGroups.map((group) => (
+              <div key={group.title} className="rounded-3xl border border-border/60 bg-card/70 backdrop-blur-xl p-3 shadow-sm space-y-2">
+                <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  {group.title}
+                </p>
+                <div className="space-y-1.5">
+                  {sidebarItems
+                    .filter((item) => group.items.includes(item.id))
+                    .map((item) => renderSidebarButton(item, true))}
+                </div>
+              </div>
+            ))}
+
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <Button variant="outline" onClick={handleLogout} className="justify-center gap-2 h-11 px-4 rounded-xl">
+                <Settings className="w-4 h-4" />
+                Logout
+              </Button>
+              <Button variant="ghost" onClick={() => setMobileNavOpen(false)} className="justify-center h-11 px-4 rounded-xl">
+                Close
+              </Button>
+            </div>
           </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Sidebar */}
+      <aside className="hidden lg:flex w-64 bg-card border-r border-border min-h-screen sticky top-0 shrink-0">
+        <div className="p-6 w-full bg-card/80 backdrop-blur-xl">
+          <div className="mb-6 rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Admin Panel</p>
+            <h2 className="text-xl font-bold text-foreground">Marketplace Control</h2>
+          </div>
+          <nav className="space-y-2">
+            {sidebarItems.map((item) => renderSidebarButton(item))}
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-28 md:pb-8">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Manage your marketplace data and operations</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start"
+          >
+            <Settings className="w-4 h-4" />
+            Logout
+          </Button>
+        </div>
 
           {activeTab === "overview" && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
                 {statsCards.map((stat) => (
-                  <Card key={stat.label}>
+                  <Card key={stat.label} className="border-border/70 bg-card/85 backdrop-blur-xl shadow-sm dark:bg-card/75 dark:border-white/10">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
@@ -283,12 +364,12 @@ export default function Admin() {
                 ))}
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
                 <div className="lg:col-span-2">
                   <AnalyticsOverview />
                 </div>
 
-                <Card>
+                <Card className="border-border/70 bg-card/85 backdrop-blur-xl shadow-sm dark:bg-card/75 dark:border-white/10">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <AlertTriangle className="w-5 h-5" />
@@ -339,8 +420,14 @@ export default function Admin() {
           {activeTab === "support" && <CustomerSupport />}
           {activeTab === "seller-alerts" && <SellerAlerts />}
           {activeTab === "activities" && <ActivitiesAndNotifications />}
-        </div>
       </div>
+
+      <AdminMobileBottomNav
+        activeTab={activeTab as "overview" | "approvals" | "products" | "orders"}
+        onNavigate={(tab) => setActiveTab(tab)}
+        onMenuOpen={() => setMobileNavOpen(true)}
+        pendingApprovals={(stats.pendingApprovals.products ?? 0) + (stats.pendingApprovals.artisans ?? 0)}
+      />
     </div>
   );
 }

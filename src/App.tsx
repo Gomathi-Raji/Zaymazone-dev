@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
@@ -58,6 +58,14 @@ const ArtisanProducts = lazy(() => import("./pages/ArtisanProducts"));
 const ArtisanOrders = lazy(() => import("./pages/ArtisanOrders"));
 const ArtisanProfile = lazy(() => import("./pages/ArtisanProfile"));
 const MockPayment = lazy(() => import("./pages/MockPayment"));
+
+const RoutedMobileBottomNav = () => {
+  const location = useLocation();
+  if (location.pathname.startsWith('/artisan') || location.pathname.startsWith('/admin')) {
+    return null;
+  }
+  return <MobileBottomNav />;
+};
 const MockPaytmPayment = lazy(() => import("./pages/MockPaytmPayment"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const Addresses = lazy(() => import("./pages/Addresses"));
@@ -93,7 +101,7 @@ const App = () => (
                 <a href="#main-content" className="skip-link">Skip to main content</a>
                 <RouteProgressBar />
                 <ScrollRestoration />
-                <MobileBottomNav />
+                <RoutedMobileBottomNav />
                 {/* Module 14: Main content landmark target for skip link */}
                 <div id="main-content">
                 <Suspense fallback={

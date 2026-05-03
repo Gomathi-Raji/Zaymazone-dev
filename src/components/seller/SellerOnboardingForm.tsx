@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -178,6 +179,7 @@ const base64ToFile = async (base64String: string, filename: string): Promise<Fil
 };
 
 export function SellerOnboardingForm() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingData>(INITIAL_DATA);
   const [loading, setLoading] = useState(false);
@@ -185,8 +187,19 @@ export function SellerOnboardingForm() {
   const { toast } = useToast();
 
   useEffect(() => {
+    const token = localStorage.getItem('firebase_id_token');
+    if (!token) {
+      navigate('/sign-in', {
+        replace: true,
+        state: {
+          message: 'Create a user account first, then sign in to create an artisan account.'
+        }
+      });
+      return;
+    }
+
     checkApplicationStatus();
-  }, []);
+  }, [navigate]);
 
   const checkApplicationStatus = async () => {
     try {
@@ -412,10 +425,11 @@ export function SellerOnboardingForm() {
   // Show status if application already submitted
   if (applicationStatus) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="relative min-h-screen overflow-hidden bg-background">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.12),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.95))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
         <Navigation />
-        <div className="container mx-auto px-4 py-12 max-w-2xl">
-          <Card>
+        <div className="relative z-10 container mx-auto px-4 py-12 max-w-2xl">
+          <Card className="border-border/70 bg-card/85 backdrop-blur-xl shadow-lg dark:bg-card/75 dark:border-white/10">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4">
                 {applicationStatus === 'pending' && <Clock className="w-16 h-16 text-yellow-500" />}
@@ -457,12 +471,13 @@ export function SellerOnboardingForm() {
   const progress = (currentStep / STEPS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="relative min-h-screen overflow-hidden bg-background">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.12),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.95))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_28%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
       <Navigation />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Become a Seller</h1>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">Become a Seller</h1>
           <p className="text-muted-foreground">Join Zaymazone and showcase your crafts to the world</p>
         </div>
 
@@ -471,11 +486,11 @@ export function SellerOnboardingForm() {
           <div className="flex justify-between items-center mb-4">
             {STEPS.map((step) => (
               <div key={step.id} className="flex flex-col items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 
-                  ${currentStep >= step.id ? 'bg-primary border-primary text-white' : 'border-gray-300'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors 
+                  ${currentStep >= step.id ? 'bg-primary border-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground'}`}>
                   <step.icon className="w-5 h-5" />
                 </div>
-                <span className="text-xs mt-1 text-center">{step.title}</span>
+                <span className="text-xs mt-1 text-center text-muted-foreground">{step.title}</span>
               </div>
             ))}
           </div>
@@ -483,7 +498,7 @@ export function SellerOnboardingForm() {
         </div>
 
         {/* Form Content */}
-        <Card>
+        <Card className="border-border/70 bg-card/85 backdrop-blur-xl shadow-lg dark:bg-card/75 dark:border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               {React.createElement(STEPS[currentStep - 1].icon, { className: "w-5 h-5" })}

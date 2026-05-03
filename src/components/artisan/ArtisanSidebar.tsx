@@ -16,10 +16,9 @@ import {
   UserCircle,
   Store,
   TrendingUp,
-  X,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // ── Section type ─────────────────────────────────────────────────────────────
 export type ArtisanSection =
@@ -39,8 +38,7 @@ interface ArtisanSidebarProps {
   lowStockCount?: number;
   totalProducts?: number;
   totalReviews?: number;
-  /** Module 14: callback to close the mobile drawer */
-  onClose?: () => void;
+  mobileMode?: boolean;
 }
 
 // ── Sidebar nav item definition ───────────────────────────────────────────────
@@ -60,7 +58,7 @@ export function ArtisanSidebar({
   lowStockCount = 0,
   totalProducts = 0,
   totalReviews = 0,
-  onClose,
+  mobileMode = false,
 }: ArtisanSidebarProps) {
   // Module 14: keyboard arrow-navigation between all nav buttons
   const handleNavKeyDown = (
@@ -149,7 +147,7 @@ export function ArtisanSidebar({
         data-nav-item="true"
         variant={isActive ? 'default' : 'ghost'}
         size="sm"
-        className={`w-full justify-start gap-2.5 h-9 px-3 font-normal ${
+        className={`w-full justify-start gap-2.5 ${mobileMode ? 'h-11 px-3 rounded-xl' : 'h-9 px-3'} font-normal ${
           isActive
             ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm'
             : 'hover:bg-primary/5 text-foreground'
@@ -180,73 +178,99 @@ export function ArtisanSidebar({
   return (
     <aside
       id="artisan-sidebar"
-      className="w-64 min-h-screen flex flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-r border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)]"
+      className={mobileMode
+        ? 'w-full h-full min-h-0 flex flex-col shrink-0 relative z-20 bg-transparent'
+        : 'w-64 min-h-screen flex flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-r border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)]'}
       aria-label="Artisan dashboard sidebar"
     >
+      {mobileMode ? (
+        <div className="px-4 pt-4 pb-3 border-b border-border/60 bg-background/95 backdrop-blur-xl sticky top-0 z-10">
+          <div className="rounded-3xl border border-border/60 bg-card/85 backdrop-blur-xl p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
+                <Store className="w-5 h-5 text-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Artisan Panel</p>
+                <p className="text-base font-semibold text-foreground truncate">Zaymazone Marketplace</p>
+                <p className="text-xs text-muted-foreground truncate">Manage orders, products, and customer engagement</p>
+              </div>
+            </div>
 
-      {/* ── Brand ─────────────────────────────────────────────────────────── */}
-      <div className="px-5 py-4 border-b border-border/70 dark:border-white/10 bg-background/20 dark:bg-background/10">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
-            <Store className="w-4 h-4 text-white" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-bold text-sm text-foreground">Artisan Panel</p>
-            <p className="text-[11px] text-muted-foreground">Zaymazone Marketplace</p>
-          </div>
-          {/* Module 14: Close button shown only in mobile drawer mode */}
-          {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close navigation menu"
-              className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary transition-colors lg:hidden shrink-0"
-            >
-              <X className="w-4 h-4" aria-hidden="true" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* ── User info ─────────────────────────────────────────────────────── */}
-      <div className="px-4 py-3 border-b border-border/70 dark:border-white/10 bg-background/10 dark:bg-background/5">
-        <div className="flex items-center gap-2.5">
-          <Avatar className="w-8 h-8 shrink-0">
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-foreground truncate leading-tight">
-              {user?.name || 'Artisan'}
-            </p>
-            <p className="text-[11px] text-muted-foreground truncate leading-tight">
-              {user?.email || 'artisan@zaymazone.com'}
-            </p>
+            <div className="mt-4 flex items-center gap-3 rounded-2xl border border-border/60 bg-background/70 px-3 py-2.5">
+              <Avatar className="w-10 h-10 shrink-0">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-foreground truncate leading-tight">
+                  {user?.name || 'Artisan'}
+                </p>
+                <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                  {user?.email || 'artisan@zaymazone.com'}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* ── Brand ─────────────────────────────────────────────────────────── */}
+          <div className="px-5 py-4 border-b border-border/70 dark:border-white/10 bg-background/20 dark:bg-background/10">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
+                <Store className="w-4 h-4 text-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-sm text-foreground">Artisan Panel</p>
+                <p className="text-[11px] text-muted-foreground">Zaymazone Marketplace</p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── User info ─────────────────────────────────────────────────────── */}
+          <div className="px-4 py-3 border-b border-border/70 dark:border-white/10 bg-background/10 dark:bg-background/5">
+            <div className="flex items-center gap-2.5">
+              <Avatar className="w-8 h-8 shrink-0">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-foreground truncate leading-tight">
+                  {user?.name || 'Artisan'}
+                </p>
+                <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                  {user?.email || 'artisan@zaymazone.com'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ── Primary nav ───────────────────────────────────────────────────── */}
-      <nav className="flex-1 px-3 pt-4 pb-2 space-y-0.5 overflow-y-auto" aria-label="Dashboard sections">
+      <nav className={mobileMode ? 'flex-1 px-4 py-4 space-y-4 overflow-y-auto' : 'flex-1 px-3 pt-4 pb-2 space-y-0.5 overflow-y-auto'} aria-label="Dashboard sections">
+        <div className={mobileMode ? 'rounded-3xl border border-border/60 bg-card/70 p-3 shadow-sm' : ''}>
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
           Dashboard
         </p>
         {primaryNav.map(renderNavButton)}
-
-        <div className="py-2">
-          <Separator />
         </div>
 
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
-          Engagement
-        </p>
-        {secondaryNav.map(renderNavButton)}
+        <div className={mobileMode ? 'rounded-3xl border border-border/60 bg-card/70 p-3 shadow-sm space-y-3' : 'py-2'}>
+          {!mobileMode && <Separator />}
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
+            Engagement
+          </p>
+          {secondaryNav.map(renderNavButton)}
+        </div>
       </nav>
 
       {/* ── Stats summary ─────────────────────────────────────────────────── */}
       {(totalProducts > 0 || totalReviews > 0) && (
-        <div className="px-4 py-3 border-t border-border/70 bg-muted/40 dark:border-white/10 dark:bg-background/10">
+        <div className={mobileMode ? 'px-4 py-4 border-t border-border/60 bg-background/90 backdrop-blur-xl' : 'px-4 py-3 border-t border-border/70 bg-muted/40 dark:border-white/10 dark:bg-background/10'}>
           <div className="flex gap-4 justify-around text-center">
             <div>
               <p className="text-xs font-bold text-foreground">{totalProducts}</p>
@@ -267,12 +291,12 @@ export function ArtisanSidebar({
       )}
 
       {/* ── Profile link ──────────────────────────────────────────────────── */}
-      <div className="px-3 py-3 border-t border-border/70 dark:border-white/10 space-y-0.5 bg-background/10 dark:bg-background/5">
+      <div className={mobileMode ? 'grid grid-cols-2 gap-2 px-4 py-4 border-t border-border/60 bg-background/95 backdrop-blur-xl' : 'px-3 py-3 border-t border-border/70 dark:border-white/10 space-y-0.5 bg-background/10 dark:bg-background/5'}>
         <Link to="/artisan/profile">
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal hover:bg-primary/10 dark:hover:bg-white/10"
+            className={mobileMode ? 'w-full justify-center gap-2.5 h-11 px-3 text-sm font-medium rounded-xl bg-card/70 hover:bg-primary/10' : 'w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal hover:bg-primary/10 dark:hover:bg-white/10'}
           >
             <UserCircle className="w-4 h-4" />
             Profile &amp; Settings
@@ -282,7 +306,7 @@ export function ArtisanSidebar({
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal"
+            className={mobileMode ? 'w-full justify-center gap-2.5 h-11 px-3 text-sm font-medium rounded-xl bg-card/70' : 'w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal'}
           >
             <TrendingUp className="w-4 h-4" />
             Full Analytics

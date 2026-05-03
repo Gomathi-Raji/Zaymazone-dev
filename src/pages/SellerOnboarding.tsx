@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { sellerApi, SellerFormData } from "@/services/api";
 import { useFormValidation } from "@/hooks/use-form-validation";
@@ -7,7 +7,6 @@ import { Loader2 } from "lucide-react";
 
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { AuthDebugPanel } from "@/components/AuthDebugPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,6 +38,18 @@ export default function SellerOnboarding() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailConflictError, setEmailConflictError] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('firebase_id_token');
+    if (!token) {
+      navigate('/sign-in', {
+        replace: true,
+        state: {
+          message: 'Create a user account first, then sign in to create an artisan account.'
+        }
+      });
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     // Step 1: Basic Info
@@ -465,9 +476,6 @@ export default function SellerOnboarding() {
       {/* Main Content */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Debug Panel - Remove in production */}
-          <AuthDebugPanel />
-          
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
