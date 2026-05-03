@@ -1,79 +1,101 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, Store, BookOpen, Compass, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+// ── Module 14: User Mobile Bottom Navigation ─────────────────────────────
+// Touch-optimised, keyboard-accessible bottom navigation for user pages
+// on small screens. Appears on public pages (home, shop, artisans, about, profile)
+import React, { useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import {
+  Home,
+  Store,
+  MapPin,
+  Info,
+  User,
+} from 'lucide-react';
 
-const MobileBottomNav = () => {
+interface UserMobileBottomNavProps {
+  onMenuOpen?: () => void;
+}
+
+interface NavItem {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  path?: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { id: 'home', label: 'Home', icon: Home, path: '/' },
+  { id: 'artisans', label: 'Artisan', icon: MapPin, path: '/artisans' },
+  { id: 'shop', label: 'Shop', icon: Store, path: '/shop' },
+  { id: 'about', label: 'About', icon: Info, path: '/about' },
+  { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
+];
+
+export function UserMobileBottomNav({ onMenuOpen }: UserMobileBottomNavProps) {
+  const navigate = useNavigate();
   const location = useLocation();
+  const navRef = useRef<HTMLElement>(null);
 
-  const navItems = [
-    {
-      icon: Home,
-      label: "Home",
-      path: "/"
-    },
-    {
-      icon: Store,
-      label: "Shop",
-      path: "/shop"
-    },
-    {
-      icon: BookOpen,
-      label: "Blogs",
-      path: "/blog"
-    },
-    {
-      icon: Compass,
-      label: "Discover",
-      path: "/categories"
-    },
-    {
-      icon: User,
-      label: "Profile",
-      path: "/profile"
+  // Determine active item based on current path
+  const getActiveItem = () => {
+    const pathMap: Record<string, string> = {
+      '/': 'home',
+      '/artisans': 'artisans',
+      '/shop': 'shop',
+      '/about': 'about',
+      '/profile': 'profile',
+    };
+    return pathMap[location.pathname] || null;
+  };
+
+  const activeSection = getActiveItem();
+
+  // Arrow-key navigation between buttons
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
+    const buttons = navRef.current?.querySelectorAll<HTMLButtonElement>('button[data-nav-item]');
+    if (!buttons) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      buttons[(idx + 1) % buttons.length]?.focus();
     }
-  ];
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      buttons[(idx - 1 + buttons.length) % buttons.length]?.focus();
+    }
+  };
 
-  // Only show on mobile devices
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border z-50 safe-area-inset-bottom">
-      <div className="flex items-center justify-around h-16 px-2 pb-safe">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+    <nav
+      ref={navRef}
+      className="user-mobile-nav lg:hidden"
+      aria-label="User navigation"
+    >
+      {NAV_ITEMS.map(({ id, label, icon: Icon, path }, idx) => {
+        const isActive = id === activeSection;
 
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "relative flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-all duration-200 ease-spring",
-                "min-h-[44px] min-w-[44px]", // iOS touch target size
-                isActive
-                  ? "text-primary bg-primary/10 shadow-glow scale-105"
-                  : "text-muted-foreground hover:text-primary hover:bg-primary/5 active:scale-95"
-              )}
-            >
-              <div className="relative">
-                <Icon className={cn(
-                  "h-5 w-5 mb-1 transition-transform duration-200",
-                  isActive && "scale-110"
-                )} />
-              </div>
-              <span className={cn(
-                "text-xs font-medium transition-all duration-200",
-                isActive ? "opacity-100 scale-105" : "opacity-75"
-              )}>
-                {item.label}
-              </span>
-              {isActive && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-primary to-primary-glow rounded-full animate-pulse-glow" />
-              )}
-            </Link>
-          );
-        })}
-      </div>
-    </div>
+        return (
+          <button
+            key={id}
+            type="button"
+            data-nav-item="true"
+            aria-label={label}
+            aria-current={isActive ? 'page' : undefined}
+            onClick={() => path && navigate(path)}
+            onKeyDown={(e) => handleKeyDown(e, idx)}
+            className={cn(
+              'user-mobile-nav__item',
+              isActive && 'user-mobile-nav__item--active',
+            )}
+          >
+            <span className="relative inline-flex items-center justify-center">
+              <Icon className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span className="user-mobile-nav__label">{label}</span>
+          </button>
+        );
+      })}
+    </nav>
   );
-};
+}
 
-export default MobileBottomNav;
+export default UserMobileBottomNav;

@@ -97,7 +97,7 @@ const ArtisansWithBackend = () => {
   const averageExperience = Math.round(artisans.reduce((sum, a) => sum + a.experience, 0) / totalArtisans);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24 md:pb-0">
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

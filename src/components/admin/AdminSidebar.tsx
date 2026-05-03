@@ -1,5 +1,4 @@
-// ── Module 8: Admin-style Sidebar for Artisan Dashboard ──────────────────────
-// Module 14: added onClose for mobile drawer, keyboard arrow-nav, ARIA attrs
+// ── Module 8: Admin-style Sidebar for Admin Dashboard ──────────────────────
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,60 +10,60 @@ import {
   ShoppingCart,
   BarChart3,
   Users,
-  Star,
+  Shield,
+  FileText,
+  Settings,
+  AlertCircle,
+  Zap,
+  CreditCard,
   MessageSquare,
-  UserCircle,
-  Store,
-  TrendingUp,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
 // ── Section type ─────────────────────────────────────────────────────────────
-export type ArtisanSection =
-  | 'overview'
-  | 'orders'
+export type AdminSection =
+  | 'dashboard'
+  | 'artisans'
+  | 'users'
   | 'products'
-  | 'analytics'
-  | 'customers'
-  | 'reviews'
-  | 'messages';
+  | 'orders'
+  | 'approvals'
+  | 'payments'
+  | 'reports'
+  | 'settings';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface ArtisanSidebarProps {
-  activeSection: ArtisanSection;
-  onNavigate: (s: ArtisanSection) => void;
-  pendingOrders?: number;
-  lowStockCount?: number;
-  totalProducts?: number;
-  totalReviews?: number;
+interface AdminSidebarProps {
+  activeSection: AdminSection;
+  onNavigate: (s: AdminSection) => void;
+  pendingApprovals?: number;
+  criticalAlerts?: number;
   mobileMode?: boolean;
 }
 
 // ── Sidebar nav item definition ───────────────────────────────────────────────
 interface NavItem {
-  id: ArtisanSection;
+  id: AdminSection;
   label: string;
   icon: React.ElementType;
   badge?: number | null;
-  badgeVariant?: 'warning' | 'info';
+  badgeVariant?: 'warning' | 'info' | 'destructive';
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export function ArtisanSidebar({
+export function AdminSidebar({
   activeSection,
   onNavigate,
-  pendingOrders = 0,
-  lowStockCount = 0,
-  totalProducts = 0,
-  totalReviews = 0,
+  pendingApprovals = 0,
+  criticalAlerts = 0,
   mobileMode = false,
-}: ArtisanSidebarProps) {
+}: AdminSidebarProps) {
   // Module 14: keyboard arrow-navigation between all nav buttons
   const handleNavKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement>,
-    allIds: ArtisanSection[],
-    currentId: ArtisanSection,
+    allIds: AdminSection[],
+    currentId: AdminSection,
   ) => {
     const idx = allIds.indexOf(currentId);
     if (e.key === 'ArrowDown' && idx < allIds.length - 1) {
@@ -89,54 +88,66 @@ export function ArtisanSidebar({
 
   const primaryNav: NavItem[] = [
     {
-      id: 'overview',
-      label: 'Overview',
+      id: 'dashboard',
+      label: 'Dashboard',
       icon: LayoutDashboard,
     },
     {
-      id: 'orders',
-      label: 'Orders',
-      icon: ShoppingCart,
-      badge: pendingOrders || null,
-      badgeVariant: 'warning',
+      id: 'artisans',
+      label: 'Artisans',
+      icon: Users,
+    },
+    {
+      id: 'users',
+      label: 'Users',
+      icon: Users,
     },
     {
       id: 'products',
       label: 'Products',
       icon: Package,
-      badge: lowStockCount || null,
-      badgeVariant: 'warning',
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      icon: BarChart3,
     },
   ];
 
   const secondaryNav: NavItem[] = [
     {
-      id: 'customers',
-      label: 'Customers',
-      icon: Users,
+      id: 'orders',
+      label: 'Orders',
+      icon: ShoppingCart,
     },
     {
-      id: 'reviews',
-      label: 'Reviews',
-      icon: Star,
-      badge: totalReviews || null,
-      badgeVariant: 'info',
+      id: 'approvals',
+      label: 'Approvals',
+      icon: CheckCircle,
+      badge: pendingApprovals || null,
+      badgeVariant: 'warning',
     },
     {
-      id: 'messages',
-      label: 'Messages',
-      icon: MessageSquare,
+      id: 'payments',
+      label: 'Payments',
+      icon: CreditCard,
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
+      icon: BarChart3,
+    },
+  ];
+
+  const toolsNav: NavItem[] = [
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      badge: criticalAlerts || null,
+      badgeVariant: 'destructive',
     },
   ];
 
   const allNavIds = [
     ...primaryNav.map((n) => n.id),
     ...secondaryNav.map((n) => n.id),
+    ...toolsNav.map((n) => n.id),
   ];
 
   const renderNavButton = (item: NavItem) => {
@@ -162,9 +173,11 @@ export function ArtisanSidebar({
           <Badge
             className={`text-[10px] px-1.5 min-w-[18px] h-4 flex items-center justify-center leading-none ${
               isActive
-                  ? 'bg-background/15 text-white border-background/25 dark:bg-background/20 dark:text-white dark:border-background/30'
+                ? 'bg-background/15 text-white border-background/25 dark:bg-background/20 dark:text-white dark:border-background/30'
                 : item.badgeVariant === 'warning'
                 ? 'bg-amber-100 text-amber-700 border-amber-200'
+                : item.badgeVariant === 'destructive'
+                ? 'bg-red-100 text-red-700 border-red-200'
                 : 'bg-blue-100 text-blue-700 border-blue-200'
             }`}
           >
@@ -177,23 +190,23 @@ export function ArtisanSidebar({
 
   return (
     <aside
-      id="artisan-sidebar"
+      id="admin-sidebar"
       className={mobileMode
         ? 'w-full h-full min-h-0 flex flex-col shrink-0 relative z-20 bg-transparent'
         : 'w-64 min-h-screen flex flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-l border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-slide-in-right fixed right-0 top-0 bottom-0 h-screen'}
-      aria-label="Artisan dashboard sidebar"
+      aria-label="Admin dashboard sidebar"
     >
       {mobileMode ? (
         <div className="px-4 pt-4 pb-3 border-b border-border/60 bg-background/95 backdrop-blur-xl sticky top-0 z-10">
           <div className="rounded-3xl border border-border/60 bg-card/85 backdrop-blur-xl p-4 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
-                <Store className="w-5 h-5 text-white" />
+                <Shield className="w-5 h-5 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Artisan Panel</p>
-                <p className="text-base font-semibold text-foreground truncate">Zaymazone Marketplace</p>
-                <p className="text-xs text-muted-foreground truncate">Manage orders, products, and customer engagement</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Admin Panel</p>
+                <p className="text-base font-semibold text-foreground truncate">Zaymazone Admin</p>
+                <p className="text-xs text-muted-foreground truncate">Manage platform & users</p>
               </div>
             </div>
 
@@ -205,10 +218,10 @@ export function ArtisanSidebar({
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground truncate leading-tight">
-                  {user?.name || 'Artisan'}
+                  {user?.name || 'Admin'}
                 </p>
                 <p className="text-[11px] text-muted-foreground truncate leading-tight">
-                  {user?.email || 'artisan@zaymazone.com'}
+                  {user?.email || 'admin@zaymazone.com'}
                 </p>
               </div>
             </div>
@@ -220,11 +233,11 @@ export function ArtisanSidebar({
           <div className="px-5 py-4 border-b border-border/70 dark:border-white/10 bg-background/20 dark:bg-background/10">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
-                <Store className="w-4 h-4 text-white" />
+                <Shield className="w-4 h-4 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-bold text-sm text-foreground">Artisan Panel</p>
-                <p className="text-[11px] text-muted-foreground">Zaymazone Marketplace</p>
+                <p className="font-bold text-sm text-foreground">Admin Panel</p>
+                <p className="text-[11px] text-muted-foreground">Zaymazone Admin</p>
               </div>
             </div>
           </div>
@@ -239,10 +252,10 @@ export function ArtisanSidebar({
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground truncate leading-tight">
-                  {user?.name || 'Artisan'}
+                  {user?.name || 'Admin'}
                 </p>
                 <p className="text-[11px] text-muted-foreground truncate leading-tight">
-                  {user?.email || 'artisan@zaymazone.com'}
+                  {user?.email || 'admin@zaymazone.com'}
                 </p>
               </div>
             </div>
@@ -250,68 +263,18 @@ export function ArtisanSidebar({
         </>
       )}
 
-      {/* ── Primary nav ───────────────────────────────────────────────────── */}
-      <nav className={mobileMode ? 'flex-1 px-4 py-4 space-y-4 overflow-y-auto' : 'flex-1 px-3 pt-4 pb-2 space-y-0.5 overflow-y-auto'} aria-label="Dashboard sections">
-        <div className={mobileMode ? 'rounded-3xl border border-border/60 bg-card/70 p-3 shadow-sm' : ''}>
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
-          Dashboard
-        </p>
-        {primaryNav.map(renderNavButton)}
-        </div>
+      {/* ── Primary Navigation ─────────────────────────────────────────────── */}
+      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
+        {primaryNav.map((item) => renderNavButton(item))}
 
-        <div className={mobileMode ? 'rounded-3xl border border-border/60 bg-card/70 p-3 shadow-sm space-y-3' : 'py-2'}>
-          {!mobileMode && <Separator />}
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
-            Engagement
-          </p>
-          {secondaryNav.map(renderNavButton)}
-        </div>
+        <Separator className="my-2 bg-border/50" />
+
+        {secondaryNav.map((item) => renderNavButton(item))}
       </nav>
 
-      {/* ── Stats summary ─────────────────────────────────────────────────── */}
-      {(totalProducts > 0 || totalReviews > 0) && (
-        <div className={mobileMode ? 'px-4 py-4 border-t border-border/60 bg-background/90 backdrop-blur-xl' : 'px-4 py-3 border-t border-border/70 bg-muted/40 dark:border-white/10 dark:bg-background/10'}>
-          <div className="flex gap-4 justify-around text-center">
-            <div>
-              <p className="text-xs font-bold text-foreground">{totalProducts}</p>
-              <p className="text-[10px] text-muted-foreground">Products</p>
-            </div>
-            <div className="w-px bg-border" />
-            <div>
-              <p className="text-xs font-bold text-foreground">{totalReviews}</p>
-              <p className="text-[10px] text-muted-foreground">Reviews</p>
-            </div>
-            <div className="w-px bg-border" />
-            <div>
-              <p className="text-xs font-bold text-amber-600">{pendingOrders}</p>
-              <p className="text-[10px] text-muted-foreground">Pending</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Profile link ──────────────────────────────────────────────────── */}
-      <div className={mobileMode ? 'grid grid-cols-2 gap-2 px-4 py-4 border-t border-border/60 bg-background/95 backdrop-blur-xl' : 'px-3 py-3 border-t border-border/70 dark:border-white/10 space-y-0.5 bg-background/10 dark:bg-background/5'}>
-        <Link to="/artisan/profile">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={mobileMode ? 'w-full justify-center gap-2.5 h-11 px-3 text-sm font-medium rounded-xl bg-card/70 hover:bg-primary/10' : 'w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal hover:bg-primary/10 dark:hover:bg-white/10'}
-          >
-            <UserCircle className="w-4 h-4" />
-            Profile &amp; Settings
-          </Button>
-        </Link>
-        <Link to="/artisan/analytics">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={mobileMode ? 'w-full justify-center gap-2.5 h-11 px-3 text-sm font-medium rounded-xl bg-card/70' : 'w-full justify-start gap-2.5 h-9 px-3 text-sm font-normal'}
-          >
-            <TrendingUp className="w-4 h-4" />
-            Full Analytics
-          </Button>
-        </Link>
+      {/* ── Secondary Navigation (Tools) ─────────────────────────────────── */}
+      <div className="border-t border-border/70 dark:border-white/10 py-3 px-3 space-y-1">
+        {toolsNav.map((item) => renderNavButton(item))}
       </div>
     </aside>
   );

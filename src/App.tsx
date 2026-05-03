@@ -61,7 +61,7 @@ const MockPayment = lazy(() => import("./pages/MockPayment"));
 
 const RoutedMobileBottomNav = () => {
   const location = useLocation();
-  if (location.pathname.startsWith('/artisan') || location.pathname.startsWith('/admin')) {
+  if (location.pathname.startsWith('/artisan/') || location.pathname.startsWith('/admin')) {
     return null;
   }
   return <MobileBottomNav />;

@@ -90,28 +90,28 @@ export const Footer = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Trust Badges */}
         <motion.div
-          className="py-12 border-b border-border/30"
+          className="py-8 md:py-12 border-b border-border/30"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             {trustBadges.map((badge, index) => (
               <motion.div
                 key={badge.title}
-                className="flex flex-col items-center text-center p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 group dark:bg-background/80 dark:backdrop-blur-lg dark:border-border/40 dark:hover:border-primary/40 dark:hover:shadow-dark-glow"
+                className="flex flex-col items-center text-center p-3 md:p-4 rounded-lg md:rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 group dark:bg-background/80 dark:backdrop-blur-lg dark:border-border/40 dark:hover:border-primary/40 dark:hover:shadow-dark-glow"
                 whileHover={{ scale: 1.02, y: -2 }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <div className="p-3 rounded-full bg-gradient-to-r from-primary/10 to-primary-glow/10 text-primary mb-3 group-hover:from-primary/20 group-hover:to-primary-glow/20 transition-all duration-300 dark:from-primary/20 dark:to-primary-glow/20 dark:group-hover:from-primary/30 dark:group-hover:to-primary-glow/30 dark:drop-shadow-lg">
-                  {badge.icon}
+                <div className="p-2 md:p-3 rounded-full bg-gradient-to-r from-primary/10 to-primary-glow/10 text-primary mb-2 md:mb-3 group-hover:from-primary/20 group-hover:to-primary-glow/20 transition-all duration-300 dark:from-primary/20 dark:to-primary-glow/20 dark:group-hover:from-primary/30 dark:group-hover:to-primary-glow/30 dark:drop-shadow-lg">
+                  <span className="block w-5 h-5 md:w-6 md:h-6">{badge.icon}</span>
                 </div>
-                <h4 className="font-semibold text-foreground mb-1 dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">{badge.title}</h4>
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground drop-shadow-sm">{badge.desc}</p>
+                <h4 className="font-semibold text-foreground mb-1 text-xs md:text-sm dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">{badge.title}</h4>
+                <p className="text-xs md:text-sm text-muted-foreground dark:text-muted-foreground drop-shadow-sm">{badge.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -119,45 +119,45 @@ export const Footer = () => {
 
         {/* Join Seller Section */}
         <motion.div
-          className="text-center py-16 border-b border-border/30 dark:border-border/40"
+          className="text-center py-8 md:py-16 border-b border-border/30 dark:border-border/40"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto px-4">
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-primary-glow/10 text-primary font-medium text-sm mb-6 dark:from-primary/20 dark:to-primary-glow/20 dark:text-primary dark:drop-shadow-lg"
+              className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-gradient-to-r from-primary/10 to-primary-glow/10 text-primary font-medium text-xs md:text-sm mb-4 md:mb-6 dark:from-primary/20 dark:to-primary-glow/20 dark:text-primary dark:drop-shadow-lg"
               whileHover={{ scale: 1.05 }}
             >
-              <Crown className="h-4 w-4 drop-shadow-sm dark:drop-shadow-lg" />
+              <Crown className="h-3 w-3 md:h-4 md:w-4 drop-shadow-sm dark:drop-shadow-lg" />
               <span className="drop-shadow-sm dark:drop-shadow-lg">Artisan Partnership Program</span>
-              <Sparkles className="h-4 w-4 drop-shadow-sm dark:drop-shadow-lg" />
+              <Sparkles className="h-3 w-3 md:h-4 md:w-4 drop-shadow-sm dark:drop-shadow-lg" />
             </motion.div>
             
-            <h2 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-foreground via-primary to-primary-glow bg-clip-text text-transparent mb-6 dark:from-foreground dark:via-primary dark:to-primary-glow drop-shadow-sm dark:drop-shadow-lg">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-primary to-primary-glow bg-clip-text text-transparent mb-3 md:mb-6 dark:from-foreground dark:via-primary dark:to-primary-glow drop-shadow-sm dark:drop-shadow-lg leading-tight">
               Join Our Artisan Community
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed dark:text-muted-foreground drop-shadow-sm dark:drop-shadow-lg">
+            <p className="text-sm md:text-xl text-muted-foreground mb-6 md:mb-8 leading-relaxed dark:text-muted-foreground drop-shadow-sm dark:drop-shadow-lg">
               Transform your passion into profit. Connect with customers worldwide and showcase your authentic craftsmanship.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                 <Button 
-                  className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-600 hover:to-primary text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 dark:shadow-dark-glow dark:hover:shadow-dark-floating" 
+                  className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-600 hover:to-primary text-white px-6 md:px-8 py-3 md:py-6 text-sm md:text-lg font-semibold rounded-lg md:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 dark:shadow-dark-glow dark:hover:shadow-dark-floating" 
                   asChild
                 >
-                  <Link to="/seller-onboarding" className="flex items-center gap-2">
-                    <Crown className="h-5 w-5" />
+                  <Link to="/seller-onboarding" className="flex items-center justify-center gap-2">
+                    <Crown className="h-4 w-4 md:h-5 md:w-5" />
                     Start Selling Today
-                    <ArrowRight className="h-5 w-5" />
+                    <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                   </Link>
                 </Button>
               </motion.div>
               
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/5 px-6 py-6 text-lg rounded-xl dark:border-primary/40 dark:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow" asChild>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto border-primary/30 text-primary hover:bg-primary/5 px-6 md:px-6 py-3 md:py-6 text-sm md:text-lg rounded-lg md:rounded-xl dark:border-primary/40 dark:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow" asChild>
                   <Link to="/artisans">View Success Stories</Link>
                 </Button>
               </motion.div>
@@ -166,8 +166,8 @@ export const Footer = () => {
         </motion.div>
         
         {/* Main Footer Content */}
-        <div className="py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="py-8 md:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12">
             {/* Brand Section */}
             <motion.div 
               className="lg:col-span-2"
@@ -176,19 +176,19 @@ export const Footer = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center mb-6">
+              <div className="flex items-center mb-4 md:mb-6">
                 <motion.div whileHover={{ scale: 1.05 }}>
                   <Link to="/" onClick={scrollToTop} className="flex items-center group">
                     <img 
                       src="/logo.png" 
                       alt="ZAYMAZONE Logo" 
-                      className="h-28 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
+                      className="h-16 md:h-28 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
                     />
-                    <div className="ml-3">
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent dark:from-primary dark:to-primary-glow drop-shadow-sm dark:drop-shadow-lg">
+                    <div className="ml-2 md:ml-3">
+                      <h3 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent dark:from-primary dark:to-primary-glow drop-shadow-sm dark:drop-shadow-lg">
                         ZAYMAZONE
                       </h3>
-                      <p className="text-sm text-muted-foreground font-medium dark:text-muted-foreground drop-shadow-sm dark:drop-shadow-lg">
+                      <p className="text-xs md:text-sm text-muted-foreground font-medium dark:text-muted-foreground drop-shadow-sm dark:drop-shadow-lg">
                         Crafting Culture. Empowering Artisans.
                       </p>
                     </div>
@@ -196,22 +196,22 @@ export const Footer = () => {
                 </motion.div>
               </div>
               
-              <p className="text-muted-foreground mb-8 leading-relaxed text-lg dark:text-muted-foreground drop-shadow-sm dark:drop-shadow-lg">
+              <p className="text-muted-foreground mb-6 md:mb-8 leading-relaxed text-sm md:text-lg dark:text-muted-foreground drop-shadow-sm dark:drop-shadow-lg">
                 Discover authentic handcrafted treasures from talented artisans across India. Each piece tells a story of tradition, skill, and cultural heritage.
               </p>
               
               {/* Newsletter Signup */}
-              <div className="mb-8">
-                <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2 dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">
-                  <Mail className="h-5 w-5 text-primary dark:text-primary drop-shadow-sm dark:drop-shadow-lg" />
+              <div className="mb-6 md:mb-8">
+                <h4 className="font-semibold text-foreground mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">
+                  <Mail className="h-4 w-4 md:h-5 md:w-5 text-primary dark:text-primary drop-shadow-sm dark:drop-shadow-lg" />
                   Stay Updated
                 </h4>
                 <div className="flex gap-2">
                   <Input 
                     placeholder="Enter your email" 
-                    className="flex-1 bg-background/50 border-border/50 focus:border-primary/50 dark:bg-background/80 dark:border-border/40 dark:focus:border-primary/60"
+                    className="flex-1 text-sm bg-background/50 border-border/50 focus:border-primary/50 dark:bg-background/80 dark:border-border/40 dark:focus:border-primary/60"
                   />
-                  <Button className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-600 hover:to-primary text-white px-6 dark:shadow-dark-glow">
+                  <Button className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-600 hover:to-primary text-white px-3 md:px-6 dark:shadow-dark-glow">
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -222,17 +222,17 @@ export const Footer = () => {
               
               {/* Social Links */}
               <div>
-                <h4 className="font-semibold text-foreground mb-4 dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">Follow Us</h4>
-                <div className="flex gap-3">
+                <h4 className="font-semibold text-foreground mb-3 md:mb-4 text-sm md:text-base dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">Follow Us</h4>
+                <div className="flex gap-2 md:gap-3">
                   {socialLinks.map((social) => (
                     <motion.a
                       key={social.name}
                       href={social.url}
-                      className={`p-3 rounded-full bg-background/50 border border-border/50 hover:border-primary/30 transition-all duration-300 ${social.color} dark:bg-background/80 dark:border-border/40 dark:hover:border-primary/40 dark:hover:shadow-dark-glow`}
+                      className={`p-2 md:p-3 rounded-lg md:rounded-full bg-background/50 border border-border/50 hover:border-primary/30 transition-all duration-300 ${social.color} dark:bg-background/80 dark:border-border/40 dark:hover:border-primary/40 dark:hover:shadow-dark-glow`}
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.9 }}
                     >
-                      {social.icon}
+                      <span className="block w-4 h-4 md:w-5 md:h-5">{social.icon}</span>
                     </motion.a>
                   ))}
                 </div>
@@ -240,7 +240,7 @@ export const Footer = () => {
             </motion.div>
             
             {/* Footer Sections */}
-            <div className="lg:col-span-3 grid grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="hidden md:grid md:col-span-1 lg:col-span-3 grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {footerSections.map((section, index) => (
                 <motion.div
                   key={section.title}
@@ -249,21 +249,21 @@ export const Footer = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <h4 className="font-semibold text-foreground mb-6 flex items-center gap-2 dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">
-                    <span className="text-primary dark:text-primary drop-shadow-sm dark:drop-shadow-lg">{section.icon}</span>
-                    {section.title}
+                  <h4 className="font-semibold text-foreground mb-3 md:mb-6 flex items-center gap-2 text-xs md:text-base dark:text-foreground drop-shadow-sm dark:drop-shadow-lg">
+                    <span className="text-primary text-xs md:text-base dark:text-primary drop-shadow-sm dark:drop-shadow-lg">{section.icon}</span>
+                    <span className="line-clamp-2">{section.title}</span>
                   </h4>
-                  <ul className="space-y-4">
+                  <ul className="space-y-2 md:space-y-4">
                     {section.links.map((link) => (
                       <li key={link.name}>
                         <Link
                           to={link.path}
-                          className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors duration-300 group dark:text-muted-foreground dark:hover:text-primary dark:hover:shadow-dark-glow"
+                          className="flex items-center gap-2 md:gap-3 text-xs md:text-base text-muted-foreground hover:text-primary transition-colors duration-300 group dark:text-muted-foreground dark:hover:text-primary dark:hover:shadow-dark-glow"
                         >
-                          <span className="text-primary/60 group-hover:text-primary group-hover:scale-110 transition-all duration-300 dark:text-primary/80 dark:group-hover:text-primary drop-shadow-sm dark:drop-shadow-lg">
+                          <span className="text-primary/60 group-hover:text-primary group-hover:scale-110 transition-all duration-300 dark:text-primary/80 dark:group-hover:text-primary drop-shadow-sm dark:drop-shadow-lg flex-shrink-0">
                             {link.icon}
                           </span>
-                          <span className="group-hover:translate-x-1 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
+                          <span className="group-hover:translate-x-1 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg line-clamp-2">
                             {link.name}
                           </span>
                         </Link>
@@ -278,25 +278,25 @@ export const Footer = () => {
         
         {/* Bottom Bar */}
         <motion.div
-          className="py-8 border-t border-border/30 dark:border-border/40"
+          className="py-6 md:py-8 border-t border-border/30 dark:border-border/40"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-6 text-sm text-muted-foreground dark:text-muted-foreground drop-shadow-sm">
-              <p>© 2024 Zaymazone. All rights reserved.</p>
-              <div className="flex items-center gap-4">
-                <Link to="/terms" className="hover:text-primary transition-colors dark:hover:text-primary">Terms</Link>
-                <Link to="/privacy" className="hover:text-primary transition-colors dark:hover:text-primary">Privacy</Link>
-                <Link to="/privacy" className="hover:text-primary transition-colors dark:hover:text-primary">Cookies</Link>
-              </div>
+          <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground dark:text-muted-foreground drop-shadow-sm">
+            <p className="text-center sm:text-left">© 2024 Zaymazone. All rights reserved.</p>
+            <div className="flex items-center gap-3 md:gap-4 justify-center flex-wrap">
+              <Link to="/terms" className="hover:text-primary transition-colors dark:hover:text-primary">Terms</Link>
+              <span className="hidden sm:inline">•</span>
+              <Link to="/privacy" className="hover:text-primary transition-colors dark:hover:text-primary">Privacy</Link>
+              <span className="hidden sm:inline">•</span>
+              <Link to="/privacy" className="hover:text-primary transition-colors dark:hover:text-primary">Cookies</Link>
             </div>
             
-            <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground drop-shadow-sm">
+            <div className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground dark:text-muted-foreground drop-shadow-sm whitespace-nowrap">
               <span>Made with</span>
-              <Heart className="h-4 w-4 text-red-500 animate-pulse" />
+              <Heart className="h-3 w-3 md:h-4 md:w-4 text-red-500 animate-pulse" />
               <span>in India</span>
               <Badge variant="secondary" className="bg-gradient-to-r from-primary/10 to-primary-glow/10 text-primary border-0 dark:from-primary/20 dark:to-primary-glow/20 dark:text-primary dark:drop-shadow-lg">
                 <Star className="h-3 w-3 mr-1" />

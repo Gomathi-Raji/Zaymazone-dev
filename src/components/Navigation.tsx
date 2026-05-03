@@ -257,10 +257,10 @@ export const Navigation = () => {
                     </Button>
                   </motion.div>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background/98 backdrop-blur-xl border-primary/20 dark:bg-background/98 dark:backdrop-blur-2xl dark:border-primary/30 dark:shadow-dark-floating">
+                <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background/98 backdrop-blur-xl border-primary/20 dark:bg-background/98 dark:backdrop-blur-2xl dark:border-primary/30 dark:shadow-dark-floating overflow-y-auto">
                   <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <motion.div
-                    className="flex flex-col space-y-6 mt-6"
+                    className="flex flex-col space-y-6 mt-6 pb-6"
                     initial="hidden"
                     animate="visible"
                     variants={{
@@ -268,51 +268,117 @@ export const Navigation = () => {
                       visible: {
                         opacity: 1,
                         transition: {
-                          staggerChildren: 0.1,
-                          delayChildren: 0.2,
+                          staggerChildren: 0.08,
+                          delayChildren: 0.15,
                         },
                       },
                     }}
                   >
-                    {navigationItems.concat([
-                      { to: "/help", label: "Help & Support", icon: <Heart className="h-4 w-4" /> },
-                      { to: "/sustainability", label: "Sustainability", icon: <Sparkles className="h-4 w-4" /> },
-                      { to: "/start-selling", label: "Start Selling", icon: <Crown className="h-4 w-4" /> },
-                      ...(isAuthenticated ? [
-                        { to: user?.role === 'artisan' ? '/artisan/profile' : '/profile', label: "My Profile", icon: <User className="h-4 w-4" /> },
-                        { to: "/orders", label: "My Orders", icon: <ShoppingBag className="h-4 w-4" /> },
-                        { to: "/wishlist", label: "Wishlist", icon: <Heart className="h-4 w-4" /> },
-                      ] : []),
-                    ]).map((item, index) => (
-                      <motion.div
-                        key={item.to}
-                        variants={{
-                          hidden: { x: 50, opacity: 0 },
-                          visible: {
-                            x: 0,
-                            opacity: 1,
-                            transition: {
-                              duration: 0.4,
-                              ease: [0.25, 0.46, 0.45, 0.94],
-                            },
-                          },
-                        }}
-                      >
-                        <Link
-                          to={item.to}
-                          className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
-                          onClick={() => {
-                            if (item.onClick) item.onClick();
-                            setIsOpen(false);
-                          }}
-                        >
-                          <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
-                            {item.icon}
-                          </span>
-                          <span className="drop-shadow-sm dark:drop-shadow-lg">{item.label}</span>
-                        </Link>
-                      </motion.div>
-                    ))}
+                    {/* Browse Section */}
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-3 mb-3">Browse</p>
+                      <div className="space-y-1">
+                        {navigationItems.map((item) => (
+                          <motion.div
+                            key={item.to}
+                            variants={{
+                              hidden: { x: 50, opacity: 0 },
+                              visible: {
+                                x: 0,
+                                opacity: 1,
+                                transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+                              },
+                            }}
+                          >
+                            <Link
+                              to={item.to}
+                              className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
+                              onClick={() => {
+                                if (item.onClick) item.onClick();
+                                setIsOpen(false);
+                              }}
+                            >
+                              <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
+                                {item.icon}
+                              </span>
+                              <span className="drop-shadow-sm dark:drop-shadow-lg">{item.label}</span>
+                            </Link>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Resources Section */}
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-3 mb-3">Resources</p>
+                      <div className="space-y-1">
+                        {[
+                          { to: "/help", label: "Help & Support", icon: <Heart className="h-4 w-4" /> },
+                          { to: "/sustainability", label: "Sustainability", icon: <Sparkles className="h-4 w-4" /> },
+                          { to: "/start-selling", label: "Start Selling", icon: <Crown className="h-4 w-4" /> },
+                        ].map((item) => (
+                          <motion.div
+                            key={item.to}
+                            variants={{
+                              hidden: { x: 50, opacity: 0 },
+                              visible: {
+                                x: 0,
+                                opacity: 1,
+                                transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+                              },
+                            }}
+                          >
+                            <Link
+                              to={item.to}
+                              className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
+                                {item.icon}
+                              </span>
+                              <span className="drop-shadow-sm dark:drop-shadow-lg">{item.label}</span>
+                            </Link>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Account Section - Only show if authenticated */}
+                    {isAuthenticated && (
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.15em] font-semibold text-muted-foreground px-3 mb-3">Account</p>
+                        <div className="space-y-1">
+                          {[
+                            { to: user?.role === 'artisan' ? '/artisan/profile' : '/profile', label: "My Profile", icon: <User className="h-4 w-4" /> },
+                            { to: "/orders", label: "My Orders", icon: <ShoppingBag className="h-4 w-4" /> },
+                            { to: "/wishlist", label: "Wishlist", icon: <Heart className="h-4 w-4" /> },
+                          ].map((item) => (
+                            <motion.div
+                              key={item.to}
+                              variants={{
+                                hidden: { x: 50, opacity: 0 },
+                                visible: {
+                                  x: 0,
+                                  opacity: 1,
+                                  transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+                                },
+                              }}
+                            >
+                              <Link
+                                to={item.to}
+                                className="flex items-center gap-3 p-3 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 dark:text-foreground dark:hover:text-primary dark:hover:bg-primary/10 dark:hover:shadow-dark-glow font-medium transition-all duration-300 group"
+                                onClick={() => setIsOpen(false)}
+                              >
+                                <span className="group-hover:scale-110 transition-transform duration-300 drop-shadow-sm dark:drop-shadow-lg">
+                                  {item.icon}
+                                </span>
+                                <span className="drop-shadow-sm dark:drop-shadow-lg">{item.label}</span>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </motion.div>
                 </SheetContent>
               </Sheet>

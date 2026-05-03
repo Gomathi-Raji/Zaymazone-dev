@@ -28,7 +28,7 @@ const Index = () => {
   } = useProductComparison();
 
   return (
-    <div className="min-h-screen bg-background artisan-pattern">
+    <div className="min-h-screen bg-background artisan-pattern pb-24 md:pb-0">
       <SEO
         structuredData={{
           "@context": "https://schema.org",

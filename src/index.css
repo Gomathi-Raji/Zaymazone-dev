@@ -491,6 +491,33 @@ All colors MUST be HSL.
     animation: pulse-soft 2s ease-in-out infinite;
   }
 
+  /* RTL Animations for Sidebars */
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-out-right {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out;
+  }
+
   /* Artisan-themed component variants */
   .btn-artisan-primary {
     @apply bg-gradient-to-r from-primary to-primary-glow text-primary-foreground
@@ -1617,6 +1644,151 @@ a:focus:not(:focus-visible),
   box-shadow: 0 0 0 1px hsl(var(--primary) / 0.18) inset;
 }
 
+/* ── User Mobile Navigation (Bottom Nav) ──────────────────────────────── */
+.user-mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: stretch;
+  background: hsl(var(--background) / 0.95);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid hsl(var(--border));
+  box-shadow: 0 -12px 32px -22px hsl(var(--foreground) / 0.45);
+  padding: 0.35rem 0.5rem calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
+}
+
+.user-mobile-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.25rem;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  border-radius: 0.5rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.user-mobile-nav__item:hover,
+.user-mobile-nav__item:focus-visible {
+  background: hsl(var(--muted) / 0.75);
+  color: hsl(var(--foreground));
+  transform: translateY(-1px);
+}
+
+.user-mobile-nav__item--active {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.12) inset;
+  transform: scale(1.04);
+}
+
+.user-mobile-nav__item--active .user-mobile-nav__label {
+  font-weight: 600;
+}
+
+.user-mobile-nav__label {
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition: font-weight 0.2s ease, opacity 0.2s ease;
+}
+
+.dark .user-mobile-nav {
+  background: hsl(var(--background) / 0.96);
+  border-color: hsl(var(--border) / 0.9);
+  box-shadow: 0 -18px 60px -28px rgba(0, 0, 0, 0.85);
+}
+
+.dark .user-mobile-nav__item:hover,
+.dark .user-mobile-nav__item:focus-visible {
+  background: hsl(var(--primary) / 0.08);
+}
+
+.dark .user-mobile-nav__item--active {
+  background: hsl(var(--primary) / 0.12);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.18) inset;
+}
+
+/* ── Sidebar Navigation (Right-aligned, RTL) ──────────────────────────────── */
+.user-sidebar,
+#artisan-sidebar,
+#admin-sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  background: hsl(var(--background) / 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 40;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.user-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.user-sidebar__item:hover {
+  background: hsl(var(--muted) / 0.6);
+  color: hsl(var(--foreground));
+  transform: translateX(-2px);
+}
+
+.user-sidebar__item:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: -2px;
+}
+
+.user-sidebar__item--active {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  font-weight: 600;
+  box-shadow: inset -3px 0 0 hsl(var(--primary));
+}
+
+.dark .user-sidebar {
+  background: hsl(var(--background) / 0.7);
+}
+
+.dark .user-sidebar__item:hover {
+  background: hsl(var(--primary) / 0.08);
+}
+
+.dark .user-sidebar__item--active {
+  background: hsl(var(--primary) / 0.12);
+  box-shadow: inset -3px 0 0 hsl(var(--primary)), 0 0 0 1px hsl(var(--primary) / 0.18) inset;
+}
+
 /* ── High-contrast mode overrides ─────────────────────────────────────── */
 @media (prefers-contrast: more) {
   /* Stronger border visibility */
@@ -1624,6 +1796,14 @@ a:focus:not(:focus-visible),
     border-top: 2px solid hsl(var(--foreground));
   }
   .artisan-mobile-nav__item--active {
+    color: hsl(var(--foreground));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .user-mobile-nav {
+    border-top: 2px solid hsl(var(--foreground));
+  }
+  .user-mobile-nav__item--active {
     color: hsl(var(--foreground));
     text-decoration: underline;
     text-underline-offset: 2px;

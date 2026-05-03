@@ -266,7 +266,7 @@ export default function Admin() {
       </div>
 
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        <SheetContent side="left" className="w-[92vw] max-w-[420px] h-[100dvh] p-0 overflow-hidden bg-background/95 backdrop-blur-xl border-r border-border/60 shadow-2xl">
+        <SheetContent side="right" className="w-[92vw] max-w-[420px] h-[100dvh] p-0 overflow-hidden bg-background/95 backdrop-blur-xl border-l border-border/60 shadow-2xl">
           <SheetHeader className="px-4 py-4 border-b border-border/60 bg-card/50 sticky top-0 z-10 backdrop-blur-xl">
             <SheetTitle>Admin Panel</SheetTitle>
           </SheetHeader>
@@ -310,8 +310,8 @@ export default function Admin() {
         </SheetContent>
       </Sheet>
 
-      {/* Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-card border-r border-border min-h-screen sticky top-0 shrink-0">
+      {/* Sidebar (right side on large screens) */}
+      <aside className="hidden lg:flex w-64 bg-card border-l border-border min-h-screen sticky top-0 shrink-0 lg:order-last animate-slide-in-right">
         <div className="p-6 w-full bg-card/80 backdrop-blur-xl">
           <div className="mb-6 rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
             <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Admin Panel</p>

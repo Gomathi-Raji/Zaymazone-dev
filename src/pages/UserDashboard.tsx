@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
+import UserSidebar from "@/components/user/UserSidebar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -141,6 +142,21 @@ export default function UserDashboard() {
       });
     }
   }, [user]);
+
+  // Sidebar state (keeps in sync with artisan/admin panels)
+  const [activeSection, setActiveSection] = useState<'dashboard'|'orders'|'wishlist'|'profile'|'settings'>('dashboard');
+  const handleNavigate = (section: 'dashboard'|'orders'|'wishlist'|'profile'|'settings') => {
+    setActiveSection(section);
+    const pathMap: Record<string,string> = {
+      dashboard: '/user/dashboard',
+      orders: '/user/orders',
+      wishlist: '/wishlist',
+      profile: '/profile',
+      settings: '/user/settings',
+    };
+    const dest = (pathMap as any)[section];
+    if (dest) navigate(dest);
+  };
 
   const loadUserData = async () => {
     setLoading(true);
@@ -303,8 +319,17 @@ export default function UserDashboard() {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="pt-20 pb-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative flex flex-col lg:flex-row flex-1">
+        <UserSidebar
+          activeSection={activeSection}
+          onNavigate={handleNavigate}
+          userName={user?.name}
+          userInitials={user?.name?.split(" ").map(n=>n[0]).join("").slice(0,2).toUpperCase()}
+          pendingOrders={orders.length}
+          wishlistCount={wishlist.length}
+        />
+        
+        <div className="flex-1 min-w-0 pt-4 pb-16">
           {/* Welcome Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -764,7 +789,6 @@ export default function UserDashboard() {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
 
       <Footer />
 
@@ -822,6 +846,8 @@ export default function UserDashboard() {
           loadUserData();
         }}
       />
+        </div>
+      </div>
     </div>
   );
 }

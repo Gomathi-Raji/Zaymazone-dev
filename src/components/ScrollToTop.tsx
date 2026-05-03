@@ -34,7 +34,7 @@ export const ScrollToTop = () => {
     <Button
       onClick={scrollToTop}
       className={cn(
-        "fixed bottom-8 right-8 z-50 rounded-full w-12 h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300",
+        "fixed bottom-20 md:bottom-8 right-8 z-40 rounded-full w-12 h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
       )}
       size="icon"

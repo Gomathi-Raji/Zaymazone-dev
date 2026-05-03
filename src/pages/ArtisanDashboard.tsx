@@ -208,7 +208,7 @@ const ArtisanDashboard = () => {
     return (
       <div className="relative min-h-screen overflow-hidden bg-background flex">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.09),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
-        <aside className="hidden lg:flex flex-col w-64 bg-card/80 backdrop-blur-xl border-r border-border/50 dark:bg-card/55 dark:border-white/10 min-h-screen animate-pulse shrink-0 relative z-10">
+        <aside className="hidden lg:flex flex-col w-64 bg-card/80 backdrop-blur-xl border-l border-border/50 dark:bg-card/55 dark:border-white/10 min-h-screen animate-pulse shrink-0 relative z-10 lg:order-last animate-slide-in-right">
           <div className="p-5 border-b"><div className="h-9 bg-muted rounded-lg" /></div>
           <div className="p-4 border-b"><div className="h-8 bg-muted rounded-full w-3/4" /></div>
           <div className="p-3 space-y-2">
@@ -657,7 +657,7 @@ const ArtisanDashboard = () => {
       </div>
 
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-[92vw] max-w-[420px] h-[100dvh] p-0 overflow-hidden bg-background/95 backdrop-blur-xl border-r border-border/60 shadow-2xl">
+        <SheetContent side="right" className="w-[92vw] max-w-[420px] h-[100dvh] p-0 overflow-hidden bg-background/95 backdrop-blur-xl border-l border-border/60 shadow-2xl">
           <SheetTitle className="sr-only">Artisan navigation</SheetTitle>
           <ArtisanSidebar
             mobileMode
