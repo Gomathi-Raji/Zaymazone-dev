@@ -33,13 +33,13 @@ export const ArtisanProfile = ({ artisan }: ArtisanProfileProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
       {/* Hero Image */}
-      <div className="aspect-video bg-muted overflow-hidden relative">
+      <div className="relative overflow-hidden bg-gradient-to-br from-background via-muted to-secondary/30 aspect-[16/11] sm:aspect-[16/9]">
         <img 
           src={coverImage} 
           alt={`${artisan.name} at work`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-contain object-center transition-transform duration-300 group-hover:scale-[1.01]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/5 to-transparent pointer-events-none" />
         
         {/* Avatar positioned over the hero image */}
         <div className="absolute bottom-4 left-4">

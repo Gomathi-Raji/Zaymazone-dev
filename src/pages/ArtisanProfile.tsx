@@ -366,12 +366,12 @@ const ArtisanProfile = () => {
         )}
 
         {/* ── Banner ── */}
-        <div className="relative w-full rounded-2xl overflow-hidden mb-6 aspect-[4/1] min-h-[120px] max-h-[220px] bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/30 dark:from-primary/30 dark:via-primary/15 dark:to-secondary/10 shadow-card">
+        <div className="relative w-full rounded-2xl overflow-hidden mb-6 aspect-[16/9] sm:aspect-[21/9] bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/30 dark:from-primary/30 dark:via-primary/15 dark:to-secondary/10 shadow-card">
           {bannerSrc ? (
             <img
               src={bannerSrc}
               alt="Shop banner"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain object-center"
             />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-primary/40 select-none">
