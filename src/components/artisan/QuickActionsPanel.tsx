@@ -43,7 +43,7 @@ const ACTIONS: QuickAction[] = [
     icon: ShoppingCart,
     href: '/artisan/orders',
     iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-50 dark:bg-blue-950/40',
+    iconBg: 'bg-blue-50',
   },
   {
     label: 'Analytics',
@@ -51,7 +51,7 @@ const ACTIONS: QuickAction[] = [
     icon: BarChart3,
     href: '/artisan/analytics',
     iconColor: 'text-purple-600',
-    iconBg: 'bg-purple-50 dark:bg-purple-950/40',
+    iconBg: 'bg-purple-50',
   },
   {
     label: 'Customers',
@@ -59,7 +59,7 @@ const ACTIONS: QuickAction[] = [
     icon: Users,
     href: '/artisan/customers',
     iconColor: 'text-green-600',
-    iconBg: 'bg-green-50 dark:bg-green-950/40',
+    iconBg: 'bg-green-50',
   },
   {
     label: 'Messages',
@@ -67,7 +67,7 @@ const ACTIONS: QuickAction[] = [
     icon: MessageSquare,
     href: '/artisan/messages',
     iconColor: 'text-indigo-600',
-    iconBg: 'bg-indigo-50 dark:bg-indigo-950/40',
+    iconBg: 'bg-indigo-50',
   },
   {
     label: 'My Products',
@@ -75,7 +75,7 @@ const ACTIONS: QuickAction[] = [
     icon: Package,
     href: '/artisan/products',
     iconColor: 'text-amber-600',
-    iconBg: 'bg-amber-50 dark:bg-amber-950/40',
+    iconBg: 'bg-amber-50',
   },
   {
     label: 'Reviews',
@@ -83,7 +83,7 @@ const ACTIONS: QuickAction[] = [
     icon: FileText,
     href: '/artisan/reviews',
     iconColor: 'text-pink-600',
-    iconBg: 'bg-pink-50 dark:bg-pink-950/40',
+    iconBg: 'bg-pink-50',
   },
   {
     label: 'Profile',
@@ -91,7 +91,7 @@ const ACTIONS: QuickAction[] = [
     icon: UserCircle,
     href: '/artisan/profile',
     iconColor: 'text-gray-600',
-    iconBg: 'bg-gray-100 dark:bg-gray-800',
+    iconBg: 'bg-gray-100',
   },
 ];
 

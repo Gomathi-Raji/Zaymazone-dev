@@ -338,20 +338,20 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
 
       {/* ── Pending action alert ──────────────────────────────────────────── */}
       {!alertActive && pendingOrders.length > 0 && (
-        <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-amber-300 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/35">
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-amber-300 bg-amber-50">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+            <p className="text-sm font-semibold text-amber-900">
               {pendingOrders.length} order{pendingOrders.length !== 1 ? 's' : ''} awaiting your action
             </p>
-            <p className="text-xs text-amber-700 mt-0.5 dark:text-amber-300">
+            <p className="text-xs text-amber-700 mt-0.5">
               Unactioned placed orders may auto-cancel after 24 hours.
             </p>
           </div>
           <Button
             size="sm"
             variant="outline"
-            className="border-amber-400 text-amber-800 hover:bg-amber-100 h-7 text-xs shrink-0 dark:border-amber-700 dark:text-amber-200 dark:hover:bg-amber-950/40"
+            className="border-amber-400 text-amber-800 hover:bg-amber-100 h-7 text-xs shrink-0"
             onClick={() => applyFilter('placed')}
           >
             Review <ChevronRight className="w-3 h-3 ml-1" />
@@ -379,7 +379,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                 {f.label}
                 {count > 0 && (
                   <span className={`text-[10px] px-1.5 py-0 rounded-full font-bold ${
-                    filter === f.id ? 'bg-background/15 text-primary-foreground border border-background/20 dark:bg-background/20' : 'bg-muted dark:bg-muted/80'
+                    filter === f.id ? 'bg-white/20' : 'bg-muted'
                   }`}>
                     {count}
                   </span>
@@ -448,9 +448,9 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                 <Card
                   key={order._id}
                   className={`transition-all ${
-                    isNew     ? 'border-orange-400 shadow-orange-100 shadow-sm dark:shadow-orange-950/30' :
-                    canAct    ? 'border-amber-300 bg-amber-50/30 dark:border-amber-800 dark:bg-amber-950/20' :
-                    selected  ? 'border-blue-300 bg-blue-50/20 dark:border-blue-800 dark:bg-blue-950/20' :
+                    isNew     ? 'border-orange-400 shadow-orange-100 shadow-sm' :
+                    canAct    ? 'border-amber-300 bg-amber-50/30' :
+                    selected  ? 'border-blue-300 bg-blue-50/20' :
                     'border-border hover:border-border/70'
                   }`}
                 >
@@ -469,11 +469,11 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
 
                       {/* Status icon */}
                       <div className={`p-2 rounded-lg shrink-0 ${
-                        isNew     ? 'bg-orange-100 dark:bg-orange-950/40' :
-                        canAct    ? 'bg-amber-100 dark:bg-amber-950/40' :
-                        order.status === 'delivered' ? 'bg-green-100 dark:bg-green-950/40' :
-                        order.status === 'rejected' || order.status === 'cancelled' ? 'bg-red-100 dark:bg-red-950/40' :
-                        'bg-muted/50 dark:bg-muted/30'
+                        isNew     ? 'bg-orange-100' :
+                        canAct    ? 'bg-amber-100' :
+                        order.status === 'delivered' ? 'bg-green-100' :
+                        order.status === 'rejected' || order.status === 'cancelled' ? 'bg-red-100' :
+                        'bg-muted/50'
                       }`}>
                         <StatusIcon className={`w-4 h-4 ${
                           isNew     ? 'text-primary' :
@@ -494,7 +494,7 @@ export function OrdersManagementPage({ onNavigateTo }: OrdersManagementPageProps
                             </Badge>
                           )}
                           {canAct && !isNew && (
-                            <Badge className="text-[10px] px-1.5 bg-amber-500 text-white dark:bg-amber-400 dark:text-amber-950">
+                            <Badge className="text-[10px] px-1.5 bg-amber-500 text-white">
                               Needs Action
                             </Badge>
                           )}

@@ -142,9 +142,7 @@ const ArtisanProducts = () => {
   const formatPrice = (price) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(price);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.12),transparent_32%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_28%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
-      <div className="relative z-10">
+    <div className="min-h-screen bg-gradient-subtle artisan-pattern">
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -444,7 +442,6 @@ const ArtisanProducts = () => {
       </main>
 
       <Footer />
-      </div>
     </div>
   );
 };

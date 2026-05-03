@@ -44,7 +44,6 @@ import { QuickActionsPanel } from '@/components/artisan/QuickActionsPanel';
 import { OrdersManagementPage } from '@/components/artisan/OrdersManagementPage';
 import { useOrderAlerts } from '@/hooks/useOrderAlerts';
 import { ArtisanMobileBottomNav } from '@/components/artisan/ArtisanMobileBottomNav';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -206,9 +205,8 @@ const ArtisanDashboard = () => {
   // ── Loading skeleton ──────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-background flex">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.09),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
-        <aside className="hidden lg:flex flex-col w-64 bg-card/80 backdrop-blur-xl border-l border-border/50 dark:bg-card/55 dark:border-white/10 min-h-screen animate-pulse shrink-0 relative z-10 lg:order-last animate-slide-in-right">
+      <div className="min-h-screen bg-gradient-subtle artisan-pattern flex">
+        <aside className="hidden lg:flex flex-col w-64 bg-card border-r min-h-screen animate-pulse shrink-0">
           <div className="p-5 border-b"><div className="h-9 bg-muted rounded-lg" /></div>
           <div className="p-4 border-b"><div className="h-8 bg-muted rounded-full w-3/4" /></div>
           <div className="p-3 space-y-2">
@@ -217,7 +215,7 @@ const ArtisanDashboard = () => {
             ))}
           </div>
         </aside>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 relative z-10">
+        <main className="flex-1 p-8 space-y-6">
           <div className="h-10 bg-muted rounded-lg w-64 animate-pulse" />
           <div className="grid grid-cols-6 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -237,7 +235,7 @@ const ArtisanDashboard = () => {
   const OverviewSection = () => (
     <div className="space-y-6">
       {/* Page header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
             <LayoutDashboard className="w-3.5 h-3.5" />
@@ -254,13 +252,13 @@ const ArtisanDashboard = () => {
             {' · '}Period: {period === '7days' ? '7 Days' : period === '30days' ? '30 Days' : period === '90days' ? '90 Days' : '1 Year'}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <div className="flex w-full sm:w-auto border rounded-lg overflow-x-auto text-xs">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex border rounded-lg overflow-hidden text-xs">
             {(['7days', '30days', '90days', '1year'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => handlePeriodChange(p)}
-                className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
+                className={`px-3 py-1.5 font-medium transition-colors ${
                   period === p ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-primary/5'
                 }`}
               >
@@ -324,7 +322,7 @@ const ArtisanDashboard = () => {
                 : undefined}
               color={(bundle?.revenue?.growthPct ?? 0) > 0 ? 'text-green-600' : (bundle?.revenue?.growthPct ?? 0) < 0 ? 'text-red-600' : 'text-foreground'}
             />
-            <KpiCard label="Avg Order Value" value={fmt(bundle?.performance?.avgOrderValue ?? 0)} sub="per order" />
+            <KpiCard label="Avg Order Value" value={fmt(bundle?.revenue?.avgOrderValue ?? 0)} sub="per order" />
             <KpiCard
               label="Total Orders"
               value={String(bundle?.orderCounts?.total ?? 0)}
@@ -373,7 +371,7 @@ const ArtisanDashboard = () => {
                 Latest {Math.min(recentOrders.length, 5)} orders · Accept or reject placed orders
               </CardDescription>
             </div>
-            <Button variant="outline" size="sm" className="h-7 text-xs w-full sm:w-auto" onClick={() => setActiveSection('orders')}>
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setActiveSection('orders')}>
               View All <ExternalLink className="w-3 h-3 ml-1.5" />
             </Button>
           </div>
@@ -449,7 +447,7 @@ const ArtisanDashboard = () => {
   // ── Section: Products ─────────────────────────────────────────────────────
   const ProductsSection = () => (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
             <LayoutDashboard className="w-3.5 h-3.5" />
@@ -461,14 +459,14 @@ const ArtisanDashboard = () => {
             {products.length} listing{products.length !== 1 ? 's' : ''} · {lowStock.length} low stock
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-          <Link to="/artisan/products" className="w-full sm:w-auto"><Button variant="outline" size="sm" className="w-full sm:w-auto justify-center">Manage <ExternalLink className="w-3.5 h-3.5 ml-1.5" /></Button></Link>
-          <Link to="/artisan/products" className="w-full sm:w-auto"><Button size="sm" className="btn-artisan-primary w-full sm:w-auto justify-center"><Plus className="w-3.5 h-3.5 mr-1.5" />Add</Button></Link>
+        <div className="flex gap-2">
+          <Link to="/artisan/products"><Button variant="outline" size="sm">Manage <ExternalLink className="w-3.5 h-3.5 ml-1.5" /></Button></Link>
+          <Link to="/artisan/products"><Button size="sm" className="btn-artisan-primary"><Plus className="w-3.5 h-3.5 mr-1.5" />Add</Button></Link>
         </div>
       </div>
 
       {lowStock.length > 0 && (
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
           <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-red-800">{lowStock.length} product{lowStock.length > 1 ? 's' : ''} need restocking</p>
@@ -532,7 +530,7 @@ const ArtisanDashboard = () => {
   // ── Section: Analytics ────────────────────────────────────────────────────
   const AnalyticsSection = () => (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
             <LayoutDashboard className="w-3.5 h-3.5" />
@@ -542,13 +540,13 @@ const ArtisanDashboard = () => {
           <h2 className="text-2xl font-bold">Analytics</h2>
           <p className="text-sm text-muted-foreground mt-0.5">Sales performance and order trends</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex w-full sm:w-auto border rounded-lg overflow-x-auto text-xs">
+        <div className="flex items-center gap-2">
+          <div className="flex border rounded-lg overflow-hidden text-xs">
             {(['7days', '30days', '90days', '1year'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => handlePeriodChange(p)}
-                className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
+                className={`px-3 py-1.5 font-medium transition-colors ${
                   period === p ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-primary/5'
                 }`}
               >
@@ -557,7 +555,7 @@ const ArtisanDashboard = () => {
             ))}
           </div>
           <Link to="/artisan/analytics">
-            <Button size="sm" variant="outline" className="w-full sm:w-auto justify-center">Full Page <ExternalLink className="w-3.5 h-3.5 ml-1.5" /></Button>
+            <Button size="sm" variant="outline">Full Page <ExternalLink className="w-3.5 h-3.5 ml-1.5" /></Button>
           </Link>
         </div>
       </div>
@@ -641,59 +639,30 @@ const ArtisanDashboard = () => {
     <>
       {/* Module 14: skip-navigation link for keyboard users */}
       <a href="#artisan-main-content" className="skip-link">Skip to main content</a>
-      <div className="relative min-h-screen overflow-hidden bg-background flex">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.14),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.09),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.94))] dark:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_30%),radial-gradient(circle_at_top_right,hsl(var(--accent)/0.08),transparent_24%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)/0.96))]" />
+      <div className="min-h-screen bg-gradient-subtle artisan-pattern flex">
 
       {/* ── Sidebar ────────────────────────────────────────────────────── */}
-      <div className="hidden lg:block">
-        <ArtisanSidebar
-          activeSection={activeSection}
-          onNavigate={setActiveSection}
-          pendingOrders={pendingOrders.length}
-          lowStockCount={lowStock.length}
-          totalProducts={products.length}
-          totalReviews={bundle?.performance?.totalReviews ?? 0}
-        />
-      </div>
-
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="right" className="w-[92vw] max-w-[420px] h-[100dvh] p-0 overflow-hidden bg-background/95 backdrop-blur-xl border-l border-border/60 shadow-2xl">
-          <SheetTitle className="sr-only">Artisan navigation</SheetTitle>
-          <ArtisanSidebar
-            mobileMode
-            activeSection={activeSection}
-            onNavigate={(section) => {
-              setActiveSection(section);
-              setSidebarOpen(false);
-            }}
-            pendingOrders={pendingOrders.length}
-            lowStockCount={lowStock.length}
-            totalProducts={products.length}
-            totalReviews={bundle?.performance?.totalReviews ?? 0}
-          />
-        </SheetContent>
-      </Sheet>
+      <ArtisanSidebar
+        activeSection={activeSection}
+        onNavigate={setActiveSection}
+        pendingOrders={pendingOrders.length}
+        lowStockCount={lowStock.length}
+        totalProducts={products.length}
+        totalReviews={bundle?.performance?.totalReviews ?? 0}
+      />
 
       {/* ── Main pane ──────────────────────────────────────────────────── */}
-      <div className="relative z-10 flex-1 flex flex-col min-h-screen overflow-auto backdrop-blur-sm">
+      <div className="flex-1 flex flex-col min-h-screen overflow-auto">
 
         {/* Top bar */}
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 px-4 sm:px-6 py-3 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-border/60 bg-card/80 backdrop-blur-sm text-foreground hover:bg-muted transition-colors shrink-0"
-              aria-label="Open artisan navigation"
-            >
-              <Menu className="w-4 h-4" />
-            </button>
-            <h2 className="text-sm font-semibold truncate">{SECTION_LABELS[activeSection]}</h2>
+        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 px-6 py-3 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold">{SECTION_LABELS[activeSection]}</h2>
             {/* New-order alert badge */}
             {alertActive && (
               <button
                 onClick={() => { clearAlert(); setActiveSection('orders'); }}
-                className="hidden sm:flex items-center gap-1.5 text-xs text-primary bg-primary/10 border border-primary/20 rounded-full px-2.5 py-0.5 hover:bg-primary/15 transition-colors animate-pulse"
+                className="flex items-center gap-1.5 text-xs text-primary bg-primary/10 border border-primary/20 rounded-full px-2.5 py-0.5 hover:bg-primary/15 transition-colors animate-pulse"
               >
                 <Zap className="w-3 h-3" />
                 {newOrderIds.length} new!
@@ -702,14 +671,14 @@ const ArtisanDashboard = () => {
             {!alertActive && pendingOrders.length > 0 && activeSection !== 'orders' && (
               <button
                 onClick={() => setActiveSection('orders')}
-                className="hidden sm:flex items-center gap-1.5 text-xs text-amber-700 bg-amber-100 border border-amber-200 rounded-full px-2.5 py-0.5 hover:bg-amber-200 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-amber-700 bg-amber-100 border border-amber-200 rounded-full px-2.5 py-0.5 hover:bg-amber-200 transition-colors"
               >
                 <Bell className="w-3 h-3" />
                 {pendingOrders.length} pending
               </button>
             )}
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
+          <div className="flex items-center gap-3">
             {/* Module 11: Verification status pill */}
             {approvalStatus && (
               <span
@@ -754,7 +723,7 @@ const ArtisanDashboard = () => {
                 <RefreshCw className="w-3 h-3 animate-spin" />Syncing…
               </span>
             )}
-            <Link to="/" className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
               <Home className="w-3.5 h-3.5" />Back to Site
             </Link>
           </div>
@@ -763,7 +732,7 @@ const ArtisanDashboard = () => {
         {/* Section content */}
         <main
           id="artisan-main-content"
-          className="flex-1 p-4 lg:p-6 pb-28 lg:pb-6"
+          className="flex-1 p-4 lg:p-6 pb-20 lg:pb-6"
           tabIndex={-1}
           aria-label={SECTION_LABELS[activeSection]}
         >
@@ -792,7 +761,7 @@ const ArtisanDashboard = () => {
         </main>
 
         {/* Footer strip — hidden on mobile (replaced by bottom nav) */}
-        <footer className="hidden lg:flex border-t border-border/50 bg-background/35 backdrop-blur-xl px-6 py-3 items-center justify-between text-[11px] text-muted-foreground dark:border-white/10 dark:bg-card/25">
+        <footer className="hidden lg:flex border-t border-border px-6 py-3 items-center justify-between text-[11px] text-muted-foreground">
           <span>Zaymazone Artisan Panel · Module 14</span>
           <span>
             Auto-refreshes every 30s · Last synced{' '}
@@ -800,6 +769,14 @@ const ArtisanDashboard = () => {
           </span>
         </footer>
 
+        {/* Module 14: Mobile bottom navigation */}
+        <ArtisanMobileBottomNav
+          activeSection={activeSection}
+          onNavigate={(s) => setActiveSection(s)}
+          onMenuOpen={() => setSidebarOpen(true)}
+          pendingOrders={pendingOrders.length}
+          lowStockCount={lowStock.length}
+        />
         </div>
 
       {/* ── Modals ─────────────────────────────────────────────────────── */}
@@ -816,15 +793,6 @@ const ArtisanDashboard = () => {
         onRejected={handleOrderActioned}
       />
       </div>
-
-      {/* Module 14: Mobile bottom navigation */}
-      <ArtisanMobileBottomNav
-        activeSection={activeSection}
-        onNavigate={(s) => setActiveSection(s)}
-        onMenuOpen={() => setSidebarOpen(true)}
-        pendingOrders={pendingOrders.length}
-        lowStockCount={lowStock.length}
-      />
     </>
   );
 };

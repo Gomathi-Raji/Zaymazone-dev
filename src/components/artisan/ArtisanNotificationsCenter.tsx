@@ -88,10 +88,10 @@ const STATIC_SYSTEM: SystemNotification[] = [
 // ── Notification type chip helper ─────────────────────────────────────────────
 function TypeIcon({ type }: { type: 'info' | 'success' | 'warning' | 'error' }) {
   const map = {
-    info:    { icon: Info,          cls: 'text-blue-600 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-300'  },
-    success: { icon: CheckCircle2,  cls: 'text-green-600 bg-green-50 dark:bg-green-950/40 dark:text-green-300' },
-    warning: { icon: AlertTriangle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300' },
-    error:   { icon: AlertTriangle, cls: 'text-red-600 bg-red-50 dark:bg-red-950/40 dark:text-red-300'    },
+    info:    { icon: Info,          cls: 'text-blue-600 bg-blue-50'  },
+    success: { icon: CheckCircle2,  cls: 'text-green-600 bg-green-50' },
+    warning: { icon: AlertTriangle, cls: 'text-amber-600 bg-amber-50' },
+    error:   { icon: AlertTriangle, cls: 'text-red-600 bg-red-50'    },
   };
   const { icon: Icon, cls } = map[type];
   return (
@@ -160,7 +160,7 @@ export function ArtisanNotificationsCenter({
             <TabsTrigger value="orders" className="flex-1 text-xs h-7 relative">
               Orders
               {visiblePending.length > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold rounded-full bg-amber-500 text-white leading-none dark:bg-amber-400 dark:text-amber-950">
+                <span className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold rounded-full bg-amber-500 text-white leading-none">
                   {visiblePending.length}
                 </span>
               )}
@@ -168,7 +168,7 @@ export function ArtisanNotificationsCenter({
             <TabsTrigger value="stock" className="flex-1 text-xs h-7">
               Stock
               {visibleLowStock.length > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold rounded-full bg-red-500 text-white leading-none dark:bg-red-400 dark:text-red-950">
+                <span className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold rounded-full bg-red-500 text-white leading-none">
                   {visibleLowStock.length}
                 </span>
               )}
@@ -176,7 +176,7 @@ export function ArtisanNotificationsCenter({
             <TabsTrigger value="system" className="flex-1 text-xs h-7">
               System
               {visibleSystem.length > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold rounded-full bg-blue-500 text-white leading-none dark:bg-blue-400 dark:text-blue-950">
+                <span className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold rounded-full bg-blue-500 text-white leading-none">
                   {visibleSystem.length}
                 </span>
               )}
@@ -199,23 +199,23 @@ export function ArtisanNotificationsCenter({
                   {visiblePending.map((order) => (
                     <div
                       key={order._id}
-                        className="flex items-start gap-2.5 p-2.5 rounded-lg bg-amber-50 border border-amber-200 group dark:bg-amber-950/35 dark:border-amber-900/60"
+                      className="flex items-start gap-2.5 p-2.5 rounded-lg bg-amber-50 border border-amber-200 group"
                     >
-                        <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0 dark:bg-amber-950/60">
-                          <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-300" />
+                      <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                        <Clock className="w-3.5 h-3.5 text-amber-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-amber-900 leading-tight dark:text-amber-100">
+                        <p className="text-xs font-semibold text-amber-900 leading-tight">
                           #{order.orderNumber}
                         </p>
-                          <p className="text-[11px] text-amber-700 truncate mt-0.5 dark:text-amber-300">
+                        <p className="text-[11px] text-amber-700 truncate mt-0.5">
                           {order.items
                             ?.slice(0, 2)
                             .map((i) => i.name || 'Item')
                             .join(', ')}
                           {(order.items?.length ?? 0) > 2 && ` +${(order.items?.length ?? 0) - 2}`}
                         </p>
-                          <p className="text-[11px] font-semibold text-amber-800 mt-0.5 dark:text-amber-200">
+                        <p className="text-[11px] font-semibold text-amber-800 mt-0.5">
                           {fmt(order.total)}
                         </p>
                       </div>
@@ -236,7 +236,7 @@ export function ArtisanNotificationsCenter({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full mt-2 h-7 text-xs border-amber-300 text-amber-800 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-200 dark:hover:bg-amber-950/40"
+                className="w-full mt-2 h-7 text-xs border-amber-300 text-amber-800 hover:bg-amber-50"
                 onClick={onViewOrders}
               >
                 <ShoppingCart className="w-3 h-3 mr-1.5" />
@@ -261,7 +261,7 @@ export function ArtisanNotificationsCenter({
                   {visibleLowStock.map((product) => (
                     <div
                       key={product._id}
-                        className="flex items-center gap-2.5 p-2.5 rounded-lg bg-red-50 border border-red-200 group dark:bg-red-950/35 dark:border-red-900/60"
+                      className="flex items-center gap-2.5 p-2.5 rounded-lg bg-red-50 border border-red-200 group"
                     >
                       {product.images?.[0] ? (
                         <img
@@ -270,8 +270,8 @@ export function ArtisanNotificationsCenter({
                           className="w-8 h-8 rounded-md object-cover shrink-0"
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-md bg-red-100 flex items-center justify-center shrink-0 dark:bg-red-950/60">
-                          <Package className="w-3.5 h-3.5 text-red-500 dark:text-red-300" />
+                        <div className="w-8 h-8 rounded-md bg-red-100 flex items-center justify-center shrink-0">
+                          <Package className="w-3.5 h-3.5 text-red-500" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
@@ -285,8 +285,8 @@ export function ArtisanNotificationsCenter({
                           variant="outline"
                           className={`text-[10px] h-5 px-1.5 ${
                             product.stock === 0
-                              ? 'border-red-400 bg-red-100 text-red-700 dark:border-red-700 dark:bg-red-950/40 dark:text-red-300'
-                              : 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300'
+                              ? 'border-red-400 bg-red-100 text-red-700'
+                              : 'border-amber-300 bg-amber-50 text-amber-700'
                           }`}
                         >
                           {product.stock === 0 ? 'Out' : `${product.stock} left`}
