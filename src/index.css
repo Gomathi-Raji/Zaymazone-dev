@@ -1654,3 +1654,52 @@ a:focus:not(:focus-visible),
 .text-readable-min {
   font-size: max(0.75rem, 12px);
 }
+
+/* ── User Mobile Bottom Navigation ───────────────────────────────────── */
+.user-mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  background: hsl(var(--background) / 0.97);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid hsl(var(--border));
+  /* Safe-area inset for notched devices */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.user-mobile-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0.25rem;
+  min-height: 56px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.15s ease, background 0.15s ease;
+  border-radius: 0.375rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.user-mobile-nav__item:hover,
+.user-mobile-nav__item:focus-visible {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+.user-mobile-nav__item--active {
+  color: hsl(var(--primary));
+}
+.user-mobile-nav__label {
+  font-size: 0.625rem;
+  line-height: 1;
+  white-space: nowrap;
+}
