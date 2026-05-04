@@ -1,7 +1,5 @@
-import { ENV } from '@/config/env';
-
-const _apiOrigin = (ENV.apiOrigin || '').replace(/\/api$/, '');
-const API_BASE_URL = _apiOrigin ? `${_apiOrigin}/api` : ENV.apiBaseUrl;
+// Relative — proxied by Vite (dev) / Vercel (prod)
+const API_BASE_URL = '/api';
 
 class AdminService {
   private token: string | null = null

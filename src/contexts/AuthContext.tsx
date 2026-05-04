@@ -38,21 +38,8 @@ function clearAllAuthData() {
   queryClient.clear();
 }
 
-// Get API base URL — matches the same logic as api.ts
-const getApiBaseUrl = () => {
-  const apiUrl = import.meta.env?.VITE_API_URL;
-  if (apiUrl && typeof apiUrl === 'string') {
-    // Strip trailing /api if present so we can append /api/auth/... ourselves
-    return apiUrl.replace(/\/api$/, '');
-  }
-  // In development, use localhost
-  if (import.meta.env.DEV) {
-    return 'http://localhost:4000';
-  }
-  return 'https://zaymazone-backend.onrender.com';
-};
-
-const API_BASE_URL = getApiBaseUrl();
+// Empty — all API calls are relative (/api/...), proxied by Vite (dev) / Vercel (prod)
+const API_BASE_URL = '';
 
 interface User {
   id: string;

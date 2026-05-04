@@ -1,7 +1,15 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/api/:path*",
+      "destination": "https://zaymazone-dev-backend.vercel.app/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://zaymazone-dev-backend.vercel.app/health"
+    },
+    {
+      "source": "/((?!api/|health).*)",
       "destination": "/index.html"
     }
   ]

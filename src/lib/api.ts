@@ -2,7 +2,10 @@ import { logEvent } from "./security";
 import { filterProductsResponse } from "./productFilters";
 import { ENV } from "@/config/env";
 
-const API_BASE_URL = (ENV.apiOrigin || ENV.apiBaseUrl || "").replace(/\/api\/?$/, "");
+// Use empty base URL so all API calls are relative (/api/...).
+// In dev: Vite proxy forwards /api/* to localhost:4000
+// In prod: Vercel rewrite forwards /api/* to the backend
+const API_BASE_URL = "";
 const TOKEN_KEY = "auth_token";
 const FIREBASE_TOKEN_KEY = "firebase_id_token";
 

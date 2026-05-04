@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Activity, Search, Filter, Download, RefreshCw } from "lucide-react";
 
-const API_BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://zaymazone-backend.onrender.com')).replace(/\/api\/?$/, '');
+const API_BASE = ''; // Relative — proxied by Vite (dev) / Vercel (prod)
 
 interface AuditLogEntry {
   id: string;

@@ -1,7 +1,4 @@
-import { ENV } from '@/config/env';
-
-const _origin = (ENV.apiOrigin || ENV.apiBaseUrl || '').replace(/\/api\/?$/, '');
-const BASE_URL = `${_origin}/api/seller`;
+const BASE_URL = '/api/seller'; // Relative — proxied by Vite (dev) / Vercel (prod)
 
 const getToken = () => {
   return localStorage.getItem('token') || 

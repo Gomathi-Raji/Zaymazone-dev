@@ -41,8 +41,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const _apiOrigin = (import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/api$/, '');
-const API_BASE_URL = `${_apiOrigin}/api`;
+const API_BASE_URL = '/api'; // Relative — proxied by Vite (dev) / Vercel (prod)
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

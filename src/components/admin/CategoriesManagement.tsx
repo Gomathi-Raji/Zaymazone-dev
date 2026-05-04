@@ -14,7 +14,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { SingleImageUpload } from "./ImageUpload";
 import { adminService } from "@/services/adminService";
 
-const API_BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://zaymazone-backend.onrender.com')).replace(/\/api\/?$/, '');
+const API_BASE = ''; // Relative — proxied by Vite (dev) / Vercel (prod)
 
 interface Category {
   id: string;
