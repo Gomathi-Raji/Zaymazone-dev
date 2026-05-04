@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { adminService } from '@/services/adminService';
+import { AdminSidebar, type AdminSection } from '@/components/admin/AdminSidebar';
 import { 
   Users, 
   Package, 
@@ -28,7 +29,9 @@ import {
   MoreVertical,
   Calendar,
   DollarSign,
-  Loader2
+  Loader2,
+  LayoutDashboard,
+  ChevronRight,
 } from 'lucide-react';
 
 interface AdminStats {
@@ -81,6 +84,7 @@ export function AdminDashboard() {
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
   const [activeTab, setActiveTab] = useState('overview');
   const { toast } = useToast();
 
@@ -209,13 +213,20 @@ export function AdminDashboard() {
     );
   }
 
-  return (
+  // ── Section: Overview ─────────────────────────────────────────────────
+  const OverviewSection = () => (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
+      {/* Page header */}
+      <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>Admin Panel</span>
+            <ChevronRight className="w-3 h-3" />
+            <span className="text-foreground font-medium">Overview</span>
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             Overview of marketplace operations and metrics
           </p>
         </div>
@@ -276,7 +287,7 @@ export function AdminDashboard() {
                   and {stats.pendingApprovals.blogs} blog posts awaiting review
                 </p>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setActiveTab('approvals')}>
+              <Button variant="outline" size="sm" onClick={() => setActiveSection('approvals')}>
                 Review Now
               </Button>
             </div>
@@ -487,5 +498,45 @@ export function AdminDashboard() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <>
+      <div className="min-h-screen bg-gradient-subtle flex flex-col lg:flex-row">
+        {/* ── Sidebar ────────────────────────────────────────────────────── */}
+        <AdminSidebar
+          activeSection={activeSection}
+          onNavigate={setActiveSection}
+          pendingApprovals={stats.pendingApprovals.products + stats.pendingApprovals.artisans}
+          activeArtisans={stats.activeArtisans}
+          totalUsers={stats.totalUsers}
+        />
+
+        {/* ── Main pane ──────────────────────────────────────────────────── */}
+        <div className="flex-1 flex flex-col min-h-screen overflow-auto">
+          {/* Top bar */}
+          <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 px-6 py-3 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-semibold">{activeSection === 'dashboard' ? 'Admin Dashboard' : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" onClick={() => loadDashboardData(false)}>
+                <RefreshCw className="w-4 h-4" />
+              </Button>
+            </div>
+          </header>
+
+          {/* Section content */}
+          <main
+            id="admin-main-content"
+            className="flex-1 p-4 lg:p-6 pb-20 lg:pb-6"
+            tabIndex={-1}
+          >
+            {activeSection === 'dashboard' && <OverviewSection />}
+          </main>
+        </div>
+      </div>
+    </>
   );
 }

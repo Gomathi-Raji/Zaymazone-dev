@@ -17,6 +17,7 @@ import {
   Zap,
   CreditCard,
   MessageSquare,
+  CheckCircle,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
@@ -194,7 +195,7 @@ export function AdminSidebar({
       id="admin-sidebar"
       className={mobileMode
         ? 'w-full h-full min-h-0 flex flex-col shrink-0 relative z-20 bg-transparent'
-        : 'w-64 min-h-screen flex flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-l border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-slide-in-right fixed right-0 top-0 bottom-0 h-screen'}
+        : 'w-64 min-h-screen flex flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-r border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-fade-in-left hidden lg:flex lg:order-first'}
       aria-label="Admin dashboard sidebar"
     >
       {mobileMode ? (
