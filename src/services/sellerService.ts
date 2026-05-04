@@ -1,4 +1,7 @@
-const BASE_URL = '/api/seller';
+import { ENV } from '@/config/env';
+
+const _origin = (ENV.apiOrigin || ENV.apiBaseUrl || '').replace(/\/api\/?$/, '');
+const BASE_URL = `${_origin}/api/seller`;
 
 const getToken = () => {
   return localStorage.getItem('token') || 

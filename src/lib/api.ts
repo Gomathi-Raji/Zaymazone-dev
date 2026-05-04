@@ -2,7 +2,7 @@ import { logEvent } from "./security";
 import { filterProductsResponse } from "./productFilters";
 import { ENV } from "@/config/env";
 
-const API_BASE_URL = ENV.apiOrigin || (ENV.apiBaseUrl ? ENV.apiBaseUrl.replace(/\/api$/, "") : "");
+const API_BASE_URL = (ENV.apiOrigin || ENV.apiBaseUrl || "").replace(/\/api\/?$/, "");
 const TOKEN_KEY = "auth_token";
 const FIREBASE_TOKEN_KEY = "firebase_id_token";
 

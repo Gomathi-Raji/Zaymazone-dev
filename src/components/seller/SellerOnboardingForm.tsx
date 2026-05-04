@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ENV } from '@/config/env';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -204,7 +205,8 @@ export function SellerOnboardingForm() {
   const checkApplicationStatus = async () => {
     try {
       const token = localStorage.getItem('firebase_id_token');
-      const response = await fetch('/api/seller/onboarding/status', {
+      const apiOrigin = (ENV.apiOrigin || ENV.apiBaseUrl || '').replace(/\/api\/?$/, '');
+      const response = await fetch(`${apiOrigin}/api/seller/onboarding/status`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -395,7 +397,8 @@ export function SellerOnboardingForm() {
         formDataToSend.append('craftVideoUrl', formData.documents.craftVideo);
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/seller-onboarding`, {
+      const apiBase = (ENV.apiOrigin || ENV.apiBaseUrl || '').replace(/\/api\/?$/, '');
+      const response = await fetch(`${apiBase}/api/seller-onboarding`, {
         method: 'POST',
         body: formDataToSend
       });
