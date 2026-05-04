@@ -8,15 +8,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Package, LogOut, Palette, BarChart3, Heart, MapPin } from "lucide-react";
+import { User, Package, LogOut, Palette, BarChart3, Heart, MapPin, Shield, Store, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { getImageUrl } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { getSavedAccountSessions, restoreSavedAccountSession } from "@/lib/accountSwitcher";
+import type { SavedAccountSession } from "@/lib/accountSwitcher";
 
 export const UserMenu = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [savedAccounts, setSavedAccounts] = useState(getSavedAccountSessions());
+
+  useEffect(() => {
+    // Listen for account changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'zaymazone_saved_accounts') {
+        setSavedAccounts(getSavedAccountSessions());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
@@ -41,6 +56,13 @@ export const UserMenu = () => {
 
   const getProfileLink = () => {
     return user?.role === 'artisan' ? '/artisan/profile' : '/profile';
+  };
+
+  const handleSwitchAccount = async (account: SavedAccountSession) => {
+    await restoreSavedAccountSession(account);
+    // Navigate to the appropriate dashboard based on role
+    const dashboardUrl = account.role === 'admin' ? '/admin' : account.role === 'artisan' ? '/artisan-dashboard' : '/dashboard';
+    window.location.assign(dashboardUrl);
   };
 
   return (
@@ -132,6 +154,40 @@ export const UserMenu = () => {
             <span>Profile</span>
           </Link>
         </DropdownMenuItem>
+
+        {(() => {
+          const otherAccounts = savedAccounts.filter(
+            (account) => !(account.email === user?.email && account.role === user?.role)
+          );
+          if (otherAccounts.length > 0) {
+            return (
+              <>
+                <DropdownMenuSeparator className="bg-primary/20" />
+                <DropdownMenuLabel className="px-2 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Switch account
+                </DropdownMenuLabel>
+                {otherAccounts.map((account) => {
+                  const AccountIcon = account.role === 'admin' ? Shield : account.role === 'artisan' ? Store : User;
+                  return (
+                    <DropdownMenuItem
+                      key={account.id}
+                      className="cursor-pointer py-2.5 px-2 rounded-lg hover:bg-primary/5 transition-colors"
+                      onClick={() => handleSwitchAccount(account)}
+                    >
+                      <AccountIcon className="mr-3 h-4 w-4 text-primary" />
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium">{account.name}</div>
+                        <div className="text-xs text-muted-foreground capitalize">{account.role}</div>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </>
+            );
+          }
+          return null;
+        })()}
+
         <DropdownMenuSeparator className="bg-primary/20" />
         <DropdownMenuItem 
           className="cursor-pointer py-3 px-2 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/5 transition-colors"

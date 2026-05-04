@@ -26,9 +26,10 @@ import {
   ShieldCheck,
   AlertCircle,
   CheckCircle2,
+  UserPlus,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { getImageUrl, api, imagesApi } from "@/lib/api";
+import { getImageUrl, api, imagesApi, getAuthToken } from "@/lib/api";
 
 // ── Client-side image compression ────────────────────────────────────────────
 async function compressImage(file: File, maxSizePx = 512, quality = 0.80): Promise<File> {
@@ -65,6 +66,7 @@ import { ProfileCompletionBar } from "@/components/profile/ProfileCompletionBar"
 import { ProfilePreviewCard } from "@/components/profile/ProfilePreviewCard";
 import { SensitiveChangeModal } from "@/components/profile/SensitiveChangeModal";
 import type { SensitiveField } from "@/components/profile/SensitiveChangeModal";
+import { saveAccountSession } from "@/lib/accountSwitcher";
 
 interface OrderItem {
   product?: string;
@@ -223,6 +225,27 @@ const Profile = () => {
     setIsEditing(false);
   };
 
+  const handleAddAccount = () => {
+    if (!user) return;
+
+    const accessToken = getAuthToken();
+    if (!accessToken) {
+      toast.error('Please sign in again to save this account');
+      return;
+    }
+
+    saveAccountSession({
+      role: 'user',
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      accessToken,
+      refreshToken: localStorage.getItem('firebase_id_token') || undefined,
+    });
+
+    toast.success('Account added to switcher');
+  };
+
   // ── Avatar / profile picture upload ─────────────────────────────────────
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -374,7 +397,16 @@ const Profile = () => {
                     <CardTitle>Personal Information</CardTitle>
                     <CardDescription>Update your personal details</CardDescription>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleAddAccount}
+                      className="gap-2"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      Add account
+                    </Button>
                     {isEditing && (
                       <Button
                         variant="ghost"

@@ -1,3 +1,5 @@
+import { saveAccountSession } from '@/lib/accountSwitcher';
+
 // Relative — proxied by Vite (dev) / Vercel (prod)
 const API_BASE_URL = '/api';
 
@@ -55,6 +57,15 @@ class AdminService {
         localStorage.setItem('admin_token', data.accessToken)
         localStorage.setItem('admin_refresh_token', data.refreshToken)
         localStorage.setItem('admin_user', JSON.stringify(data.user))
+
+        saveAccountSession({
+          role: 'admin',
+          name: data.user.name,
+          email: data.user.email,
+          avatar: data.user.avatar,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        })
         
         return {
           success: true,

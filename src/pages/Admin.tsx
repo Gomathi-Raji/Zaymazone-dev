@@ -29,6 +29,8 @@ import { AuditLogManagement } from "@/components/admin/AuditLogManagement";
 import { EmailTemplateManagement } from "@/components/admin/EmailTemplateManagement";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
+import { AccountSwitcherDropdown } from "@/components/AccountSwitcherDropdown";
+import { getSavedAccountSessions, restoreSavedAccountSession } from "@/lib/accountSwitcher";
 import {
   Users,
   Package,
@@ -71,10 +73,23 @@ export default function Admin() {
     pendingApprovals: { products: 0, artisans: 0 }
   });
   const [loading, setLoading] = useState(false); // Don't show loading initially
+  const [savedAccounts, setSavedAccounts] = useState(getSavedAccountSessions());
   const { toast } = useToast();
+  const currentAdmin = adminService.getCurrentUser();
 
   useEffect(() => {
     checkAuthentication();
+  }, []);
+
+  useEffect(() => {
+    // Listen for account changes from other pages
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'zaymazone_saved_accounts') {
+        setSavedAccounts(getSavedAccountSessions());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   useEffect(() => {
@@ -350,14 +365,32 @@ export default function Admin() {
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
             <p className="text-sm sm:text-base text-muted-foreground">Manage your marketplace data and operations</p>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleLogout}
-            className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start"
-          >
-            <Settings className="w-4 h-4" />
-            Logout
-          </Button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+            <AccountSwitcherDropdown
+              currentAccount={{
+                name: currentAdmin?.name || 'Admin',
+                email: currentAdmin?.email || '',
+                avatar: currentAdmin?.avatar,
+                role: 'admin',
+              }}
+              savedAccounts={savedAccounts}
+              onSwitchAccount={async (account) => {
+                await restoreSavedAccountSession(account);
+                window.location.assign(account.role === 'admin' ? '/admin' : account.role === 'artisan' ? '/artisan-dashboard' : '/dashboard');
+              }}
+              onSignInAdmin={() => window.location.assign('/admin')}
+              onSignInArtisan={() => window.location.assign('/sign-in-artisan')}
+              onSignInUser={() => window.location.assign('/sign-in')}
+            />
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start"
+            >
+              <Settings className="w-4 h-4" />
+              Logout
+            </Button>
+          </div>
         </div>
 
           {activeTab === "overview" && (

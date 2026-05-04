@@ -44,6 +44,8 @@ import { QuickActionsPanel } from '@/components/artisan/QuickActionsPanel';
 import { OrdersManagementPage } from '@/components/artisan/OrdersManagementPage';
 import { useOrderAlerts } from '@/hooks/useOrderAlerts';
 import { ArtisanMobileBottomNav } from '@/components/artisan/ArtisanMobileBottomNav';
+import { AccountSwitcherDropdown } from '@/components/AccountSwitcherDropdown';
+import { getSavedAccountSessions, restoreSavedAccountSession } from '@/lib/accountSwitcher';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -123,6 +125,7 @@ function KpiCard({
 const ArtisanDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [savedAccounts, setSavedAccounts] = useState(getSavedAccountSessions());
 
   // ── Module 8 state ──────────────────────────────────────────────────────────
   const [activeSection, setActiveSection] = useState<ArtisanSection>('overview');
@@ -187,6 +190,17 @@ const ArtisanDashboard = () => {
       .then((p) => setApprovalStatus(p.approvalStatus))
       .catch(() => { /* silently ignore — non-critical */ });
   }, [user]);
+
+  // ── Listen for account changes from other pages ──────────────────────────
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'zaymazone_saved_accounts') {
+        setSavedAccounts(getSavedAccountSessions());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handlePeriodChange = (p: '7days' | '30days' | '90days' | '1year') => {
     setPeriod(p);
@@ -542,6 +556,22 @@ const ArtisanDashboard = () => {
           <p className="text-sm text-muted-foreground mt-0.5">Sales performance and order trends</p>
         </div>
         <div className="flex items-center gap-2">
+            <AccountSwitcherDropdown
+              currentAccount={{
+                name: user?.name || 'Artisan',
+                email: user?.email || '',
+                avatar: user?.avatar,
+                role: 'artisan',
+              }}
+              savedAccounts={savedAccounts}
+              onSwitchAccount={async (account) => {
+                await restoreSavedAccountSession(account);
+                window.location.assign(account.role === 'admin' ? '/admin' : account.role === 'artisan' ? '/artisan-dashboard' : '/dashboard');
+              }}
+              onSignInAdmin={() => window.location.assign('/admin')}
+              onSignInArtisan={() => window.location.assign('/sign-in-artisan')}
+              onSignInUser={() => window.location.assign('/sign-in')}
+            />
           <div className="flex border rounded-lg overflow-hidden text-xs">
             {(['7days', '30days', '90days', '1year'] as const).map((p) => (
               <button

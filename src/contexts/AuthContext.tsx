@@ -9,9 +9,10 @@ import {
   User as FirebaseUser
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
-import { firebaseAuthApi, setFirebaseToken, setAuthToken, getFirebaseToken, User as ApiUser } from '@/lib/api';
+import { firebaseAuthApi, setFirebaseToken, setAuthToken, getFirebaseToken, getAuthToken, User as ApiUser } from '@/lib/api';
 import { queryClient } from '@/lib/queryClient';
 import { toast } from 'sonner';
+import { saveAccountSession } from '@/lib/accountSwitcher';
 
 /**
  * Remove every auth-related key from localStorage + sessionStorage and wipe
@@ -23,6 +24,7 @@ function clearAllAuthData() {
   const LS_KEYS = [
     'token', 'refreshToken', 'user',
     'auth_token', 'admin_token',
+    'admin_refresh_token', 'admin_user',
     'firebase_id_token',
   ];
   LS_KEYS.forEach(k => localStorage.removeItem(k));
@@ -135,6 +137,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       };
 
       setUser(userProfile);
+
+      if (response.accessToken) {
+        saveAccountSession({
+          role,
+          name: userProfile.name,
+          email: userProfile.email,
+          avatar: userProfile.avatar,
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+        });
+      }
+
       return userProfile;
     } catch (error) {
       console.error('Failed to sync user with MongoDB:', error);
@@ -168,6 +182,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       // Check if there's a valid artisan JWT session in localStorage
       const storedToken = localStorage.getItem('token');
+      const storedAuthToken = getAuthToken();
       const storedUserRaw = localStorage.getItem('user');
       const hasValidArtisanSession = (() => {
         if (!storedToken || !storedUserRaw) return false;
@@ -184,8 +199,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       })();
 
-      // If a valid artisan session exists, always prefer it — don't let Firebase override it
-      if (hasValidArtisanSession) {
+      const hasValidUserSession = (() => {
+        if (!storedAuthToken || !storedUserRaw) return false;
+        try {
+          const payload = decodeJwtPayload(storedAuthToken);
+          const storedUser = JSON.parse(storedUserRaw);
+          return (
+            payload.exp &&
+            payload.exp * 1000 > Date.now() &&
+            storedUser?.role === 'user'
+          );
+        } catch {
+          return false;
+        }
+      })();
+
+      // If a valid local session exists, prefer it over Firebase so account switching works.
+      if (hasValidArtisanSession || hasValidUserSession) {
         setUser(JSON.parse(storedUserRaw!));
         setIsLoading(false);
         return;
@@ -269,6 +299,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('user', JSON.stringify(data.user));
 
+        saveAccountSession({
+          role: 'artisan',
+          name: data.user.name,
+          email: data.user.email,
+          avatar: data.user.avatar,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        });
+
         setUser(data.user);
 
         toast.success('Successfully signed in as artisan!');
@@ -282,6 +321,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Sync with MongoDB and check role
         const dbUser = await syncUserWithMongoDB(credential.user, role);
+
+        if (dbUser.role === 'user' || dbUser.role === 'artisan') {
+          saveAccountSession({
+            role: dbUser.role,
+            name: dbUser.name,
+            email: dbUser.email,
+            avatar: dbUser.avatar,
+            accessToken: getAuthToken() || '',
+            refreshToken: getFirebaseToken() || undefined,
+          });
+        }
 
         if (dbUser.role !== role) {
           await firebaseSignOut(auth);
@@ -333,6 +383,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       // Sync with MongoDB and check role
       const dbUser = await syncUserWithMongoDB(credential.user, role);
+
+      if (dbUser.role === 'user' || dbUser.role === 'artisan') {
+        saveAccountSession({
+          role: dbUser.role,
+          name: dbUser.name,
+          email: dbUser.email,
+          avatar: dbUser.avatar,
+          accessToken: getAuthToken() || '',
+          refreshToken: getFirebaseToken() || undefined,
+        });
+      }
 
       // For existing users, check if role matches
       if (dbUser.role !== role) {

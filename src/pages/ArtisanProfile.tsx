@@ -39,9 +39,11 @@ import {
   Lock,
   Briefcase,
   Info,
+  UserPlus,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, getAuthToken } from '@/lib/api';
+import { saveAccountSession } from '@/lib/accountSwitcher';
 // Module 11
 import { VerificationTimeline } from '@/components/trust/VerificationTimeline';
 
@@ -240,6 +242,27 @@ const ArtisanProfile = () => {
   const handleStartEdit = () => {
     setEditData(defaultEdit(profile));
     setEditing(true);
+  };
+
+  const handleAddAccount = () => {
+    if (!profile) return;
+
+    const accessToken = localStorage.getItem('token') || getAuthToken();
+    if (!accessToken) {
+      toast({ title: 'Unable to save', description: 'Please sign in again to add this account.', variant: 'destructive' });
+      return;
+    }
+
+    saveAccountSession({
+      role: 'artisan',
+      name: profile.fullName || user?.name || 'Artisan',
+      email: profile.email || user?.email || '',
+      avatar: profile.profilePic || user?.avatar,
+      accessToken,
+      refreshToken: localStorage.getItem('refreshToken') || undefined,
+    });
+
+    toast({ title: 'Account added', description: 'This artisan account is now available in the switcher.' });
   };
 
   const handleCancelEdit = () => {
@@ -497,7 +520,11 @@ const ArtisanProfile = () => {
           </div>
 
           {/* Edit controls */}
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+            <Button variant="outline" onClick={handleAddAccount}>
+              <UserPlus className="w-4 h-4 mr-2" />
+              Add account
+            </Button>
             {!editing ? (
               <Button onClick={handleStartEdit}>
                 <Edit className="w-4 h-4 mr-2" />
