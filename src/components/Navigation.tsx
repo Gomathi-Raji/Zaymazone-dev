@@ -298,29 +298,6 @@ export const Navigation = () => {
                       },
                     }}
                   >
-                    {/* Decorative header */}
-                    <div className="px-4">
-                      <div className="relative overflow-hidden rounded-[28px] border border-border/60 bg-gradient-to-br from-primary/15 via-background to-primary-glow/15 p-5 shadow-sm">
-                        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,hsl(var(--primary)/0.18),transparent_45%),radial-gradient(circle_at_80%_0%,hsl(var(--primary)/0.12),transparent_35%)]" />
-                        <div className="relative flex items-center justify-between gap-4">
-                          <div>
-                            <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Explore</p>
-                            <p className="text-lg font-semibold text-foreground">Handcrafted edits</p>
-                            <p className="text-[11px] text-muted-foreground">New drops from local makers</p>
-                          </div>
-                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white shadow-sm">
-                            <Sparkles className="h-5 w-5" />
-                          </div>
-                        </div>
-                        {freeShippingText && (
-                          <div className="relative mt-4 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
-                            <span>{freeShippingText}</span>
-                            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Today</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
                     {/* Brand + quick actions */}
                     <div className="px-4">
                       <div className="rounded-3xl border border-border/60 bg-gradient-to-br from-primary/10 via-background to-primary-glow/10 p-4 shadow-sm">

@@ -7,7 +7,7 @@ export const HeroSection = () => {
   const titleWords = ["Crafting Culture.", "Empowering Artisans."];
 
   return (
-    <section className="relative min-h-[72vh] md:min-h-screen flex items-center justify-center overflow-hidden mobile-section">
+    <section className="relative h-screen flex items-center justify-center overflow-hidden mobile-section">
       {/* Background Image with Parallax */}
       <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -62,7 +62,7 @@ export const HeroSection = () => {
               whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto"
             >
-              <Button className="w-full sm:w-auto px-8 py-3 text-base font-semibold btn-hero" asChild>
+              <Button className="w-full sm:w-auto px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-semibold btn-hero" asChild>
                 <Link to="/shop">Shop Now</Link>
               </Button>
             </motion.div>
@@ -73,7 +73,7 @@ export const HeroSection = () => {
             >
               <Button
                 variant="outline"
-                className="w-full sm:w-auto px-8 py-3 text-base font-semibold bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+                className="w-full sm:w-auto px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-semibold bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
                 asChild
               >
                 <Link to="/seller-onboarding">Start Selling</Link>
