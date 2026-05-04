@@ -77,9 +77,13 @@ const socialLinks = [
 
 const trustBadges = [
   { icon: <Shield className="h-6 w-6" />, title: "Secure Payment", desc: "256-bit SSL encryption" },
-  ...(ENV.freeShippingThreshold
-    ? [{ icon: <Truck className="h-6 w-6" />, title: "Free Shipping", desc: `On orders over ${formatCurrency(ENV.freeShippingThreshold)}` }]
-    : []),
+  {
+    icon: <Truck className="h-6 w-6" />, 
+    title: "Free Shipping", 
+    desc: ENV.freeShippingThreshold
+      ? `On orders over ${formatCurrency(ENV.freeShippingThreshold)}`
+      : "On eligible orders",
+  },
   { icon: <Award className="h-6 w-6" />, title: "Authentic Crafts", desc: "Verified artisans only" },
   { icon: <Heart className="h-6 w-6" />, title: "Satisfaction", desc: "30-day return policy" }
 ];

@@ -8,6 +8,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { ENV } from "@/config/env";
 
+const contactInfo = [
+  {
+    title: "Visit Us",
+    icon: MapPin,
+    value: ENV.supportAddress || "123 Craft Street\nDelhi, India 110001",
+  },
+  {
+    title: "Call Us",
+    icon: Phone,
+    value: ENV.supportPhone || "+91 98765 43210",
+  },
+  {
+    title: "Email Us",
+    icon: Mail,
+    value: ENV.supportEmail || "support@zaymazone.com",
+  },
+  {
+    title: "Business Hours",
+    icon: Clock,
+    value: ENV.supportHours || "Mon-Fri 9AM-6PM IST",
+  },
+];
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -46,77 +69,27 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="lg:col-span-1">
             <div className="space-y-6">
-              {ENV.supportAddress ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Visit Us</h3>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">
-                          {ENV.supportAddress}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : null}
+              {contactInfo.map((item) => {
+                const Icon = item.icon;
 
-              {ENV.supportPhone ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Phone className="w-6 h-6 text-primary" />
+                return (
+                  <Card key={item.title}>
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{item.title}</h3>
+                          <p className="text-sm text-muted-foreground whitespace-pre-line">
+                            {item.value}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold">Call Us</h3>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">
-                          {ENV.supportPhone}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : null}
-
-              {ENV.supportEmail ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Mail className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Email Us</h3>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">
-                          {ENV.supportEmail}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : null}
-
-              {ENV.supportHours ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Business Hours</h3>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">
-                          {ENV.supportHours}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : null}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
 

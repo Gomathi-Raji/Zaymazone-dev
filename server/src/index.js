@@ -15,6 +15,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
+import compression from 'compression'
 import mongoose from 'mongoose'
 
 const REQUIRED_ENV_VARS = [
@@ -128,6 +129,9 @@ app.use(cors({
 	allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
 	optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }))
+
+// Enable gzip compression for all responses
+app.use(compression())
 
 app.use(express.json({ limit: '20mb' }))
 app.use(express.urlencoded({ extended: true, limit: '20mb' }))
