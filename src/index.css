@@ -151,7 +151,7 @@ All colors MUST be HSL.
 
     /* Custom artisan design tokens */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(35 12% 95%));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
     --gradient-warm: linear-gradient(45deg, hsl(25 40% 92%), hsl(35 30% 90%));
     
     --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
@@ -301,6 +301,9 @@ All colors MUST be HSL.
     --gradient-dark-overlay: linear-gradient(135deg, hsl(25 50% 8% / 0.95), hsl(25 45% 12% / 0.98));
     --gradient-dark-subtle: linear-gradient(180deg, hsl(25 50% 8%), hsl(25 45% 10%));
     --gradient-dark-warm: linear-gradient(45deg, hsl(25 45% 12%), hsl(25 40% 15%));
+    
+    /* Premium dark mode gradient override */
+    --gradient-subtle: linear-gradient(135deg, hsl(25 50% 8%) 0%, hsl(25 45% 10%) 50%, hsl(25 50% 8%) 100%);
     
     /* Enhanced dark mode shadows with cinematic depth */
     --shadow-dark-elegant: 0 15px 40px -15px hsl(0 0% 0% / 0.8);
@@ -474,6 +477,13 @@ All colors MUST be HSL.
                       radial-gradient(circle at 80% 20%, hsl(var(--accent) / 0.1) 0%, transparent 50%),
                       radial-gradient(circle at 40% 80%, hsl(var(--primary-glow) / 0.1) 0%, transparent 50%);
   }
+
+  /* Premium dark mode panel background */
+  .dark .artisan-pattern {
+    background-image: radial-gradient(circle at 20% 50%, hsl(15 75% 65% / 0.08) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, hsl(140 40% 65% / 0.06) 0%, transparent 50%),
+                      radial-gradient(circle at 40% 80%, hsl(15 85% 75% / 0.05) 0%, transparent 50%);
+  }
   
   /* Pulse animation for stats */
   @keyframes pulse-soft {
@@ -573,6 +583,36 @@ All colors MUST be HSL.
            relative overflow-hidden
            before:absolute before:top-0 before:left-0 before:w-full before:h-1
            before:bg-gradient-to-r before:from-primary before:to-accent;
+  }
+
+  /* Premium dark mode panel styling */
+  .dark .premium-panel {
+    @apply relative bg-card backdrop-blur-lg
+           border border-border/40
+           shadow-lg;
+  }
+
+  .dark .premium-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, hsl(var(--primary) / 0.05), transparent, hsl(var(--accent) / 0.03));
+    pointer-events: none;
+    border-radius: 0.5rem;
+  }
+
+  .dark .premium-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top left, rgb(255 255 255 / 0.02), transparent);
+    pointer-events: none;
+    border-radius: 0.5rem;
+  }
+
+  /* Premium panel enhanced styling */
+  .premium-panel {
+    @apply relative overflow-hidden;
   }
 
   .feature-card-artisan {
