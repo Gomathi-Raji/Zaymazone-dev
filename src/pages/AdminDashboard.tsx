@@ -112,7 +112,15 @@ export function AdminDashboard() {
 
       setStats(statsData.stats);
       setPendingApprovals(approvalsData.approvals || []);
-      setRecentActivities(activitiesData.activities || []);
+      const normalizedActivities: RecentActivity[] = (activitiesData.activities || []).map((activity) => ({
+        _id: activity._id,
+        action: activity.action,
+        user: activity.user,
+        timestamp: activity.timestamp,
+        type: activity.type as RecentActivity['type'],
+      }));
+
+      setRecentActivities(normalizedActivities);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
       toast({
@@ -503,14 +511,12 @@ export function AdminDashboard() {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <>
-      <div className="min-h-screen bg-gradient-subtle flex flex-col lg:flex-row">
+      <div className="min-h-screen bg-gradient-subtle flex flex-col lg:flex-row lg:[direction:ltr]">
         {/* ── Sidebar ────────────────────────────────────────────────────── */}
         <AdminSidebar
           activeSection={activeSection}
           onNavigate={setActiveSection}
           pendingApprovals={stats.pendingApprovals.products + stats.pendingApprovals.artisans}
-          activeArtisans={stats.activeArtisans}
-          totalUsers={stats.totalUsers}
         />
 
         {/* ── Main pane ──────────────────────────────────────────────────── */}

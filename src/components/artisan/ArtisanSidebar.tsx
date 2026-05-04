@@ -15,6 +15,8 @@ import {
   UserCircle,
   Store,
   TrendingUp,
+  ChevronsLeft,
+  ChevronsRight,
   X,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -39,6 +41,8 @@ interface ArtisanSidebarProps {
   lowStockCount?: number;
   totalProducts?: number;
   totalReviews?: number;
+  compact?: boolean;
+  onToggleCompact?: () => void;
   /** Module 14: callback to close the mobile drawer */
   onClose?: () => void;
 }
@@ -60,6 +64,8 @@ export function ArtisanSidebar({
   lowStockCount = 0,
   totalProducts = 0,
   totalReviews = 0,
+  compact = false,
+  onToggleCompact,
   onClose,
 }: ArtisanSidebarProps) {
   // Module 14: keyboard arrow-navigation between all nav buttons
@@ -149,18 +155,20 @@ export function ArtisanSidebar({
         data-nav-item="true"
         variant={isActive ? 'default' : 'ghost'}
         size="sm"
-        className={`w-full justify-start gap-2.5 h-9 px-3 font-normal ${
+        className={`w-full h-9 font-normal ${compact ? 'justify-center px-2' : 'justify-start gap-2.5 px-3'} ${
           isActive
             ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm'
             : 'hover:bg-primary/5 text-foreground'
         }`}
+        aria-label={item.label}
+        title={item.label}
         aria-current={isActive ? 'page' : undefined}
         onClick={() => onNavigate(item.id)}
         onKeyDown={(e) => handleNavKeyDown(e, allNavIds, item.id)}
       >
         <item.icon className="w-4 h-4 shrink-0" />
-        <span className="flex-1 text-left text-sm">{item.label}</span>
-        {item.badge != null && item.badge > 0 && (
+        {!compact && <span className="flex-1 text-left text-sm">{item.label}</span>}
+        {!compact && item.badge != null && item.badge > 0 && (
           <Badge
             className={`text-[10px] px-1.5 min-w-[18px] h-4 flex items-center justify-center leading-none ${
               isActive
@@ -180,74 +188,97 @@ export function ArtisanSidebar({
   return (
     <aside
       id="artisan-sidebar"
-      className="w-64 min-h-screen flex-col shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-r border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-fade-in-left hidden lg:flex lg:order-first"
+      className={`min-h-screen shrink-0 relative z-20 bg-card/90 backdrop-blur-2xl border-r border-border/70 shadow-[0_0_0_1px_hsl(var(--border)/0.35),0_24px_60px_-20px_rgba(0,0,0,0.55)] dark:bg-card/80 dark:border-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-fade-in-left hidden lg:flex lg:order-first flex-col ${compact ? 'w-20' : 'w-64'}`}
       aria-label="Artisan dashboard sidebar"
     >
 
       {/* ── Brand ─────────────────────────────────────────────────────────── */}
-      <div className="px-5 py-4 border-b border-border">
-        <div className="flex items-center gap-3">
+      <div className={`border-b border-border ${compact ? 'px-3 py-4' : 'px-5 py-4'}`}>
+        <div className={`flex items-center ${compact ? 'justify-center gap-2' : 'gap-3'}`}>
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shrink-0 shadow-sm">
             <Store className="w-4 h-4 text-white" />
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-bold text-sm text-foreground">Artisan Panel</p>
-            <p className="text-[11px] text-muted-foreground">Zaymazone Marketplace</p>
-          </div>
-          {/* Module 14: Close button shown only in mobile drawer mode */}
-          {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close navigation menu"
-              className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary transition-colors lg:hidden shrink-0"
-            >
-              <X className="w-4 h-4" aria-hidden="true" />
-            </button>
+          {!compact && (
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-sm text-foreground">Artisan Panel</p>
+              <p className="text-[11px] text-muted-foreground">Zaymazone Marketplace</p>
+            </div>
           )}
+          <div className="flex items-center gap-1 shrink-0">
+            {onToggleCompact && (
+              <button
+                type="button"
+                onClick={onToggleCompact}
+                aria-label={compact ? 'Expand sidebar' : 'Collapse sidebar'}
+                title={compact ? 'Expand sidebar' : 'Collapse sidebar'}
+                className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary transition-colors shrink-0"
+              >
+                {compact ? <ChevronsRight className="w-4 h-4" aria-hidden="true" /> : <ChevronsLeft className="w-4 h-4" aria-hidden="true" />}
+              </button>
+            )}
+            {/* Module 14: Close button shown only in mobile drawer mode */}
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close navigation menu"
+                className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary transition-colors lg:hidden shrink-0"
+              >
+                <X className="w-4 h-4" aria-hidden="true" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ── User info ─────────────────────────────────────────────────────── */}
-      <div className="px-4 py-3 border-b border-border">
-        <div className="flex items-center gap-2.5">
+      <div className={`border-b border-border ${compact ? 'px-3 py-3' : 'px-4 py-3'}`}>
+        <div className={`flex items-center ${compact ? 'justify-center gap-2' : 'gap-2.5'}`}>
           <Avatar className="w-8 h-8 shrink-0">
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-foreground truncate leading-tight">
-              {user?.name || 'Artisan'}
-            </p>
-            {user?.email || ENV.artisanEmail ? (
-              <p className="text-[11px] text-muted-foreground truncate leading-tight">
-                {user?.email || ENV.artisanEmail}
+          {!compact && (
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground truncate leading-tight">
+                {user?.name || 'Artisan'}
               </p>
-            ) : null}
-          </div>
+              {user?.email || ENV.artisanEmail ? (
+                <p className="text-[11px] text-muted-foreground truncate leading-tight">
+                  {user?.email || ENV.artisanEmail}
+                </p>
+              ) : null}
+            </div>
+          )}
         </div>
       </div>
 
       {/* ── Primary nav ───────────────────────────────────────────────────── */}
-      <nav className="flex-1 px-3 pt-4 pb-2 space-y-0.5 overflow-y-auto" aria-label="Dashboard sections">
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
-          Dashboard
-        </p>
+      <nav className={`flex-1 pt-4 pb-2 space-y-0.5 overflow-y-auto ${compact ? 'px-2' : 'px-3'}`} aria-label="Dashboard sections">
+        {!compact && (
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
+            Dashboard
+          </p>
+        )}
         {primaryNav.map(renderNavButton)}
 
-        <div className="py-2">
-          <Separator />
-        </div>
+        {!compact && (
+          <div className="py-2">
+            <Separator />
+          </div>
+        )}
 
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
-          Engagement
-        </p>
+        {!compact && (
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2 mb-2">
+            Engagement
+          </p>
+        )}
         {secondaryNav.map(renderNavButton)}
       </nav>
 
       {/* ── Stats summary ─────────────────────────────────────────────────── */}
-      {(totalProducts > 0 || totalReviews > 0) && (
+      {!compact && (totalProducts > 0 || totalReviews > 0) && (
         <div className="px-4 py-3 border-t border-border bg-muted/30">
           <div className="flex gap-4 justify-around text-center">
             <div>

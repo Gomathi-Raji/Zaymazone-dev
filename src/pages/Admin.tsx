@@ -48,6 +48,8 @@ import {
   AlertCircle,
   Activity,
   Settings,
+  ChevronsLeft,
+  ChevronsRight,
   Wallet,
   Receipt,
   Mail
@@ -56,6 +58,7 @@ import {
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [sidebarCompact, setSidebarCompact] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [stats, setStats] = useState({
@@ -229,14 +232,16 @@ export default function Admin() {
     <Button
       key={item.id}
       variant={activeTab === item.id ? "default" : "ghost"}
-      className="w-full justify-start gap-2.5 h-11 px-4 rounded-xl border border-transparent hover:border-border/60 hover:bg-primary/5 transition-all"
+      className={`w-full h-11 rounded-xl border border-transparent hover:border-border/60 hover:bg-primary/5 transition-all ${sidebarCompact ? "justify-center px-2 gap-0" : "justify-start gap-2.5 px-4"}`}
+      aria-label={item.label}
+      title={item.label}
       onClick={() => {
         setActiveTab(item.id);
         if (closeMobile) setMobileNavOpen(false);
       }}
     >
-      <item.icon className="w-4 h-4 mr-2" />
-      <span className="truncate">{item.label}</span>
+      <item.icon className={`w-4 h-4 shrink-0 ${sidebarCompact ? "" : "mr-2"}`} />
+      <span className={`truncate ${sidebarCompact ? "hidden" : "block"}`}>{item.label}</span>
     </Button>
   );
 
@@ -310,12 +315,27 @@ export default function Admin() {
         </SheetContent>
       </Sheet>
 
-      {/* Sidebar (right side on large screens) */}
-      <aside className="hidden lg:flex w-64 bg-card border-l border-border min-h-screen sticky top-0 shrink-0 lg:order-last animate-slide-in-right">
-        <div className="p-6 w-full bg-card/80 backdrop-blur-xl">
-          <div className="mb-6 rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Admin Panel</p>
-            <h2 className="text-xl font-bold text-foreground">Marketplace Control</h2>
+      {/* Sidebar (left side on large screens) */}
+      <aside className={`hidden lg:flex ${sidebarCompact ? "w-20" : "w-64"} bg-card border-r border-border min-h-screen sticky top-0 shrink-0 animate-slide-in-left`}>
+        <div className={`p-6 w-full bg-card/80 backdrop-blur-xl ${sidebarCompact ? "px-3" : ""}`}>
+          <div className={`mb-6 rounded-2xl border border-border/60 bg-background/60 ${sidebarCompact ? "px-3 py-3" : "px-4 py-3"}`}>
+            <div className="flex items-start justify-between gap-2">
+              <div className={`min-w-0 ${sidebarCompact ? "hidden" : "block"}`}>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Admin Panel</p>
+                <h2 className="text-xl font-bold text-foreground">Marketplace Control</h2>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCompact((value) => !value)}
+                aria-label={sidebarCompact ? "Expand sidebar" : "Collapse sidebar"}
+                title={sidebarCompact ? "Expand sidebar" : "Collapse sidebar"}
+                className="h-8 w-8 p-0 shrink-0"
+              >
+                {sidebarCompact ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+              </Button>
+            </div>
           </div>
           <nav className="space-y-2">
             {sidebarItems.map((item) => renderSidebarButton(item))}

@@ -138,6 +138,7 @@ const ArtisanDashboard = () => {
   // ── Module 11: verification status ──────────────────────────────────────────
   const [approvalStatus, setApprovalStatus] = useState<'pending' | 'approved' | 'rejected' | null>(null);  // ── Module 14: mobile sidebar drawer state ─────────────────────────────────────
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCompact, setSidebarCompact] = useState(false);
   // ── Data loading ─────────────────────────────────────────────────────────────
   const loadDashboard = useCallback(
     async (silent = false, p = period) => {
@@ -649,6 +650,8 @@ const ArtisanDashboard = () => {
         lowStockCount={lowStock.length}
         totalProducts={products.length}
         totalReviews={bundle?.performance?.totalReviews ?? 0}
+        compact={sidebarCompact}
+        onToggleCompact={() => setSidebarCompact((value) => !value)}
       />
 
       {/* ── Main pane ──────────────────────────────────────────────────── */}
